@@ -37,6 +37,12 @@ struct visitor : public virtual skel_visitor
     virtual void visit(opt_node& n)    = 0;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Concrete visitors:
+//  servicetime, printer, ...
+//
+///////////////////////////////////////////////////////////////////////////////
 struct servicetime: public skel_visitor
 {
     virtual void visit(seq_node& n);
@@ -74,8 +80,7 @@ struct printer : public skel_visitor
             sk.accept(*this);
     }
 private:
-    template<typename Iterator>
-    void print(const std::string& name, Iterator begin, Iterator end);
+    void print(const std::string& name, const access_node& n);
 };
 
 #endif
