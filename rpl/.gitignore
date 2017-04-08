@@ -1,1 +1,4 @@
 grammar/
+obj/
+rplsh
+a.out
