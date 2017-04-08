@@ -28,11 +28,13 @@ struct style
     style(color color_code, font font_code)
         : color_code(color_code), font_code(font_code) {}
 
-    friend ostream& operator<<(ostream& os, style& s)
+    friend ostream& operator<<(ostream& os, const style& s)
     {
         os  << "\033["
-            << static_cast<int>(s.font_code) << ";"
-            << static_cast<int>(s.color_code)  << "m";
+            << static_cast<int>(s.font_code) 
+            << ";"
+            << static_cast<int>(s.color_code)
+            << "m";
         return os;
     }
 
