@@ -8,7 +8,7 @@ using namespace std;
 //  The verb_node impl
 //
 ///////////////////////////////////////////////////////////////////////////////
-verb_node::verb_node(string& id, string& prop)
+verb_node::verb_node(const string& id, const string& prop)
     : id(id), prop(prop) {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@ verb_node::verb_node(string& id, string& prop)
 //  The rpl assign_node implementation
 //
 ///////////////////////////////////////////////////////////////////////////////
-assign_node::assign_node(string& id, shared_ptr<skel_node> rvalue)
-    : id(id), rvalue(move(rvalue)) {}
+assign_node::assign_node(const string& id, const shared_ptr<skel_node>& rvalue)
+    : id(id), rvalue(rvalue) {}
 
 void assign_node::accept(visitor &v) {
     v.visit(*this);
@@ -28,7 +28,7 @@ void assign_node::accept(visitor &v) {
 //  The rpl show_node implementation
 //
 ///////////////////////////////////////////////////////////////////////////////
-show_node::show_node(string& id, string& prop)
+show_node::show_node(const string& id, const string& prop)
     : verb_node(id, prop) {}
 
 void show_node::accept(visitor &v) {
@@ -40,7 +40,7 @@ void show_node::accept(visitor &v) {
 //  The rpl set_node implementation
 //
 ///////////////////////////////////////////////////////////////////////////////
-set_node::set_node(string& id, string& prop, int value)
+set_node::set_node(const string& id, const string& prop, int value)
     : verb_node(id, prop), value(value) {}
 
 void set_node::accept(visitor &v) {
@@ -52,7 +52,7 @@ void set_node::accept(visitor &v) {
 //  The rpl ann_node implementation
 //
 ///////////////////////////////////////////////////////////////////////////////
-ann_node::ann_node(string& id, string& prop, double value)
+ann_node::ann_node(const string& id, const string& prop, double value)
     : verb_node(id, prop), value(value) {}
 
 void ann_node::accept(visitor &v) {
@@ -64,7 +64,7 @@ void ann_node::accept(visitor &v) {
 //  The rpl rwr_node implementation
 //
 ///////////////////////////////////////////////////////////////////////////////
-rwr_node::rwr_node(string& id, string& rule)
+rwr_node::rwr_node(const string& id, const string& rule)
     : verb_node(id, rule) {}
 
 void rwr_node::accept(visitor &v) {
@@ -76,7 +76,7 @@ void rwr_node::accept(visitor &v) {
 //  The rpl opt_node implementation
 //
 ///////////////////////////////////////////////////////////////////////////////
-opt_node::opt_node(string& id, string& opt)
+opt_node::opt_node(const string& id, const string& opt)
     : verb_node(id, opt) {}
 
 void opt_node::accept(visitor& v) {
@@ -91,20 +91,20 @@ void opt_node::accept(visitor& v) {
 access_node::access_node() {
 }
 
-access_node::access_node(SkelUptr sk) {
-    children.push_back(move(sk));
+access_node::access_node(std::shared_ptr<skel_node> sk) {
+    children.push_back(sk);
 }
 
-vSkelUptr::iterator access_node::begin() {
-    return children.begin();
+void access_node::push(std::shared_ptr<skel_node> sk) {
+    children.push_back(sk);
 }
 
-vSkelUptr::iterator access_node::end() {
-    return children.end();
+shared_ptr<skel_node> access_node::get(int idx) const {
+    return children[idx];
 }
 
-void access_node::push(SkelUptr sk) {
-    children.push_back(move(sk));
+int access_node::size() const {
+    return children.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

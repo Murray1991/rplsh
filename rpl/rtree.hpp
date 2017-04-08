@@ -1,6 +1,7 @@
 #ifndef rpl_rtree_hpp
 #define rpl_rtree_hpp
 
+#include <iterator>
 #include <string>
 #include <vector>
 #include <memory>
@@ -37,7 +38,7 @@ struct rvalue_node : public rpl_node {
 //
 ///////////////////////////////////////////////////////////////////////////////
 struct verb_node : public rpl_node {
-    verb_node(std::string& id, std::string& prop);
+    verb_node(const std::string& id, const std::string& prop);
     std::string id;
     std::string prop;
 };
@@ -58,7 +59,7 @@ struct skel_node : public rvalue_node {
 ///////////////////////////////////////////////////////////////////////////////
 struct assign_node : public rpl_node
 {
-    assign_node(std::string& id, std::shared_ptr<skel_node> rvalue);
+    assign_node(const std::string& id, const std::shared_ptr<skel_node>& rvalue);
     virtual void accept(visitor & v);
 
     std::string id;
@@ -72,33 +73,33 @@ struct assign_node : public rpl_node
 ///////////////////////////////////////////////////////////////////////////////
 struct show_node : public verb_node
 {
-    show_node(std::string& id, std::string& property);
+    show_node(const std::string& id, const std::string& prop);
     virtual void accept(visitor & v);
 };
 
 struct set_node : public verb_node
 {
-    set_node(std::string& id, std::string& prop, int value);
+    set_node(const std::string& id, const std::string& prop, int value);
     virtual void accept(visitor & v);
     int value;
 };
 
 struct ann_node : public verb_node
 {
-    ann_node(std::string& id, std::string& prop, double value);
+    ann_node(const std::string& id, const std::string& prop, double value);
     virtual void accept(visitor & v);
     double value;
 };
 
 struct rwr_node : public verb_node
 {
-    rwr_node(std::string& id, std::string& rule);
+    rwr_node(const std::string& id, const std::string& rule);
     virtual void accept(visitor & v);
 };
 
 struct opt_node : public verb_node
 {
-    opt_node(std::string& id, std::string& opt);
+    opt_node(const std::string& id, const std::string& opt);
     virtual void accept(visitor & v);
 };
 
@@ -119,11 +120,12 @@ typedef std::shared_ptr<skel_node> SkelUptr;
 typedef std::vector<SkelUptr> vSkelUptr;
 
 struct access_node : public skel_node {
+
     access_node();
-    access_node(SkelUptr sk);
-    vSkelUptr::iterator begin();
-    vSkelUptr::iterator end();
-    void push(SkelUptr sk);
+    access_node(std::shared_ptr<skel_node> sk);
+    void push(std::shared_ptr<skel_node> sk);
+    std::shared_ptr<skel_node> get(int idx) const;
+    int size() const;
 
 private:
     vSkelUptr children;
