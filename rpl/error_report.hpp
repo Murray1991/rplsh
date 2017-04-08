@@ -1,0 +1,51 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Simple classes using for error reporting
+//
+///////////////////////////////////////////////////////////////////////////////
+#ifndef error_report_hpp
+#define error_report_hpp
+
+#include "utils/style.hpp"
+#include <algorithm>
+#include <ostream>
+#include <memory>
+#include <vector>
+
+struct error
+{
+    /* operator<< call the virtual method print */
+    friend ostream& operator<<(ostream& os, error const& err);
+    virtual void print(ostream& os) const;
+
+    static string line;
+};
+
+struct error_unexp : public error
+{
+    error_unexp(const string word, const int pos);
+    virtual void print(ostream& os) const;
+
+    const string word;
+    const int pos;
+};
+
+struct error_illegal : public error
+{
+    error_illegal(string word, int pos);
+    virtual void print(ostream& os) const;
+
+    const string word;
+    const int pos;
+};
+
+struct error_container
+{
+    void add(shared_ptr<error> err);
+    error& get(int pos);
+    int size();
+private:
+    std::vector<std::shared_ptr<error>> errors;
+};
+
+#endif
