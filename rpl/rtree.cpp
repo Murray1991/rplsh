@@ -3,19 +3,9 @@
 
 using namespace std;
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The verb_node impl
-//
-///////////////////////////////////////////////////////////////////////////////
 verb_node::verb_node(const string& id, const string& prop)
     : id(id), prop(prop) {}
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl assign_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 assign_node::assign_node(const string& id, const shared_ptr<skel_node>& rvalue)
     : id(id), rvalue(rvalue) {}
 
@@ -23,11 +13,6 @@ void assign_node::accept(visitor &v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl show_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 show_node::show_node(const string& id, const string& prop)
     : verb_node(id, prop) {}
 
@@ -35,11 +20,6 @@ void show_node::accept(visitor &v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl set_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 set_node::set_node(const string& id, const string& prop, int value)
     : verb_node(id, prop), value(value) {}
 
@@ -47,11 +27,6 @@ void set_node::accept(visitor &v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl ann_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 ann_node::ann_node(const string& id, const string& prop, double value)
     : verb_node(id, prop), value(value) {}
 
@@ -59,11 +34,6 @@ void ann_node::accept(visitor &v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl rwr_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 rwr_node::rwr_node(const string& id, const string& rule)
     : verb_node(id, rule) {}
 
@@ -71,11 +41,6 @@ void rwr_node::accept(visitor &v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl opt_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 opt_node::opt_node(const string& id, const string& opt)
     : verb_node(id, opt) {}
 
@@ -83,11 +48,6 @@ void opt_node::accept(visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The access_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 access_node::access_node() {
 }
 
@@ -99,22 +59,21 @@ void access_node::push(std::shared_ptr<skel_node> sk) {
     children.push_back(sk);
 }
 
-shared_ptr<skel_node> access_node::get(int idx) const {
-    return children[idx];
+shared_ptr<skel_node> access_node::get(size_t idx) const {
+    if (idx < children.size())
+        return children[idx];
+    return nullptr;
 }
 
 int access_node::size() const {
     return children.size();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl seq_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
+seq_node::seq_node (double servicetime)
+    : access_node(), servicetime(servicetime) {}
+
 seq_node::seq_node (shared_ptr<skel_node> pattexp, double servicetime)
-        : access_node(move(pattexp)), servicetime(servicetime) {
-}
+    : access_node(pattexp), servicetime(servicetime) {}
 
 void seq_node::accept(visitor& v) {
     v.visit(*this);
@@ -124,11 +83,6 @@ void seq_node::accept(skel_visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl comp_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 void comp_node::accept(visitor& v) {
     v.visit(*this);
 }
@@ -137,11 +91,6 @@ void comp_node::accept(skel_visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl pipe_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 void pipe_node::accept(visitor& v) {
     v.visit(*this);
 }
@@ -150,13 +99,8 @@ void pipe_node::accept(skel_visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl farm_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 farm_node::farm_node(shared_ptr<skel_node> pattexp, int pardegree)
-        : access_node(move(pattexp)), pardegree(pardegree) {
+        : access_node(pattexp), pardegree(pardegree) {
 }
 
 void farm_node::accept(visitor& v) {
@@ -167,13 +111,8 @@ void farm_node::accept(skel_visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl map_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 map_node::map_node(shared_ptr<skel_node> pattexp, int pardegree)
-        : access_node(move(pattexp)), pardegree(pardegree) {}
+        : access_node(pattexp), pardegree(pardegree) {}
 
 void map_node::accept(visitor& v) {
     v.visit(*this);
@@ -183,13 +122,8 @@ void map_node::accept(skel_visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl reduce_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
 reduce_node::reduce_node(shared_ptr<skel_node> pattexp)
-    : access_node(move(pattexp)) {}
+    : access_node(pattexp) {}
 
 void reduce_node::accept(visitor& v) {
     v.visit(*this);
@@ -199,13 +133,8 @@ void reduce_node::accept(skel_visitor& v) {
     v.visit(*this);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//  The rpl id_node implementation
-//
-///////////////////////////////////////////////////////////////////////////////
-id_node::id_node(string& identifier)
-    : identifier (identifier) {}
+id_node::id_node(string& id)
+    : id (id) {}
 
 void id_node::accept(visitor& v) {
     v.visit(*this);

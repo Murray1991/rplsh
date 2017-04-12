@@ -28,6 +28,7 @@ map<string, token::type> token::st_map =
    {"reduce",   token::reduce},
    {"Reduce",   token::reduce},
    {"servicetime",  token::parameter},
+   {"latency",  token::parameter},
    {"efficiency",   token::parameter},
    {"pardegree",    token::parameter},
    {"resources",    token::parameter},

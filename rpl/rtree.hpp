@@ -49,6 +49,7 @@ struct verb_node : public rpl_node {
 //
 ///////////////////////////////////////////////////////////////////////////////
 struct skel_node : public rvalue_node {
+    using rvalue_node::accept;
     virtual void accept(skel_visitor& v) = 0;
 };
 
@@ -119,12 +120,12 @@ struct opt_node : public verb_node
 typedef std::shared_ptr<skel_node> SkelUptr;
 typedef std::vector<SkelUptr> vSkelUptr;
 
-struct access_node : public skel_node {
-
+struct access_node : public skel_node
+{
     access_node();
     access_node(std::shared_ptr<skel_node> sk);
     void push(std::shared_ptr<skel_node> sk);
-    std::shared_ptr<skel_node> get(int idx) const;
+    std::shared_ptr<skel_node> get(std::size_t idx) const;
     int size() const;
 
 private:
@@ -133,6 +134,7 @@ private:
 
 struct seq_node : public access_node
 {
+    seq_node(double servicetime);
     seq_node(std::shared_ptr<skel_node> pattexp, double servicetime = 1.0);
     virtual void accept(visitor& v);
     virtual void accept(skel_visitor& v);
@@ -176,10 +178,10 @@ struct reduce_node : public access_node
 
 struct id_node : public skel_node
 {
-    id_node(std::string& identifier);
+    id_node(std::string& id);
     virtual void accept(visitor& v);
     virtual void accept(skel_visitor& v);
-    std::string identifier;
+    std::string id;
 };
 
 #endif

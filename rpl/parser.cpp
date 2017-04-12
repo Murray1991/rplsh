@@ -102,7 +102,7 @@ shared_ptr<rpl_node> parser::assign_rule(token& tok)
 //  <parameter> ::= servicetime | latency | ...
 shared_ptr<rpl_node> parser::show_rule(token& tok)
 {
-    string id, par;
+    string id, par = "show_default";
     expect(tok, token::show);
     expect(tok, token::word, id);
     if (tok.kind == token::parameter) {                     // optional
@@ -197,9 +197,20 @@ shared_ptr<skel_node> parser::seq_rule(token& tok)
 {
     shared_ptr<skel_node> pattexp;
     double ts = -1;
-
     expect(tok, token::seq);
     expect(tok, token::open);
+    // cases without pattern expressions
+    if ( tok.kind == token::close ) {                                   //e.g seq()
+        expect(tok, token::close);
+        return make_shared<seq_node>(ts);
+    }
+    if (tok.kind == token::integer || tok.kind == token::number) {      //e.g seq(5)
+        ts = stod(tok.data);
+        expect(tok, token::integer, token::number);
+        expect(tok, token::close);
+        return make_shared<seq_node>(ts);
+    }
+    // cases with pattern expressions
     pattexp = pattexp_rule(tok);
     if ( tok.kind == token::comma ) {
         expect(tok, token::comma);                      //success for sure
@@ -221,7 +232,7 @@ shared_ptr<skel_node> parser::comp_pipe_rule(token& tok)
     expect(tok, token::open);
     pattexp = pattexp_rule(tok);
 
-    // distinguish conp and pipe
+    // distinguish comp and pipe
     shared_ptr<access_node> comp_pipe = (kind == token::comp)?
         static_pointer_cast<access_node>(make_shared<comp_node>()):
         static_pointer_cast<access_node>(make_shared<pipe_node>());
@@ -254,9 +265,9 @@ shared_ptr<skel_node> parser::farm_map_rule(token& tok)
     }
     expect(tok, token::close);
 
-    return (kind == token::comp)?
-        static_pointer_cast<skel_node>( make_shared<farm_node>(pattexp, nw) ):
-        static_pointer_cast<skel_node>( make_shared<map_node> (pattexp, nw) );
+    if (kind == token::farm)
+        return make_shared<farm_node>(pattexp, nw);
+    return make_shared<map_node>(pattexp, nw);
 }
 
 //  <comp> ::= token::open <pattexp> token::close
@@ -272,7 +283,7 @@ shared_ptr<skel_node> parser::reduce_rule(token& tok)
     return make_shared<reduce_node>(pattexp);
 }
 
-//  Identifier parse rule, it just eat the identifier token
+//  Identifier parse rule, it just eat the id token
 shared_ptr<skel_node> parser::id_rule(token& tok)
 {
     string word = tok.data;
