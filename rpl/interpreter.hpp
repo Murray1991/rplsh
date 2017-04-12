@@ -7,31 +7,40 @@
 #define rpl_interpreter_hpp
 
 #include "visitor.hpp"
+#include "environment.hpp"
 #include "error_report.hpp"
+#include <tuple>
 #include <exception>
 #include <iostream>
 #include <map>
 
-typedef std::map<std::string, std::shared_ptr<skel_node>> binding_map;
-
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  The environment contains the following bindings:
-//  * name - skeleton tree
-//  * name - annotation                 <--- TODO
+//  Template class that dispatch a name of type K returning a shared_ptr of
+//  the instantiated object associated to the name, or a logic_error
+//  exception
 //
 ///////////////////////////////////////////////////////////////////////////////
-struct environment
+template <typename K, typename V>
+struct dispatcher
 {
-    skel_node& get(std::string& id);    // throw an exception env[id] == null
-    void put(std::string& id, std::shared_ptr<skel_node> n);
-
-    binding_map env;
+    shared_ptr<V> operator[](const K& id);                               // could throw logic_error exception
+    void add(const K& id, shared_ptr<V> value);
+private:
+    std::map<K, shared_ptr<V>> dispatch;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Template class of the rpl interpreter. Template arguments are Env,
+//  for the environment <name, skel_node_ptr> and Disp for the dispatcher
+//  <name, skel_visitor>
+//
+///////////////////////////////////////////////////////////////////////////////
+template <typename Env, typename Disp>
 struct interpreter : public visitor
 {
-    interpreter(environment& env, error_container& err_repo);
+    interpreter(Env& env, Disp& dispatch, error_container& err_repo);
     virtual void visit(assign_node& n);
     virtual void visit(show_node& n);
     virtual void visit(set_node& n);
@@ -46,9 +55,11 @@ struct interpreter : public visitor
     virtual void visit(reduce_node& n);
     virtual void visit(id_node& n);
 
-    environment& env;
+private:
+    Env& env;
+    Disp& dispatch;
     error_container& err_repo;
-    std::map<std::string, shared_ptr<skel_visitor>> dispatch;
+    bool success;
 };
 
 #endif

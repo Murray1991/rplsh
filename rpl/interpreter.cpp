@@ -1,21 +1,26 @@
 #include "interpreter.hpp"
 
+// explicit instantiations
+typedef environment<string, shared_ptr<skel_node>> env_t;
+typedef dispatcher<string, skel_visitor> disp_t;
+typedef interpreter<env_t, disp_t> interpr_t;
+template struct environment<string, shared_ptr<skel_node>>;
+template struct dispatcher<string, skel_visitor>;
+template struct interpreter<env_t, disp_t>;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Implementation of the environment
+//  Implementation of the dispatcher
 //
 ///////////////////////////////////////////////////////////////////////////////
-void environment::put(string& id, shared_ptr<skel_node> n)
-{
-    env[id] = move(n);
+template <typename K, typename V>
+shared_ptr<V> dispatcher<K,V>::operator[](const K& id) {
+    return dispatch.at(id);
 }
 
-skel_node& environment::get(string& id)
-{
-    binding_map::iterator it = env.find(id);
-    if (it == env.end())
-        throw logic_error(id + " not found");
-    return *(it->second);
+template <typename K, typename V>
+void dispatcher<K, V>::add(const K& id, shared_ptr<V> value) {
+    dispatch.insert(std::pair<K, shared_ptr<V>>(id, value));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,89 +28,90 @@ skel_node& environment::get(string& id)
 //  Implementation of the interpreter
 //
 ///////////////////////////////////////////////////////////////////////////////
-interpreter::interpreter(environment& env, error_container& err_repo)
-: env(env), err_repo(err_repo) {
-    //register "commanders" to the map
-    dispatch["show_default"] = make_shared<printer>();
-    dispatch["servicetime"]  = make_shared<servicetime>();
+template <typename Env, typename Disp>
+interpreter<Env, Disp>::interpreter(Env& env, Disp& dispatch, error_container& err_repo)
+: env(env), dispatch(dispatch), err_repo(err_repo), success(true) {}
+
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(assign_node& n) {
+    auto skptr = n.rvalue;            // skptr cannot be null here
+    skptr->accept(*this);             // recurse for semantic check in skel tree
+    if (success)
+        env.put(n.id, n.rvalue);
 }
 
-void interpreter::visit(assign_node& n)
-{
-    skel_node& sk = *n.rvalue;
-    sk.accept(*this);
-
-    // TODO handle errors in interpretation
-    env.put(n.id, move(n.rvalue));
-}
-
-string getname(string& s) {
-    return s.empty() ? "show_default" : s;
-}
-
-void interpreter::visit(show_node& n)
-{
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(show_node& n) {
     try {
-        skel_node& sn = env.get(n.id);
-        (*dispatch[ getname(n.prop) ])(sn);
-    } catch (logic_error& e) {
-        cout << e.what();
+        // dispatch, monamour
+        skel_node& sn = *(env.get(n.id));
+        (*dispatch[ n.prop ])(sn);
+        (*dispatch[ n.prop ]).print();
+    } catch (out_of_range& e) {
+        err_repo.add( make_shared<error_not_exist>(n.id) );
     }
-    cout << endl;
 }
 
-void interpreter::visit(set_node& n)
-{
-
-}
-
-void interpreter::visit(ann_node& n)
-{
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(set_node& n) {
 
 }
 
-void interpreter::visit(rwr_node& n)
-{
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(ann_node& n) {
 
 }
 
-void interpreter::visit(opt_node& n)
-{
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(rwr_node& n) {
 
 }
 
-void interpreter::visit(seq_node& n)
-{
-    cout << "seq" << endl;
-}
-
-void interpreter::visit(comp_node& n)
-{
-    cout << "comp" << endl;
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(opt_node& n) {
 
 }
 
-void interpreter::visit(pipe_node& n)
-{
-    cout << "pipe\n";
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(seq_node& n) {
+    if (n.get(0) != nullptr)
+        n.get(0)->accept(*this);
 }
 
-void interpreter::visit(farm_node& n)
-{
-    cout << "farm\n";
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(comp_node& n) {
+    for (int i = 0;  i < n.size(); i++)
+        n.get(i)->accept(*this);
 }
 
-void interpreter::visit(map_node& n)
-{
-    cout << "map\n";
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(pipe_node& n) {
+    for (int i = 0;  i < n.size(); i++)
+        n.get(i)->accept(*this);
 }
 
-void interpreter::visit(reduce_node& n)
-{
-    cout << "reduce\n";
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(farm_node& n) {
+    n.get(0)->accept(*this);
 }
 
-void interpreter::visit(id_node& n)
-{
-    cout << "id: " << n.identifier << endl;
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(map_node& n) {
+    n.get(0)->accept(*this);
+}
+
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(reduce_node& n) {
+    n.get(0)->accept(*this);
+}
+
+template <typename Env, typename Disp>
+void interpreter<Env, Disp>::visit(id_node& n) {
+    try {
+        // check if it exists
+        env.get(n.id);
+    } catch (out_of_range& e) {
+        success  = false;
+        err_repo.add( make_shared<error_not_exist>(n.id) );
+    }
 }
