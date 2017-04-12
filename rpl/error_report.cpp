@@ -48,6 +48,22 @@ void error_unexp::print(ostream& os) const {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+//  Implementation of the derived class error_not_exist
+//
+///////////////////////////////////////////////////////////////////////////////
+error_not_exist::error_not_exist(const string word)
+    : word(word) {
+    }
+
+void error_not_exist::print(ostream& os) const {
+    os << pp_def << rplsh::info;
+    os << pp_err << "error";
+    os << pp_def << ": variable '" << word
+       << "' not exist in the environment" << endl;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 //  Implementation of the derived class error_illegal
 //
 ///////////////////////////////////////////////////////////////////////////////
