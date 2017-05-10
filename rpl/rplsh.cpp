@@ -14,7 +14,7 @@
 
 using namespace std;
 
-typedef environment<string, shared_ptr<skel_node>> env_t;
+typedef environment<string, skel_node> env_t;
 typedef dispatcher<string, skel_visitor> disp_t;
 typedef interpreter<env_t, disp_t> interpr_t;
 typedef lexer scanner_t;

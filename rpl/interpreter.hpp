@@ -6,29 +6,16 @@
 #ifndef rpl_interpreter_hpp
 #define rpl_interpreter_hpp
 
-#include "visitor.hpp"
+#include "visitors.hpp"
+#include "dispatcher.hpp"
+#include "verbs.hpp"
+#include "skeletons.hpp"
 #include "environment.hpp"
 #include "error_report.hpp"
 #include <tuple>
 #include <exception>
 #include <iostream>
 #include <map>
-
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Template class that dispatch a name of type K returning a shared_ptr of
-//  the instantiated object associated to the name, or a logic_error
-//  exception
-//
-///////////////////////////////////////////////////////////////////////////////
-template <typename K, typename V>
-struct dispatcher
-{
-    shared_ptr<V> operator[](const K& id);                               // could throw logic_error exception
-    void add(const K& id, shared_ptr<V> value);
-private:
-    std::map<K, shared_ptr<V>> dispatch;
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -41,19 +28,19 @@ template <typename Env, typename Disp>
 struct interpreter : public visitor
 {
     interpreter(Env& env, Disp& dispatch, error_container& err_repo);
-    virtual void visit(assign_node& n);
-    virtual void visit(show_node& n);
-    virtual void visit(set_node& n);
-    virtual void visit(ann_node& n);
-    virtual void visit(rwr_node& n);
-    virtual void visit(opt_node& n);
-    virtual void visit(seq_node& n);
-    virtual void visit(comp_node& n);
-    virtual void visit(pipe_node& n);
-    virtual void visit(farm_node& n);
-    virtual void visit(map_node& n);
-    virtual void visit(reduce_node& n);
-    virtual void visit(id_node& n);
+    void visit(assign_node& n);
+    void visit(show_node& n);
+    void visit(set_node& n);
+    void visit(ann_node& n);
+    void visit(rwr_node& n);
+    void visit(opt_node& n);
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
 
 private:
     Env& env;

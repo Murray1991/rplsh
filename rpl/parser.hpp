@@ -8,8 +8,9 @@
 #define rpl_parser_hpp
 
 #include "lexer.hpp"
-#include "rtree.hpp"
-#include "visitor.hpp"
+#include "verbs.hpp"
+#include "skeletons.hpp"
+#include "visitors.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -27,20 +28,20 @@ struct parser
     std::shared_ptr<rpl_node> parse();
 
 private:
-    std::shared_ptr<rpl_node> start_rule(token& tok);
-    std::shared_ptr<rpl_node> assign_rule(token& tok);
-    std::shared_ptr<rpl_node> show_rule(token& tok);
-    std::shared_ptr<rpl_node> set_rule(token& tok);
-    std::shared_ptr<rpl_node> ann_rule(token& tok);
-    std::shared_ptr<rpl_node> opt_rule(token& tok);
-    std::shared_ptr<rpl_node> rwr_rule(token& tok);
+    rpl_node* start_rule(token& tok);
+    rpl_node* assign_rule(token& tok);
+    rpl_node* show_rule(token& tok);
+    rpl_node* set_rule(token& tok);
+    rpl_node* ann_rule(token& tok);
+    rpl_node* opt_rule(token& tok);
+    rpl_node* rwr_rule(token& tok);
 
-    std::shared_ptr<skel_node> pattexp_rule(token& tok);
-    std::shared_ptr<skel_node> id_rule(token& tok);
-    std::shared_ptr<skel_node> seq_rule(token& tok);
-    std::shared_ptr<skel_node> comp_pipe_rule(token& tok);
-    std::shared_ptr<skel_node> farm_map_rule(token& tok);
-    std::shared_ptr<skel_node> reduce_rule(token& tok);
+    skel_node* pattexp_rule(token& tok);
+    skel_node* id_rule(token& tok);
+    skel_node* seq_rule(token& tok);
+    skel_node* comp_pipe_rule(token& tok);
+    skel_node* farm_map_rule(token& tok);
+    skel_node* reduce_rule(token& tok);
 
     bool expect(token& tok, token::type exp);
     bool expect(token& tok, token::type exp, std::string& data);
