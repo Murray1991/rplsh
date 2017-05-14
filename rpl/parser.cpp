@@ -144,7 +144,7 @@ rpl_node* parser::ann_rule(token& tok)
 rpl_node* parser::rwr_rule(token& tok)
 {
     string id, par;
-    expect(tok, token::annotate);
+    expect(tok, token::rewrite);
     expect(tok, token::word, id);
     expect(tok, token::with);
     expect(tok, token::word, par);                      //TODO rewrite rule token here...
@@ -156,7 +156,7 @@ rpl_node* parser::rwr_rule(token& tok)
 rpl_node* parser::opt_rule(token& tok)
 {
     string id, par;
-    expect(tok, token::annotate);
+    expect(tok, token::rewrite);
     expect(tok, token::word, id);
     expect(tok, token::with);
     expect(tok, token::word, par);                      //TODO opt rule token here
@@ -236,8 +236,8 @@ skel_node* parser::comp_pipe_rule(token& tok)
 
     // distinguish comp and pipe
     skel_node* comp_pipe = ( kind == token::comp ) ?
-        static_cast<skel_node*>(new comp_node()):
-        static_cast<skel_node*>(new pipe_node());
+        static_cast<skel_node*>(new comp_node{}):
+        static_cast<skel_node*>(new pipe_node{});
 
     // add the pattexps to the comp_pipe
     comp_pipe->add(pattexp);

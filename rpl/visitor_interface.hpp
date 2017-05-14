@@ -19,6 +19,8 @@ struct visitor
     virtual void visit(map_node& n)     = 0;
     virtual void visit(reduce_node& n)  = 0;
     virtual void visit(id_node& n)      = 0;
+
+    virtual void visit(_& n)            {}
 };
 
 struct skel_visitor : public visitor
@@ -31,7 +33,7 @@ struct skel_visitor : public visitor
     void visit(rwr_node& n)    {};
     void visit(opt_node& n)    {};
 
-    virtual void print(skel_node& sk) = 0;
+    virtual void print(skel_node& sk) {};
 };
 
 #endif

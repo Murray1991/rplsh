@@ -188,3 +188,73 @@ string printer::operator()(skel_node& sk){
     sk.accept(*this);
     return res;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+void label_printer::visit( seq_node& n ) {
+    str = "seq";
+}
+
+void label_printer::visit( comp_node& n ) {
+    str = "comp";
+}
+
+void label_printer::visit( pipe_node& n ) {
+    str = "pipe";
+}
+
+void label_printer::visit( farm_node& n ) {
+    str = "farm";
+}
+
+void label_printer::visit( map_node& n ) {
+    str = "map";
+}
+
+void label_printer::visit( reduce_node& n ) {
+    str = "reduce";
+}
+
+void label_printer::visit( id_node& n ) {
+    str = n.id;
+}
+
+string label_printer::operator()( skel_node& sk ) {
+    sk.accept(*this);
+    return str;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void single_node_cloner::visit( seq_node& n ) {
+    tmp = new seq_node(n);
+}
+
+void single_node_cloner::visit( comp_node& n ) {
+    tmp = new comp_node{};
+}
+
+void single_node_cloner::visit( pipe_node& n ) {
+    tmp = new pipe_node{};
+}
+
+void single_node_cloner::visit( farm_node& n ) {
+    tmp = new farm_node{};
+}
+
+void single_node_cloner::visit( map_node& n ) {
+    tmp = new map_node{};
+}
+
+void single_node_cloner::visit( reduce_node& n ) {
+    tmp = new reduce_node{};
+}
+
+void single_node_cloner::visit( id_node& n ) {
+    tmp = new id_node(n.id);
+}
+
+skel_node* single_node_cloner::operator()( skel_node& sk ) {
+    sk.accept(*this);
+    return tmp;
+}

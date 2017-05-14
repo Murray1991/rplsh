@@ -25,5 +25,6 @@ struct farm_node;
 struct map_node;
 struct reduce_node;
 struct id_node;
+struct _;
 
 #endif

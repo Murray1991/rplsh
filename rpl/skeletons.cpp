@@ -4,6 +4,9 @@
 using namespace std;
 ///////////////////////////////////////////////////////////////////////////////
 
+skel_node::skel_node( initializer_list<skel_node*> init )
+    : children(init) {}
+
 skel_node::~skel_node() {
     for (auto sk : children)
         delete sk;
@@ -44,17 +47,36 @@ void concrete_skel_node<skeleton>::accept( visitor & v ) {
 }
 
 template <typename skeleton>
+bool concrete_skel_node<skeleton>::match ( const skel_node& rhs ) {
+    return dynamic_cast<const skeleton*>(&rhs);
+}
+
+template <typename skeleton>
+bool concrete_skel_node<skeleton>::operator==( const skel_node& rhs ) {
+    return match(rhs);
+}
+
+template <typename skeleton>
+bool concrete_skel_node<skeleton>::operator!=( const skel_node& rhs ) {
+    return !match(rhs);
+}
+
+template <typename skeleton>
 concrete_skel_node<skeleton>::concrete_skel_node( skeleton& sk )
-    : _sk(sk) {}
+    : skel_node({}), _sk(sk) {}
 
 template <typename skeleton>
 concrete_skel_node<skeleton>::concrete_skel_node( skeleton& sk, const skeleton& toclone )
-    : _sk(sk) {
+    : skel_node({}), _sk(sk) {
 
     for (size_t i = 0; i < toclone.size(); i++)
         add( toclone.get(i)->clone() );
 
 }
+
+template <typename skeleton>
+concrete_skel_node<skeleton>::concrete_skel_node( skeleton& sk, initializer_list<skel_node*> init)
+    : skel_node(init), _sk(sk) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -75,8 +97,8 @@ skel_node* seq_node::clone() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-comp_node::comp_node()
-    : concrete_skel_node( *this ) {}
+comp_node::comp_node( initializer_list<skel_node*> init )
+    : concrete_skel_node( *this, init ) {}
 
 comp_node::comp_node( const comp_node& other )
     : concrete_skel_node( *this, other ) {}
@@ -87,8 +109,8 @@ skel_node * comp_node::clone() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-pipe_node::pipe_node()
-    : concrete_skel_node( *this ) {}
+pipe_node::pipe_node( initializer_list<skel_node*> init )
+    : concrete_skel_node( *this, init ) {}
 
 pipe_node::pipe_node( const pipe_node& other )
     : concrete_skel_node( *this, other ) {}
@@ -98,6 +120,9 @@ skel_node * pipe_node::clone() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+farm_node::farm_node(initializer_list<skel_node*> init)
+    : concrete_skel_node( *this, init ), pardegree(1) {}
 
 farm_node::farm_node( skel_node* pattexp, int pardegree )
         : concrete_skel_node( *this ), pardegree( pardegree ) {
@@ -113,6 +138,9 @@ skel_node* farm_node::clone() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+map_node::map_node(initializer_list<skel_node*> init)
+    : concrete_skel_node( *this, init ), pardegree(1) {}
+
 map_node::map_node(skel_node* pattexp, int pardegree)
         : concrete_skel_node( *this ), pardegree( pardegree ) {
     add(pattexp);
@@ -126,6 +154,9 @@ skel_node * map_node::clone() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+reduce_node::reduce_node(initializer_list<skel_node*> init)
+    : concrete_skel_node( *this, init ) {}
 
 reduce_node::reduce_node( skel_node* pattexp )
         : concrete_skel_node( *this ) {
@@ -149,4 +180,16 @@ id_node::id_node( const id_node& other )
 
 skel_node* id_node::clone() {
     return new id_node(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+_::_()
+    : concrete_skel_node( *this ) {}
+
+_::_( const _& other )
+    : concrete_skel_node( *this ) {}
+
+skel_node* _::clone() {
+    return new _(*this);
 }
