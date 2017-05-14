@@ -16,6 +16,8 @@
 #include <exception>
 #include <iostream>
 #include <map>
+#include "rr_dispatcher.hpp"
+#include "visitor_dispatcher.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -24,10 +26,10 @@
 //  <name, skel_visitor>
 //
 ///////////////////////////////////////////////////////////////////////////////
-template <typename Env, typename Disp>
+template <typename Env>
 struct interpreter : public visitor
 {
-    interpreter(Env& env, Disp& dispatch, error_container& err_repo);
+    interpreter(Env& env, error_container& err_repo);
     void visit(assign_node& n);
     void visit(show_node& n);
     void visit(set_node& n);
@@ -44,8 +46,9 @@ struct interpreter : public visitor
 
 private:
     Env& env;
-    Disp& dispatch;
     error_container& err_repo;
+    rr_dispatcher rdispatch;
+    visitor_dispatcher<Env> vdispatch;
     bool success;
 };
 
