@@ -7,11 +7,6 @@
 
 using namespace std;
 
-// some template instantiations
-typedef environment<std::string, skel_node> env_t;
-template struct servicetime<env_t>;
-template struct latencytime<env_t>;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 template <typename Visitor, typename BinaryOp>
@@ -24,43 +19,35 @@ double compute(Visitor& v, skel_node& n, BinaryOp op) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename Env>
-servicetime<Env>::servicetime(Env& env)
+servicetime::servicetime(rpl_environment& env)
     : env(env) {}
 
-template <typename Env>
-void servicetime<Env>::visit(seq_node& n) {
+void servicetime::visit(seq_node& n) {
     res = n.servicetime;
 }
 
-template <typename Env>
-void servicetime<Env>::visit(comp_node& n) {
+void servicetime::visit(comp_node& n) {
     res = compute(*this, n, std::plus<double>());
 }
 
-template <typename Env>
-void servicetime<Env>::visit(pipe_node& n) {
+void servicetime::visit(pipe_node& n) {
     res = compute(*this, n, [](double a, double b){return std::max(a, b);});
 }
 
-template <typename Env>
-void servicetime<Env>::visit(farm_node& n) {
+void servicetime::visit(farm_node& n) {
     res = (*this)(*n.get(0)) / n.pardegree;
 }
 
-template <typename Env>
-void servicetime<Env>::visit(map_node& n) {
+void servicetime::visit(map_node& n) {
     res = (*this)(*n.get(0)) / n.pardegree;
 }
 
 // TODO WRONG -> for reduce is important the dim of input
-template <typename Env>
-void servicetime<Env>::visit(reduce_node& n) {
+void servicetime::visit(reduce_node& n) {
     res = log2( (*this)(*n.get(0)) );
 }
 
-template <typename Env>
-void servicetime<Env>::visit(id_node& n) {
+void servicetime::visit(id_node& n) {
     try {
         auto ptr = env.get(n.id);
         res = (*this)(*ptr);
@@ -70,56 +57,47 @@ void servicetime<Env>::visit(id_node& n) {
     }
 }
 
-template <typename Env>
-void servicetime<Env>::print( skel_node& sk ){
+void servicetime::print( skel_node& sk ){
     cout << (*this)( sk ) << endl;;
 }
 
-template <typename Env>
-double servicetime<Env>::operator()(skel_node& sk){
+double servicetime::operator()(skel_node& sk){
     sk.accept(*this);
     return res;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename Env>
-latencytime<Env>::latencytime(Env& env)
+latencytime::latencytime(rpl_environment& env)
     : env( env ) {}
 
-template <typename Env>
-void latencytime<Env>::visit(seq_node& n) {
+
+void latencytime::visit(seq_node& n) {
     res = n.servicetime;
 }
 
-template <typename Env>
-void latencytime<Env>::visit(comp_node& n) {
+void latencytime::visit(comp_node& n) {
     res = compute(*this, n, std::plus<double>());
 }
 
-template <typename Env>
-void latencytime<Env>::visit(pipe_node& n) {
+void latencytime::visit(pipe_node& n) {
     res = compute(*this, n, std::plus<double>());
 }
 
-template <typename Env>
-void latencytime<Env>::visit(farm_node& n) {
+void latencytime::visit(farm_node& n) {
     res = (*this)( *n.get(0) );
 }
 
-template <typename Env>
-void latencytime<Env>::visit(map_node& n) {
+void latencytime::visit(map_node& n) {
     res = (*this)( *n.get(0) ) / n.pardegree;
 }
 
 // TODO WRONG -> for reduce is important the dim of input
-template <typename Env>
-void latencytime<Env>::visit(reduce_node& n) {
+void latencytime::visit(reduce_node& n) {
     res = log2( (*this)( *n.get(0) ) );
 }
 
-template <typename Env>
-void latencytime<Env>::visit(id_node& n) {
+void latencytime::visit(id_node& n) {
     try {
         auto ptr = env.get(n.id);
         res = (*this)(n);
@@ -129,13 +107,11 @@ void latencytime<Env>::visit(id_node& n) {
     }
 }
 
-template <typename Env>
-void latencytime<Env>::print( skel_node& sk ){
+void latencytime::print( skel_node& sk ){
     cout << (*this)( sk ) << endl;;
 }
 
-template <typename Env>
-double latencytime<Env>::operator()(skel_node& sk){
+double latencytime::operator()(skel_node& sk){
     sk.accept(*this);
     return res;
 }

@@ -14,9 +14,7 @@
 
 using namespace std;
 
-typedef environment<string, skel_node> env_t;
-typedef dispatcher<string, skel_visitor> disp_t;
-typedef interpreter<env_t> interpr_t;
+typedef interpreter interpr_t;
 typedef lexer scanner_t;
 typedef parser parser_t;
 
@@ -35,9 +33,8 @@ bool is_quit_input(string& line) {
 
 int main(int argc, char * argv[])
 {
-    string line;    // input line
-    env_t env;      // environment: <name, skel_tree> bindings
-    disp_t disp;    // dispatcher: <name, skel_visitor> bindings
+    string line;              // input line
+    rpl_environment env;      // environment: <name, skel_tree> bindings
 
     while ( print_rpl() && getline(cin, line) )
     {

@@ -6,13 +6,12 @@
 #ifndef rpl_visitor_hpp
 #define rpl_visitor_hpp
 
-#include "environment.hpp"
+#include "rpl_environment.hpp"
 #include "visitor_interface.hpp"
 
-template <typename Env>
 struct servicetime: public skel_visitor
 {
-    servicetime(Env& env);
+    servicetime(rpl_environment& env);
     void visit(seq_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
@@ -24,15 +23,13 @@ struct servicetime: public skel_visitor
     void print(skel_node& sk);
     double operator()(skel_node& sk);
 private:
-    Env& env;
+    rpl_environment& env;
     double res;
 };
 
-
-template <typename Env>
 struct latencytime: public skel_visitor
 {
-    latencytime(Env& env);
+    latencytime(rpl_environment& env);
     void visit(seq_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
@@ -44,7 +41,7 @@ struct latencytime: public skel_visitor
     void print(skel_node& sk);
     double operator()(skel_node& sk);
 protected:
-    Env& env;
+    rpl_environment& env;
     double res;
 };
 
