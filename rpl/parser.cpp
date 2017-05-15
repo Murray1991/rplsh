@@ -76,7 +76,7 @@ rpl_node* parser::start_rule(token& tok)
         case token::rewrite:
             return rwr_rule(tok);
         case token::optimize:
-            return  opt_rule(tok);
+            return opt_rule(tok);
         default:
             err_repo.add( make_shared<error_unexp>(tok.data, tok.pos) );
             return nullptr;
@@ -156,11 +156,11 @@ rpl_node* parser::rwr_rule(token& tok)
 rpl_node* parser::opt_rule(token& tok)
 {
     string id, par;
-    expect(tok, token::rewrite);
+    expect(tok, token::optimize);
     expect(tok, token::word, id);
     expect(tok, token::with);
     expect(tok, token::word, par);                      //TODO opt rule token here
-    return new rwr_node(id, par);
+    return new opt_node(id, par);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
