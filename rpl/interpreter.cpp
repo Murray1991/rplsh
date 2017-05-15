@@ -3,8 +3,6 @@
 
 using namespace std;
 
-typedef environment<string, skel_node> env_t;
-template struct interpreter<env_t>;
 single_node_cloner snc;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,12 +26,10 @@ void unrank2rank( skel_node& n )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename Env>
-interpreter<Env>::interpreter(Env& env, error_container& err_repo)
-    : env(env), err_repo(err_repo), vdispatch(env), success(true) {}
+interpreter::interpreter(rpl_environment& env, error_container& err_repo)
+    : env(env), err_repo(err_repo), odispatch(env), vdispatch(env), success(true) {}
 
-template <typename Env>
-void interpreter<Env>::visit(assign_node& n) {
+void interpreter::visit(assign_node& n) {
     n.rvalue->accept(*this);                // recurse for semantic check in skel tree
     if (success) {
         unrank2rank(*n.rvalue);
@@ -43,8 +39,7 @@ void interpreter<Env>::visit(assign_node& n) {
         delete n.rvalue;
 }
 
-template <typename Env>
-void interpreter<Env>::visit(show_node& n) {
+void interpreter::visit(show_node& n) {
     try {
 
         auto range = env.range( n.id );
@@ -59,18 +54,15 @@ void interpreter<Env>::visit(show_node& n) {
     }
 }
 
-template <typename Env>
-void interpreter<Env>::visit(set_node& n) {
+void interpreter::visit(set_node& n) {
 
 }
 
-template <typename Env>
-void interpreter<Env>::visit(ann_node& n) {
+void interpreter::visit(ann_node& n) {
 
 }
 
-template <typename Env>
-void interpreter<Env>::visit(rwr_node& n) {
+void interpreter::visit(rwr_node& n) {
     try {
 
         string id = n.id;
@@ -91,46 +83,47 @@ void interpreter<Env>::visit(rwr_node& n) {
     }
 }
 
-template <typename Env>
-void interpreter<Env>::visit(opt_node& n) {
+void interpreter::visit(opt_node& n) {
+    try {
 
+        auto p = env.range( n.id );
+        optrule& optrule = *odispatch[ n.prop ];
+        for (auto it = p.first; it != p.second; it++)
+            optrule( *it->second );
+
+    } catch (out_of_range& e) {
+        err_repo.add( make_shared<error_not_exist>(n.id) );
+    }
 }
 
-template <typename Env>
-void interpreter<Env>::visit(seq_node& n) {
+void interpreter::visit(seq_node& n) {
     if (n.get(0) != nullptr)
         n.get(0)->accept(*this);
 }
 
-template <typename Env>
-void interpreter<Env>::visit(comp_node& n) {
+void interpreter::visit(comp_node& n) {
     for (size_t i = 0;  i < n.size(); i++)
         n.get(i)->accept(*this);
 }
 
-template <typename Env>
-void interpreter<Env>::visit(pipe_node& n) {
+void interpreter::visit(pipe_node& n) {
     for (size_t i = 0;  i < n.size(); i++)
         n.get(i)->accept(*this);
 }
 
-template <typename Env>
-void interpreter<Env>::visit(farm_node& n) {
+void interpreter::visit(farm_node& n) {
     n.get(0)->accept(*this);
 }
 
-template <typename Env>
-void interpreter<Env>::visit(map_node& n) {
+void interpreter::visit(map_node& n) {
     n.get(0)->accept(*this);
 }
 
-template <typename Env>
-void interpreter<Env>::visit(reduce_node& n) {
+void interpreter::visit(reduce_node& n) {
     n.get(0)->accept(*this);
 }
 
-template <typename Env>
-void interpreter<Env>::visit(id_node& n) {
+void interpreter::visit(id_node& n) {
     try {
         auto ptr = env.get(n.id);                 // check if it exists
     } catch (out_of_range& e) {

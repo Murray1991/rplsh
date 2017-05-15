@@ -10,13 +10,14 @@
 #include "dispatcher.hpp"
 #include "verbs.hpp"
 #include "skeletons.hpp"
-#include "environment.hpp"
+#include "rpl_environment.hpp"
 #include "error_report.hpp"
 #include <tuple>
 #include <exception>
 #include <iostream>
 #include <map>
 #include "rr_dispatcher.hpp"
+#include "opt_dispatcher.hpp"
 #include "visitor_dispatcher.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -26,10 +27,9 @@
 //  <name, skel_visitor>
 //
 ///////////////////////////////////////////////////////////////////////////////
-template <typename Env>
 struct interpreter : public visitor
 {
-    interpreter(Env& env, error_container& err_repo);
+    interpreter(rpl_environment& env, error_container& err_repo);
     void visit(assign_node& n);
     void visit(show_node& n);
     void visit(set_node& n);
@@ -45,10 +45,11 @@ struct interpreter : public visitor
     void visit(id_node& n);
 
 private:
-    Env& env;
+    rpl_environment& env;
     error_container& err_repo;
     rr_dispatcher rdispatch;
-    visitor_dispatcher<Env> vdispatch;
+    opt_dispatcher odispatch;
+    visitor_dispatcher vdispatch;
     bool success;
 };
 
