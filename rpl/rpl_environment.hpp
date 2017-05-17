@@ -17,15 +17,19 @@ struct rpl_environment : public environment<std::string, skel_node>
 {
     rpl_environment();
 
-    void set_emitter_time(double te);
-    void set_collector_time(double tc);
-    void set_scatter_time(double ts);
-    void set_gather_time(double tg);
+    void set_emitter_time( double te );
+    void set_collector_time( double tc );
+    void set_scatter_time( double ts );
+    void set_gather_time( double tg );
 
     double get_emitter_time();
     double get_collector_time();
     double get_scatter_time();
     double get_gather_time();
+
+    /* setters and getters for stream input size */
+    void set_dim( std::size_t dim );
+    std::size_t get_dim();
 
 private:
     std::map<std::string, double> sd_map;

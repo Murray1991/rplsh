@@ -1,5 +1,7 @@
 #include "rpl_environment.hpp"
 
+using namespace std;
+
 rpl_environment::rpl_environment() {
     set_emitter_time(1);
     set_collector_time(1);
@@ -37,4 +39,12 @@ double rpl_environment::get_scatter_time() {
 
 double rpl_environment::get_gather_time() {
     return sd_map["tg"];
+}
+
+void rpl_environment::set_dim(size_t dim) {
+    sd_map["dim"] = dim;
+}
+
+size_t rpl_environment::get_dim() {
+    return (size_t) sd_map["dim"];
 }
