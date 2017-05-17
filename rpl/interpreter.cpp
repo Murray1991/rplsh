@@ -31,7 +31,7 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo)
 
 void interpreter::visit(assign_node& n) {
     n.rvalue->accept(*this);                // recurse for semantic check in skel tree
-    if (success) {
+    if ( success ) {
         unrank2rank(*n.rvalue);
         env.put(n.id, n.rvalue);
     }
@@ -42,11 +42,13 @@ void interpreter::visit(assign_node& n) {
 void interpreter::visit(show_node& n) {
     try {
 
+        size_t pos = 0;
         auto range = env.range( n.id );
         auto& shower = *vdispatch[ n.prop ];
         for (auto it = range.first; it != range.second; it++) {
-            skel_node& sn = *it->second;
-            shower.print( sn );
+            cout << (it - range.first) << ") ";
+            auto& skptr = *it;
+            shower.print( *skptr );
         }
 
     } catch (out_of_range& e) {
@@ -88,8 +90,10 @@ void interpreter::visit(opt_node& n) {
 
         auto p = env.range( n.id );
         optrule& optrule = *odispatch[ n.prop ];
-        for (auto it = p.first; it != p.second; it++)
-            optrule( *it->second );
+        for (auto it = p.first; it != p.second; it++) {
+            auto& skptr = *it;
+            optrule( *skptr );
+        }
 
     } catch (out_of_range& e) {
         err_repo.add( make_shared<error_not_exist>(n.id) );

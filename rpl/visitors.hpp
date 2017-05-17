@@ -19,9 +19,8 @@ struct servicetime: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-
-    void print(skel_node& sk);
-    double operator()(skel_node& sk);
+    void print(skel_node& n);
+    double operator()(skel_node& n);
 private:
     rpl_environment& env;
     double res;
@@ -37,70 +36,65 @@ struct latencytime: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-
-    void print(skel_node& sk);
-    double operator()(skel_node& sk);
+    void print(skel_node& n);
+    double operator()(skel_node& n);
 protected:
     rpl_environment& env;
     double res;
 };
 
-/*
-template <typename Env>
 struct completiontime: public skel_visitor
 {
-    completiontime(Env& env);
-    void set_dimension(int dim);
-    virtual void visit(seq_node& n);
-    virtual void visit(comp_node& n);
-    virtual void visit(pipe_node& n);
-    virtual void visit(farm_node& n);
-    virtual void visit(map_node& n);
-    virtual void visit(reduce_node& n);
-    virtual void visit(id_node& n);
-    virtual void print();
-    virtual const skel_visitor& operator()(skel_node& sk);
+    completiontime(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+    void print(skel_node& n);
+    double operator()(skel_node& n);
 protected:
-    Env& env;
+    latencytime lat;
+    servicetime ts;
+    rpl_environment& env;
     double res;
-    int dim;
 };
 
-template <typename Env>
 struct pardegree: public skel_visitor
 {
-    pardegree(Env& env);
-    virtual void visit(seq_node& n);
-    virtual void visit(comp_node& n);
-    virtual void visit(pipe_node& n);
-    virtual void visit(farm_node& n);
-    virtual void visit(map_node& n);
-    virtual void visit(reduce_node& n);
-    virtual void visit(id_node& n);
-    virtual void print();
-    virtual const skel_visitor& operator()(skel_node& sk);
+    pardegree(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+    void print(skel_node& n);
+    std::size_t operator()(skel_node& n);
 protected:
-    Env& env;
-    int res;
+    rpl_environment& env;
+    std::size_t res;
 };
 
-template <typename Env>
 struct resources: public skel_visitor
 {
-    resources(Env& env);
-    virtual void visit(seq_node& n);
-    virtual void visit(comp_node& n);
-    virtual void visit(pipe_node& n);
-    virtual void visit(farm_node& n);
-    virtual void visit(map_node& n);
-    virtual void visit(reduce_node& n);
-    virtual void visit(id_node& n);
-    virtual void print();
-    virtual const skel_visitor& operator()(skel_node& sk);
+    resources(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+    void print(skel_node& n);
+    std::size_t operator()(skel_node& n);
 protected:
-    Env& env;
-    int res;
-};*/
+    rpl_environment& env;
+    std::size_t res;
+};
 
 struct printer : public skel_visitor
 {

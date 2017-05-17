@@ -118,6 +118,163 @@ double latencytime::operator()(skel_node& sk){
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// TODO here the stream size is something "global"
+// user should set it through some shell verbs
+// like "set_dimension(_)" and get with "get_dimension"
+// better ideas?
+
+completiontime::completiontime( rpl_environment& env ) :
+    lat( env ), ts( env ), env( env )
+{}
+
+void completiontime::visit( seq_node& n ) {
+    res = n.servicetime;
+}
+
+void completiontime::visit( comp_node& n ) {
+    res = compute(*this, n, std::plus<double>());
+}
+
+void completiontime::visit( pipe_node& n ) {
+    /* latency of the first stage + ts*dimension */
+    res = lat(*n.get(0)) + env.get_dim() * ts(n);
+}
+
+void completiontime::visit( farm_node& n ) {
+    res = env.get_dim() / n.pardegree * lat(n);
+}
+
+void completiontime::visit( map_node& n ) {
+    res = env.get_dim() / n.pardegree * ts(n);
+}
+
+void completiontime::visit( reduce_node& n ) {
+    res = lat(n);
+}
+
+void completiontime::visit( id_node& n ) {
+    try {
+        auto ptr = env.get(n.id);
+        res = (*this)(n);
+    } catch (out_of_range& e) {
+        //TODO handle in a better way
+        cout << "error, not found: " << n.id << endl;
+    }
+}
+
+void completiontime::print( skel_node& n ){
+    cout << (*this)( n ) << endl;;
+}
+
+double completiontime::operator()(skel_node& n){
+    n.accept(*this);
+    return res;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+pardegree::pardegree( rpl_environment& env ) :
+    env( env )
+{}
+
+void pardegree::visit( seq_node& n ) {
+    res = 1;
+}
+
+void pardegree::visit( comp_node& n ) {
+    res = compute(*this, n, [](double a, double b){return std::max(a, b);});
+}
+
+void pardegree::visit( pipe_node& n ) {
+    res = compute(*this, n, std::plus<size_t>());
+}
+
+void pardegree::visit( farm_node& n ) {
+    res = n.pardegree * (*this)(*n.get(0));
+}
+
+void pardegree::visit( map_node& n ) {
+    res = n.pardegree * (*this)(*n.get(0));
+}
+
+// TODO also reduce should be have a configurable
+// parallelism degree like farm and map!!
+void pardegree::visit( reduce_node& n ) {
+    res = 1;
+}
+
+void pardegree::visit( id_node& n ) {
+    try {
+        auto ptr = env.get(n.id);
+        res = (*this)(n);
+    } catch (out_of_range& e) {
+        //TODO handle in a better way
+        cout << "error, not found: " << n.id << endl;
+    }
+}
+
+void pardegree::print( skel_node& n ){
+    cout << (*this)( n ) << endl;;
+}
+
+size_t pardegree::operator()(skel_node& n){
+    n.accept(*this);
+    return res;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+resources::resources( rpl_environment& env ) :
+    env( env )
+{}
+
+void resources::visit( seq_node& n ) {
+    res = 1;
+}
+
+void resources::visit( comp_node& n ) {
+    res = compute(*this, n, [](size_t a, size_t b){return std::max(a, b);});
+}
+
+void resources::visit( pipe_node& n ) {
+    res = compute(*this, n, std::plus<size_t>());
+}
+
+void resources::visit( farm_node& n ) {
+    res = n.pardegree * (*this)(*n.get(0)) + 2;  //emitter + collector
+}
+
+void resources::visit( map_node& n ) {
+    res = n.pardegree * (*this)(*n.get(0)) + 2;  //scatter + gather
+}
+
+// TODO also reduce should be have a configurable
+// parallelism degree like farm and map!!
+void resources::visit( reduce_node& n ) {
+    res = 1;
+}
+
+void resources::visit( id_node& n ) {
+    try {
+        auto ptr = env.get(n.id);
+        res = (*this)(n);
+    } catch (out_of_range& e) {
+        //TODO handle in a better way
+        cout << "error, not found: " << n.id << endl;
+    }
+}
+
+void resources::print( skel_node& n ){
+    cout << (*this)( n ) << endl;;
+}
+
+size_t resources::operator()(skel_node& n){
+    n.accept(*this);
+    return res;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void printer::tostring(const string& name, const skel_node& n) {
     res += name + "(";
     for (size_t i = 0; i < n.size(); i++) {

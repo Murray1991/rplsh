@@ -21,7 +21,7 @@ struct rewriter {
     node_set apply_allrules ( Iterator& it1, Iterator& it2, rr_dispatcher& rr_disp);
     template <typename Iterator>
     node_set apply_rule ( Iterator& it1, Iterator& it2, rewrule& r);
-    
+
 private:
     printer print;
     single_node_cloner snc;
@@ -33,8 +33,10 @@ private:
 template <typename Iterator>
 node_set rewriter::apply_rule ( Iterator& begin, Iterator& end, rewrule& r) {
     node_set set;
-    for ( auto it = begin ; it != end; ++it)
-        insert_or_delete ( set, rewrite(*it->second, r) );
+    for ( auto it = begin ; it != end; ++it) {
+        auto& skelptr = *it;
+        insert_or_delete ( set, rewrite(*skelptr, r) );
+    }
     return set;
 }
 
@@ -52,8 +54,10 @@ template <typename Iterator>
 node_set rewriter::apply_allrules ( Iterator& begin, Iterator& end, rr_dispatcher& rr_disp) {
     node_set set;
     vector<node_set> sets;
-    for (auto it = begin; it != end; it++)
-        sets.push_back( apply_allrules(*it->second, rr_disp) );
+    for (auto it = begin; it != end; it++) {
+        auto& skelptr = *it;
+        sets.push_back( apply_allrules(*skelptr, rr_disp) );
+    }
     for (auto& curr : sets)
         set = merge(set, curr);
     return set;
