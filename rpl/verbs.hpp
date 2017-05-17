@@ -36,7 +36,6 @@ public:
 // Node representing the "show" verb
 struct show_node : public verb_node<show_node> {
     show_node(const std::string& id, const std::string& prop, std::vector<std::string> parameters);
-private:
     std::vector<std::string> parameters;
 };
 
