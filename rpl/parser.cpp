@@ -118,6 +118,7 @@ rpl_node* parser::show_rule(token& tok)
             expect(tok, token::parameter, par);
         }
         parameters.push_back(par);
+        parameters.push_back("show_default");
     }
     else if (tok.kind == token::parameter) {                     // optional
         expect(tok, token::parameter, par);

@@ -2,6 +2,7 @@
 #define rpl_Ivisitor_hpp
 
 #include "node_forwards.hpp"
+#include <string>
 
 struct visitor
 {
@@ -33,7 +34,7 @@ struct skel_visitor : public visitor
     void visit(rwr_node& n)    {};
     void visit(opt_node& n)    {};
 
-    virtual void print(skel_node& sk) {};
+    virtual std::string print(skel_node& sk) { return ""; };
 };
 
 #endif

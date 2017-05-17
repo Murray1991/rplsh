@@ -57,8 +57,8 @@ void servicetime::visit(id_node& n) {
     }
 }
 
-void servicetime::print( skel_node& sk ){
-    cout << (*this)( sk ) << endl;;
+string servicetime::print( skel_node& sk ){
+    return std::to_string( (*this)( sk ) );
 }
 
 double servicetime::operator()(skel_node& sk){
@@ -107,8 +107,8 @@ void latencytime::visit(id_node& n) {
     }
 }
 
-void latencytime::print( skel_node& sk ){
-    cout << (*this)( sk ) << endl;;
+string latencytime::print( skel_node& sk ){
+    return std::to_string( (*this)( sk ) );
 }
 
 double latencytime::operator()(skel_node& sk){
@@ -162,8 +162,8 @@ void completiontime::visit( id_node& n ) {
     }
 }
 
-void completiontime::print( skel_node& n ){
-    cout << (*this)( n ) << endl;;
+string completiontime::print( skel_node& n ){
+    return std::to_string( (*this)( n ));;
 }
 
 double completiontime::operator()(skel_node& n){
@@ -213,8 +213,8 @@ void pardegree::visit( id_node& n ) {
     }
 }
 
-void pardegree::print( skel_node& n ){
-    cout << (*this)( n ) << endl;;
+string pardegree::print( skel_node& n ){
+    return std::to_string( (*this)( n ) );;
 }
 
 size_t pardegree::operator()(skel_node& n){
@@ -264,8 +264,8 @@ void resources::visit( id_node& n ) {
     }
 }
 
-void resources::print( skel_node& n ){
-    cout << (*this)( n ) << endl;;
+string resources::print( skel_node& n ){
+    return std::to_string( (*this)( n ) );;
 }
 
 size_t resources::operator()(skel_node& n){
@@ -312,8 +312,8 @@ void printer::visit(id_node& n) {
     res += n.id;
 }
 
-void printer::print( skel_node& sk ){
-    cout << (*this)( sk ) << endl;
+string printer::print( skel_node& sk ){
+    return (*this)( sk );
 }
 
 string printer::operator()(skel_node& sk){

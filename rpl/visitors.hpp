@@ -19,7 +19,8 @@ struct servicetime: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-    void print(skel_node& n);
+
+    std::string print(skel_node& n);
     double operator()(skel_node& n);
 private:
     rpl_environment& env;
@@ -36,7 +37,7 @@ struct latencytime: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-    void print(skel_node& n);
+    std::string print(skel_node& n);
     double operator()(skel_node& n);
 protected:
     rpl_environment& env;
@@ -53,7 +54,7 @@ struct completiontime: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-    void print(skel_node& n);
+    std::string print(skel_node& n);
     double operator()(skel_node& n);
 protected:
     latencytime lat;
@@ -72,7 +73,7 @@ struct pardegree: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-    void print(skel_node& n);
+    std::string print(skel_node& n);
     std::size_t operator()(skel_node& n);
 protected:
     rpl_environment& env;
@@ -89,7 +90,7 @@ struct resources: public skel_visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
-    void print(skel_node& n);
+    std::string print(skel_node& n);
     std::size_t operator()(skel_node& n);
 protected:
     rpl_environment& env;
@@ -106,7 +107,7 @@ struct printer : public skel_visitor
     void visit(reduce_node& n);
     void visit(id_node& n);
 
-    void print(skel_node& sk);
+    std::string print(skel_node& sk);
     std::string operator()(skel_node& sk);
 private:
     std::string res;
