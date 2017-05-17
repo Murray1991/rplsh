@@ -105,13 +105,25 @@ rpl_node* parser::assign_rule(token& tok)
 rpl_node* parser::show_rule(token& tok)
 {
     string id, par = "show_default";
+    vector<string> parameters;
+
     expect(tok, token::show);
     expect(tok, token::word, id);
-    if (tok.kind == token::parameter) {                     // optional
+    if (tok.kind == token::by) {
+        expect(tok, token::by);
+        expect(tok, token::parameter, par);
+        while ( tok.kind == token::comma ) {
+            parameters.push_back(par);
+            expect(tok, token::comma);
+            expect(tok, token::parameter, par);
+        }
+        parameters.push_back(par);
+    }
+    else if (tok.kind == token::parameter) {                     // optional
         expect(tok, token::parameter, par);
     }
     expect(tok, token::eol);
-    return new show_node(id, par);
+    return new show_node(id, par, parameters);
 }
 
 //  <set> ::= set <word> with <pattern> <integer>

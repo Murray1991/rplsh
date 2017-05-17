@@ -21,7 +21,7 @@ struct token
     typedef enum
     {
         open = 1, close, comma, equals, show, set, annotate, rewrite, optimize, seq,
-        comp, pipe, farm, map, reduce, integer, number, word, with, illegal, parameter,
+        comp, pipe, farm, map, reduce, integer, number, word, with, by, illegal, parameter,
         eol,
     } type;
 

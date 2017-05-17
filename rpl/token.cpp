@@ -10,6 +10,7 @@ map<string, token::type> token::st_map =
    {",",        token::comma},
    {"=",        token::equals},
    {"with",     token::with},
+   {"by",     token::by},
    {"show",     token::show},
    {"set",      token::set},
    {"annotate", token::annotate},

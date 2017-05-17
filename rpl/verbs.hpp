@@ -2,6 +2,7 @@
 #define rpl_verbs_hpp
 
 #include <string>
+#include <vector>
 #include "node_interface.hpp"
 
 //Forward declaration of a skeleton node
@@ -34,7 +35,9 @@ public:
 
 // Node representing the "show" verb
 struct show_node : public verb_node<show_node> {
-    show_node(const std::string& id, const std::string& prop);
+    show_node(const std::string& id, const std::string& prop, std::vector<std::string> parameters);
+private:
+    std::vector<std::string> parameters;
 };
 
 // Node representing the "set" verb
