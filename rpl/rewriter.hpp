@@ -1,5 +1,7 @@
 #pragma once
 
+// TODO funzia, ma un po' incasinato
+
 #include "rewrules.hpp"
 #include "visitors.hpp"
 #include <unordered_map>
@@ -69,12 +71,19 @@ skel_node* rewriter::rewrite( skel_node& n, rewrule& r ) {
 
 node_set rewriter::fullrecrewrite( skel_node& n, rewrule& r ) {
     node_set set;
+    skel_node* rn = rewrite(n, r);
     insert_or_delete( set, n.clone() );
     insert_or_delete( set, rewrite(n, r) );
+
     if ( n.size() == 1 )
         combine(n, fullrecrewrite(*n.get(0), r), set);
-    else if ( n.size() == 2 )
+    else if ( n.size() == 2 ) {                             // Comp or Pipe
         combine(n, allpairs(fullrecrewrite(*n.get(0),r), fullrecrewrite(*n.get(1), r)), set);
+        if (rn != nullptr && rn->size() == 2)
+            combine(*rn, allpairs(fullrecrewrite(*rn->get(0),r), fullrecrewrite(*rn->get(1), r)), set);
+    }
+
+    delete rn;
     return set;
 }
 
