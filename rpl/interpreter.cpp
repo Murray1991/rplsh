@@ -1,30 +1,12 @@
 #include "interpreter.hpp"
 #include "rewriter.hpp"
-#include <memory>
 #include "utils/mytuple.hpp"
+#include "utils/rank.hpp"
+#include <memory>
 
 using namespace std;
 
 single_node_cloner snc;
-
-///////////////////////////////////////////////////////////////////////////////
-
-void unrank2rank( skel_node& n )
-{
-    // 2-rank the children
-    for ( size_t i = 0; i < n.size(); i++)
-        unrank2rank( *n.get(i) );
-
-    // 2-rank the current node
-    while (n.size() > 2) {
-        skel_node* newnode = snc(n);
-        skel_node* last2 = n.pop();
-        skel_node* last1 = n.pop();
-        newnode->add(last1);
-        newnode->add(last2);
-        n.add(newnode);
-    }
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +16,7 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo)
 void interpreter::visit(assign_node& n) {
     n.rvalue->accept(*this);                // recurse for semantic check in skel tree
     if ( success ) {
-        unrank2rank(*n.rvalue);
+        unranktorank2(*n.rvalue, snc);
         env.put(n.id, n.rvalue);
     }
     else
