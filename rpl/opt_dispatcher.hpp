@@ -8,7 +8,8 @@
 struct opt_dispatcher : public dispatcher<std::string, optrule>
 {
     opt_dispatcher(rpl_environment& env) {
-        add("farmopt",  new farmopt(env));
+        add("farmopt", new farmopt(env));
+        add("pipeopt", new pipeopt(env));
     }
 };
 
