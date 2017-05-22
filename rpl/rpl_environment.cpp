@@ -7,6 +7,8 @@ rpl_environment::rpl_environment() {
     set_collector_time(1);
     set_scatter_time(1);
     set_gather_time(1);
+    set_dim(1);
+    set_res(16);
 }
 
 void rpl_environment::set_emitter_time(double te) {
@@ -47,4 +49,12 @@ void rpl_environment::set_dim(size_t dim) {
 
 size_t rpl_environment::get_dim() {
     return (size_t) sd_map["dim"];
+}
+
+void rpl_environment::set_res(size_t res) {
+    sd_map["res"] = res;
+}
+
+size_t rpl_environment::get_res() {
+    return (size_t) sd_map["res"];
 }

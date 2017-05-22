@@ -31,6 +31,10 @@ struct rpl_environment : public environment<std::string, skel_node>
     void set_dim( std::size_t dim );
     std::size_t get_dim();
 
+    /* setters and getters for resources */
+    void set_res( std::size_t res );
+    std::size_t get_res();
+
 private:
     std::map<std::string, double> sd_map;
 };
