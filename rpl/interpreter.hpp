@@ -7,7 +7,6 @@
 #define rpl_interpreter_hpp
 
 #include "visitors.hpp"
-#include "dispatcher.hpp"
 #include "verbs.hpp"
 #include "skeletons.hpp"
 #include "rpl_environment.hpp"
@@ -16,9 +15,9 @@
 #include <exception>
 #include <iostream>
 #include <map>
-#include "rr_dispatcher.hpp"
-#include "opt_dispatcher.hpp"
-#include "visitor_dispatcher.hpp"
+#include "dispatchers/rr_dispatcher.hpp"
+#include "dispatchers/opt_dispatcher.hpp"
+#include "dispatchers/visitor_dispatcher.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 //
