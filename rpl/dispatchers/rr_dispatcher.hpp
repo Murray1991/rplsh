@@ -1,7 +1,7 @@
 #ifndef rpl_rr_dispatcher_hpp
 #define rpl_rr_dispatcher_hpp
 
-#include "dispatcher.hpp"
+#include "dispatchers/dispatcher.hpp"
 #include "rewrules.hpp"
 
 struct rr_dispatcher : public dispatcher<std::string, rewrule>

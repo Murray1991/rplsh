@@ -1,7 +1,7 @@
 #ifndef rpl_visitor_dispatcher_hpp
 #define rpl_visitor_dispatcher_hpp
 
-#include "dispatcher.hpp"
+#include "dispatchers/dispatcher.hpp"
 #include "visitors.hpp"
 
 struct visitor_dispatcher : public dispatcher<std::string, skel_visitor>
