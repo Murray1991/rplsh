@@ -64,4 +64,19 @@ private:
     pipebalance balance;
 };
 
+struct maxresources : public optrule
+{
+    maxresources ( rpl_environment& env );
+    void visit( comp_node& n );
+    void visit( pipe_node& n );
+    void visit( farm_node& n );
+    void visit( map_node& n );
+    void operator()( skel_node& n );
+private:
+    void operator()( skel_node& n, size_t maxres );
+    reduce_resources reduce_res;
+    resources res;
+    size_t maxres;
+};
+
 #endif

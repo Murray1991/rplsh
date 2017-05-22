@@ -1,7 +1,9 @@
 #include "optimizers.hpp"
 #include "utils/rank.hpp"
 #include <tuple>
+#include <cassert>
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -125,6 +127,33 @@ void pipebalance::operator()( skel_node& n ) {
 
 void pipebalance::operator()( skel_node& n, double max ) {
     ts_max = max;
+    n.accept(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+maxresources::maxresources( rpl_environment& env ) :
+    optrule( env ), reduce_res(env), res(env)
+{}
+
+void maxresources::visit( comp_node& n ) {
+    while ( res(n) > maxres && reduce_res(n) );
+}
+
+void maxresources::visit( pipe_node& n ) {
+    while ( res(n) > maxres && reduce_res(n) );
+}
+
+void maxresources::visit( farm_node& n ) {
+    while ( res(n) > maxres && reduce_res(n) );
+}
+
+void maxresources::visit( map_node& n ) {
+    while ( res(n) > maxres && reduce_res(n) );
+}
+
+void maxresources::operator()( skel_node& n ) {
+    maxres = env.get_res();
     n.accept(*this);
 }
 
