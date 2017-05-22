@@ -142,4 +142,20 @@ private:
     skel_node* tmp;
 };
 
+struct reduce_resources : public skel_visitor {
+    reduce_resources( rpl_environment& env );
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+    bool operator()(skel_node& n);
+private:
+    bool res;
+    servicetime ts;
+    resources getres;
+};
+
 #endif

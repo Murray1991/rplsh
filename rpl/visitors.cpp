@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include <algorithm>
+#include <tuple>
 #include <cmath>
 
 using namespace std;
@@ -390,4 +391,87 @@ void single_node_cloner::visit( id_node& n ) {
 skel_node* single_node_cloner::operator()( skel_node& sk ) {
     sk.accept(*this);
     return tmp;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+reduce_resources::reduce_resources( rpl_environment& env ) :
+    ts(env), getres(env)
+{}
+
+void reduce_resources::visit( seq_node& n ) {
+    res = false;
+}
+
+typedef std::tuple<skel_node*, double, size_t> sds_t;
+
+template < typename triples_container >
+void fill_triples( triples_container& triples, skel_node& n, servicetime& ts, resources& res ) {
+    for (size_t i = 0; i < n.size(); i++) {
+        triples.push_back( make_tuple(
+            n.get(i),
+            ts ( *n.get(i) ),
+            res( *n.get(i) )
+        ) );
+    }
+}
+
+void reduce_resources::visit( comp_node& n ) {
+
+    std::vector<sds_t> triples;
+    fill_triples( triples, n, ts, getres );
+
+    sort (triples.begin(), triples.end(), [](const sds_t& a, const sds_t& b) {
+        if (get<2>(a) == get<2>(b))
+            return get<1>(b) < get<1>(a);
+        return get<2>(a) > get<2>(b);
+    });
+
+    for ( auto it = triples.begin(); it != triples.end() && !res; it++ )
+        (*this)( *get<0>(*it) );
+}
+
+void reduce_resources::visit( pipe_node& n ) {
+
+    std::vector<sds_t> triples;
+    fill_triples( triples, n, ts, getres );
+
+    sort (triples.begin(), triples.end(), [](const sds_t& a, const sds_t& b) {
+        if (get<1>(a) == get<1>(b))
+            return get<2>(b) < get<2>(a);
+        return get<1>(a) < get<1>(b);
+    });
+
+    for ( auto it = triples.begin(); it != triples.end() && !res; it++ )
+        (*this)( *get<0>(*it) );
+}
+
+void reduce_resources::visit( farm_node& n ) {
+    res = n.pardegree > 1;
+    if ( res )
+        n.pardegree--;
+    else
+        (*this)( *n.get(0) );
+}
+
+void reduce_resources::visit( map_node& n ) {
+    res = n.pardegree > 1;
+    if ( res )
+        n.pardegree--;
+    else
+        (*this)( *n.get(0) );
+}
+
+void reduce_resources::visit( reduce_node& n ) {
+    res = false;
+}
+
+void reduce_resources::visit( id_node& n ) {
+    res = false;
+}
+
+bool reduce_resources::operator()(skel_node& n) {
+    res = false;
+    n.accept(*this);
+    return res;
 }
