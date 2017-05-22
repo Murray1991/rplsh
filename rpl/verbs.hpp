@@ -35,8 +35,9 @@ public:
 
 // Node representing the "show" verb
 struct show_node : public verb_node<show_node> {
-    show_node(const std::string& id, const std::string& prop, std::vector<std::string> parameters);
+    show_node(const std::string& id, const int& lines, const std::string& prop, std::vector<std::string> parameters);
     std::vector<std::string> parameters;
+    const int lines_to_print;
 };
 
 // Node representing the "set" verb

@@ -24,8 +24,8 @@ void verb_node<verb>::accept( visitor& v ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-show_node::show_node(const string& id, const string& prop, vector<string> parameters)
-    : verb_node(*this, id, prop), parameters(parameters) {}
+show_node::show_node(const string& id, const int& lines, const string& prop, vector<string> parameters)
+    : verb_node(*this, id, prop), parameters(parameters), lines_to_print(lines) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 

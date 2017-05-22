@@ -33,7 +33,9 @@ map<string, token::type> token::st_map =
    {"efficiency",   token::parameter},
    {"pardegree",    token::parameter},
    {"resources",    token::parameter},
-   {"compltime",    token::parameter}
+   {"compltime",    token::parameter},
+   {"+",            token::plus },
+   {"-",            token::minus },
 };
 
 map<token::type, string> token::ts_map =

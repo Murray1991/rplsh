@@ -3,6 +3,7 @@
 #include "utils/mytuple.hpp"
 #include "utils/rank.hpp"
 #include <memory>
+#include <iostream>
 
 using namespace std;
 
@@ -28,46 +29,37 @@ void interpreter::visit(show_node& n) {
     try {
 
         auto range = env.range( n.id );
-
-        if ( n.parameters.size() > 0 )
-        {
-            vector<mytuple> tuples;
-
-            // fill the tuples
-            for (auto it = range.first; it != range.second; it++) {
-                tuples.push_back(mytuple());
-                auto& last  = tuples.back();
-                auto& skptr = *it;
-                for (const string& par : n.parameters) {
-                    auto& shower = *vdispatch[ par ];
-                    if ( par != "show_default" )
-                        last.add( unique_ptr<wrapper>(new double_wrapper(shower.print(*skptr))) );
-                    else
-                        last.add( unique_ptr<wrapper>(new string_wrapper(shower.print(*skptr))) );
-                }
+        vector<mytuple> tuples;
+        for ( auto it = range.first; it != range.second; it++ ) {
+            tuples.push_back(mytuple());
+            auto& last  = tuples.back();
+            auto& skptr = *it;
+            for (const string& par : n.parameters) {
+                auto& shower = *vdispatch[ par ];
+                if ( par != "show_default" )
+                    last.add( unique_ptr<wrapper>(new double_wrapper(shower.print(*skptr))) );
+                else
+                    last.add( unique_ptr<wrapper>(new string_wrapper(shower.print(*skptr))) );
             }
+        }
 
-            // sort the tuples by calling stable_sort multiple times
-            // complexity: O(N·log^2(N)) * #parameters
-            size_t i = n.parameters.size()-1;
-            while ( i-- > 0 )
-                std::stable_sort(tuples.begin(), tuples.end(), [&i](const mytuple& t1, const mytuple& t2) {
-                    return t1.compare(t2, i);
-                });
+        // sort the tuples by calling stable_sort multiple times
+        // complexity: O(N·log^2(N)) * #parameters
+        size_t i = n.parameters.size()-1;
+        while ( i-- > 0 )
+            std::stable_sort(tuples.begin(), tuples.end(), [&i](const mytuple& t1, const mytuple& t2) {
+                return t1.compare(t2, i);
+            });
 
-            for (auto& t : tuples)
-                cout << t.tostring() << endl;
-
-
+        if (n.lines_to_print >= 0) {
+            int max = n.lines_to_print;
+            for (auto it = tuples.begin(); it != tuples.end() && max-- > 0; it++)
+                cout << it->tostring() << endl;
         } else {
-
-            auto& shower = *vdispatch[ n.prop ];
-            for (auto it = range.first; it != range.second; it++) {
-                cout << (it - range.first) << ") ";
-                auto& skptr = *it;
-                cout << shower.print( *skptr ) << endl;
-            }
-
+            size_t max = -n.lines_to_print;
+            size_t start = tuples.size() < max ? 0 : tuples.size() - max;
+            for (auto it = tuples.begin() + start; it != tuples.end(); it++)
+                cout << it->tostring() << endl;
         }
 
     } catch (out_of_range& e) {

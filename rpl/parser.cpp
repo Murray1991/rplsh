@@ -2,6 +2,8 @@
 
 using namespace std;
 
+#include <limits>
+
 ///////////////////////////////////////////////////////////////////////////////
 //  Implementation of parser class
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,6 +108,7 @@ rpl_node* parser::show_rule(token& tok)
 {
     string id, par = "show_default";
     vector<string> parameters;
+    int num = numeric_limits<int>::max();
 
     expect(tok, token::show);
     expect(tok, token::word, id);
@@ -118,13 +121,24 @@ rpl_node* parser::show_rule(token& tok)
             expect(tok, token::parameter, par);
         }
         parameters.push_back(par);
-        parameters.push_back("show_default");
     }
     else if (tok.kind == token::parameter) {                     // optional
         expect(tok, token::parameter, par);
+        parameters.push_back(par);
     }
+
+    /* always put the default */
+    parameters.push_back("show_default");
+
+    if ( tok.kind == token::plus || tok.kind == token::minus ) {
+        auto type = tok.kind;
+        expect( tok, type );
+        expect(tok, token::integer, num);
+        num = ( type == token::minus )? -num : num;
+    }
+
     expect(tok, token::eol);
-    return new show_node(id, par, parameters);
+    return new show_node(id, num, parameters[0], parameters);
 }
 
 //  <set> ::= set <word> with <pattern> <integer>
@@ -204,7 +218,6 @@ skel_node* parser::pattexp_rule(token& tok)
             return nullptr;
     }
 }
-
 
 //  <seq> ::= 'seq' '(' <word> [ ',' <number> ] ')'
 //  TODO maybe also <word> should be optional -> possibility to do "a = seq()"

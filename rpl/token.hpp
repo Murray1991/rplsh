@@ -22,7 +22,7 @@ struct token
     {
         open = 1, close, comma, equals, show, set, annotate, rewrite, optimize, seq,
         comp, pipe, farm, map, reduce, integer, number, word, with, by, illegal, parameter,
-        eol,
+        plus, minus, eol
     } type;
 
     token(token::type kind, string data, int pos = -1);
