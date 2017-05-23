@@ -4,20 +4,21 @@
 #include "dispatchers/dispatcher.hpp"
 #include "parameters.hpp"
 #include "rewrules.hpp"
+#include <memory>
 
-struct rr_dispatcher : public dispatcher<std::string, rewrule>
+struct rr_dispatcher : public dispatcher<std::string, std::unique_ptr<rewrule>>
 {
     rr_dispatcher() {
-        add(par::farmintro , new farmintro());
-        add(par::farmelim  , new farmelim());
-        add(par::pipeintro , new pipeintro());
-        add(par::pipeelim  , new pipeelim());
-        add(par::pipeassoc , new pipeassoc());
-        add(par::compassoc , new compassoc());
-        add(par::mapofcomp , new mapofcomp());
-        add(par::compofmap , new compofmap());
-        add(par::mapofpipe , new mapofpipe());
-        add(par::pipeofmap , new pipeofmap());
+        add(par::farmintro , std::unique_ptr<rewrule> (new farmintro()));
+        add(par::farmelim  , std::unique_ptr<rewrule> (new farmelim()));
+        add(par::pipeintro , std::unique_ptr<rewrule> (new pipeintro()));
+        add(par::pipeelim  , std::unique_ptr<rewrule> (new pipeelim()));
+        add(par::pipeassoc , std::unique_ptr<rewrule> (new pipeassoc()));
+        add(par::compassoc , std::unique_ptr<rewrule> (new compassoc()));
+        add(par::mapofcomp , std::unique_ptr<rewrule> (new mapofcomp()));
+        add(par::compofmap , std::unique_ptr<rewrule> (new compofmap()));
+        add(par::mapofpipe , std::unique_ptr<rewrule> (new mapofpipe()));
+        add(par::pipeofmap , std::unique_ptr<rewrule> (new pipeofmap()));
     }
 };
 
