@@ -11,7 +11,7 @@ struct visitor_dispatcher : public dispatcher<std::string, skel_visitor>
         add(par::show_default   ,  new printer());
         add(par::servicetime    ,  new servicetime(env));
         add(par::latency        ,  new latencytime(env));
-        add(par::completiontime ,  new completiontime(env));
+        add(par::compltime      ,  new completiontime(env));
         add(par::pardegree      ,  new pardegree(env));
         add(par::resources      ,  new resources(env));
     }

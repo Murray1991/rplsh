@@ -1,4 +1,5 @@
 #include "token.hpp"
+#include "parameters.hpp"
 
 using namespace std;
 
@@ -44,18 +45,19 @@ map<string, token::type> token::st_map =
    {"Reduce",   token::reduce},
 
    /* parameters */
-   {"servicetime",   token::parameter},
-   {"latency",       token::parameter},
-   {"efficiency",    token::parameter},
-   {"pardegree",     token::parameter},
-   {"resources",     token::parameter},
-   {"compltime",     token::parameter},
-   {"emitter_time",  token::parameter},
-   {"collector_time",token::parameter},
-   {"scatter_time",  token::parameter},
-   {"gather_time",   token::parameter},
-   {"dimension",     token::parameter},
-   {"arch",          token::parameter},
+   {par::servicetime,   token::parameter},
+   {par::latency,       token::parameter},
+   {par::efficiency,    token::parameter},
+   {par::compltime,     token::parameter},
+   {par::pardegree,     token::parameter},
+   {par::resources,     token::parameter},
+
+   {par::emitter_time,  token::parameter},
+   {par::collector_time,token::parameter},
+   {par::scatter_time,  token::parameter},
+   {par::gather_time,   token::parameter},
+   {par::dimension,     token::parameter},
+   {par::arch,          token::parameter},
 };
 
 map<token::type, string> token::ts_map =
