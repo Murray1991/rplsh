@@ -2,6 +2,7 @@
 #include "rewriter.hpp"
 #include "utils/mytuple.hpp"
 #include "utils/rank.hpp"
+#include "utils/utils.hpp"
 #include <memory>
 #include <iostream>
 
@@ -11,8 +12,15 @@ single_node_cloner snc;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-interpreter::interpreter(rpl_environment& env, error_container& err_repo)
-    : env(env), err_repo(err_repo), odispatch(env), vdispatch(env), success(true) {}
+interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
+    env(env),
+    err_repo(err_repo),
+    sdispatch(env),
+    gdispatch(env),
+    odispatch(env),
+    vdispatch(env),
+    success(true)
+{}
 
 void interpreter::visit(assign_node& n) {
     n.rvalue->accept(*this);                // recurse for semantic check in skel tree
@@ -27,6 +35,11 @@ void interpreter::visit(assign_node& n) {
 /* dirty implementation */
 void interpreter::visit(show_node& n) {
     try {
+
+        if ( n.id == "" && n.parameters.size() == 0) {
+            cout << utils::to_string( gdispatch[n.prop]() ) << endl;
+            return;
+        }
 
         auto range = env.range( n.id );
         vector<mytuple> tuples;
@@ -68,7 +81,7 @@ void interpreter::visit(show_node& n) {
 }
 
 void interpreter::visit(set_node& n) {
-
+    sdispatch[ n.prop ]( n.value );
 }
 
 void interpreter::visit(ann_node& n) {

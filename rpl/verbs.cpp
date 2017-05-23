@@ -29,7 +29,7 @@ show_node::show_node(const string& id, const int& lines, const string& prop, vec
 
 ///////////////////////////////////////////////////////////////////////////////
 
-set_node::set_node(const string& id, const string& prop, int value)
+set_node::set_node(const string& id, const string& prop, double value)
     : verb_node(*this, id, prop), value(value) {}
 
 ///////////////////////////////////////////////////////////////////////////////

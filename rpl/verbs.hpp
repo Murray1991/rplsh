@@ -42,8 +42,8 @@ struct show_node : public verb_node<show_node> {
 
 // Node representing the "set" verb
 struct set_node : public verb_node<set_node> {
-    set_node(const std::string& id, const std::string& prop, int value);
-    int value;
+    set_node(const std::string& id, const std::string& prop, double value);
+    double value;
 };
 
 // Node representing the "annotate" verb

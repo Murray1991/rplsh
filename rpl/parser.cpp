@@ -111,6 +111,12 @@ rpl_node* parser::show_rule(token& tok)
     int num = numeric_limits<int>::max();
 
     expect(tok, token::show);
+    if ( tok.kind == token::parameter ) {
+        expect(tok, token::parameter, par);
+        expect(tok, token::eol);
+        return new show_node("", 0, par, parameters);
+    }
+
     expect(tok, token::word, id);
     if (tok.kind == token::by) {
         expect(tok, token::by);
@@ -145,13 +151,13 @@ rpl_node* parser::show_rule(token& tok)
 //  <pattern> ::= farm | pipe | ...
 rpl_node* parser::set_rule(token& tok)
 {
-    string id, par; int value;
+    string par; double value;
     expect(tok, token::set);
-    expect(tok, token::word, id);
+    expect(tok, token::parameter, par);
     expect(tok, token::with);
-    expect(tok, token::word, par);                          // TODO this parameter should be a keyword
-    expect(tok, token::integer, value);
-    return new set_node(id, par, value);
+    if ( tok.kind == token::number || tok.kind == token::integer )
+        expect(tok, tok.kind, value);
+    return new set_node(par, par, value);
 }
 
 //  <ann> ::= set <word> with <parameter> <value>
