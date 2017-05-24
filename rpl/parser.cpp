@@ -168,7 +168,8 @@ rpl_node* parser::ann_rule(token& tok)
     expect(tok, token::word, id);
     expect(tok, token::with);
     expect(tok, token::parameter, par);
-    expect(tok, token::number, value);
+    if ( tok.kind == token::number || tok.kind == token::integer )
+        expect(tok, tok.kind, value);
     return new ann_node(id, par, value);
 }
 
