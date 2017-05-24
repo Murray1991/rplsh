@@ -101,7 +101,7 @@ void latencytime::visit(reduce_node& n) {
 void latencytime::visit(id_node& n) {
     try {
         auto ptr = env.get(n.id);
-        res = (*this)(n);
+        res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
         cout << "error, not found: " << n.id << endl;
@@ -156,7 +156,7 @@ void completiontime::visit( reduce_node& n ) {
 void completiontime::visit( id_node& n ) {
     try {
         auto ptr = env.get(n.id);
-        res = (*this)(n);
+        res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
         cout << "error, not found: " << n.id << endl;
@@ -207,7 +207,7 @@ void pardegree::visit( reduce_node& n ) {
 void pardegree::visit( id_node& n ) {
     try {
         auto ptr = env.get(n.id);
-        res = (*this)(n);
+        res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
         cout << "error, not found: " << n.id << endl;
