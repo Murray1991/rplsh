@@ -16,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include "dispatchers/rr_dispatcher.hpp"
+#include "dispatchers/ann_dispatcher.hpp"
 #include "dispatchers/set_dispatcher.hpp"
 #include "dispatchers/get_dispatcher.hpp"
 #include "dispatchers/opt_dispatcher.hpp"
@@ -49,6 +50,7 @@ private:
     rpl_environment& env;
     error_container& err_repo;
     rr_dispatcher rdispatch;
+    ann_dispatcher adispatch;
     set_dispatcher sdispatch;
     get_dispatcher gdispatch;
     opt_dispatcher odispatch;

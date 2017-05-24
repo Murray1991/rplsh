@@ -15,6 +15,7 @@ single_node_cloner snc;
 interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
     env(env),
     err_repo(err_repo),
+    adispatch(env),
     sdispatch(env),
     gdispatch(env),
     odispatch(env),
@@ -85,7 +86,9 @@ void interpreter::visit(set_node& n) {
 }
 
 void interpreter::visit(ann_node& n) {
-
+    skel_node& sk = *env.get(n.id);
+    bool response = (*adispatch[ n.prop ])( sk, n.value );
+    cout << "response: " << (response? "annotated!" : "not annotated!") << endl;
 }
 
 void interpreter::visit(rwr_node& n) {
