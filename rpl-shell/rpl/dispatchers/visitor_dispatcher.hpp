@@ -1,9 +1,9 @@
 #ifndef rpl_visitor_dispatcher_hpp
 #define rpl_visitor_dispatcher_hpp
 
-#include "dispatchers/dispatcher.hpp"
+#include "dispatcher.hpp"
+#include "visitors/visitors.hpp"
 #include "parameters.hpp"
-#include "visitors.hpp"
 #include <memory>
 
 struct visitor_dispatcher : public dispatcher<std::string, std::unique_ptr<skel_visitor>>

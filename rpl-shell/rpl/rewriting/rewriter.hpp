@@ -3,7 +3,8 @@
 // TODO funzia, ma un po' incasinato
 
 #include "rewrules.hpp"
-#include "visitors.hpp"
+#include "nodes/skeletons.hpp"
+#include "visitors/visitors.hpp"
 #include <unordered_map>
 
 using namespace std;

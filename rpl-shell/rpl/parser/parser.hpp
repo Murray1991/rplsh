@@ -8,9 +8,8 @@
 #define rpl_parser_hpp
 
 #include "lexer.hpp"
-#include "verbs.hpp"
-#include "skeletons.hpp"
-#include "visitors.hpp"
+#include "nodes/verbs.hpp"
+#include "nodes/skeletons.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>

@@ -1,8 +1,8 @@
 #ifndef rpl_annotators_hpp
 #define rpl_annotators_hpp
 
-#include "rpl_environment.hpp"
-#include "visitor_interface.hpp"
+#include "environment/rpl_environment.hpp"
+#include "visitors/visitor_interface.hpp"
 
 struct ann_visitor : public skel_visitor
 {

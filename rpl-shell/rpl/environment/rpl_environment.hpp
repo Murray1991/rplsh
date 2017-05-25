@@ -7,8 +7,8 @@
 #ifndef rpl_rplenvironment_hpp
 #define rpl_rplenvironment_hpp
 
+#include "nodes/skeletons.hpp"
 #include "environment.hpp"
-#include "skeletons.hpp"
 #include <map>
 
 // TODO scatter and gather times should be something in

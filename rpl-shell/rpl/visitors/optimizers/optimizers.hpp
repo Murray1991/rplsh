@@ -1,9 +1,9 @@
 #ifndef rpl_optimizers_hpp
 #define rpl_optimizers_hpp
 
-#include "visitor_interface.hpp"
-#include "visitors.hpp"
-#include "rpl_environment.hpp"
+#include "visitors/visitor_interface.hpp"
+#include "visitors/visitors.hpp"
+#include "environment/rpl_environment.hpp"
 
 /*
     interface for each optimize rule: recursively

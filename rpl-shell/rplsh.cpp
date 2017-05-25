@@ -3,8 +3,9 @@
 //          Main program
 //
 ///////////////////////////////////////////////////////////////////////////////
-#include "parser.hpp"
-#include "interpreter.hpp"
+#include "rpl/interpreter.hpp"
+#include "parser/lexer.hpp"
+#include "parser/parser.hpp"
 
 #include <iostream>
 #include <memory>

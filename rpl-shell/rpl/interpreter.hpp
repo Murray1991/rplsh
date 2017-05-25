@@ -6,21 +6,20 @@
 #ifndef rpl_interpreter_hpp
 #define rpl_interpreter_hpp
 
-#include "visitors.hpp"
-#include "verbs.hpp"
-#include "skeletons.hpp"
-#include "rpl_environment.hpp"
-#include "error_report.hpp"
-#include <tuple>
-#include <exception>
-#include <iostream>
-#include <map>
-#include "dispatchers/rr_dispatcher.hpp"
 #include "dispatchers/ann_dispatcher.hpp"
 #include "dispatchers/set_dispatcher.hpp"
 #include "dispatchers/get_dispatcher.hpp"
 #include "dispatchers/opt_dispatcher.hpp"
+#include "dispatchers/rr_dispatcher.hpp"
 #include "dispatchers/visitor_dispatcher.hpp"
+#include "error/error_report.hpp"
+#include "nodes/skeletons.hpp"
+#include "nodes/verbs.hpp"
+
+#include <exception>
+#include <iostream>
+#include <tuple>
+#include <map>
 
 ///////////////////////////////////////////////////////////////////////////////
 //

@@ -6,7 +6,7 @@
 #ifndef rpl_visitor_hpp
 #define rpl_visitor_hpp
 
-#include "rpl_environment.hpp"
+#include "environment/rpl_environment.hpp"
 #include "visitor_interface.hpp"
 
 struct servicetime: public skel_visitor

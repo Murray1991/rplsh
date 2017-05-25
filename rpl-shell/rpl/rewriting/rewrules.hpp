@@ -1,8 +1,7 @@
 #ifndef rpl_rewrules_hpp
 #define rpl_rewrules_hpp
 
-#include "skeletons.hpp"
-#include "visitors.hpp"
+#include "nodes/skeletons.hpp"
 #include <memory>
 
 struct rewrule;

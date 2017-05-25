@@ -3,10 +3,10 @@
 //  Simple classes using for error reporting
 //
 ///////////////////////////////////////////////////////////////////////////////
-#ifndef error_report_hpp
-#define error_report_hpp
+#ifndef rpl_error_report_hpp
+#define rpl_error_report_hpp
 
-#include "utils/style.hpp"
+#include "style.hpp"
 #include <algorithm>
 #include <ostream>
 #include <memory>
@@ -14,7 +14,6 @@
 
 struct error
 {
-    /* operator<< call the virtual method print */
     friend ostream& operator<<(ostream& os, error const& err);
     virtual void print(ostream& os) const;
     static string line;

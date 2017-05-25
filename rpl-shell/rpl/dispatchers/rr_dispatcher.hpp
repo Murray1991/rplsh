@@ -1,9 +1,9 @@
 #ifndef rpl_rr_dispatcher_hpp
 #define rpl_rr_dispatcher_hpp
 
-#include "dispatchers/dispatcher.hpp"
+#include "dispatcher.hpp"
+#include "rewriting/rewrules.hpp"
 #include "parameters.hpp"
-#include "rewrules.hpp"
 #include <memory>
 
 struct rr_dispatcher : public dispatcher<std::string, std::unique_ptr<rewrule>>

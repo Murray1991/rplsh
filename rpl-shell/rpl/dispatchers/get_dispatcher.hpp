@@ -1,9 +1,9 @@
 #ifndef rpl_get_dispatcher_hpp
 #define rpl_get_dispatcher_hpp
 
-#include "dispatchers/dispatcher.hpp"
 #include "parameters.hpp"
-#include "rpl_environment.hpp"
+#include "dispatcher.hpp"
+#include "environment/rpl_environment.hpp"
 #include <functional>
 
 struct get_dispatcher : public dispatcher<std::string, std::function<double (void)>>

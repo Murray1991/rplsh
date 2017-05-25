@@ -1,9 +1,9 @@
 #ifndef rpl_ann_dispatcher_hpp
 #define rpl_ann_dispatcher_hpp
 
-#include "dispatchers/dispatcher.hpp"
+#include "dispatcher.hpp"
 #include "parameters.hpp"
-#include "annotators.hpp"
+#include "visitors/annotators/annotators.hpp"
 #include <memory>
 
 struct ann_dispatcher : public dispatcher<std::string, std::unique_ptr<ann_visitor>>

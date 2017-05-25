@@ -1,10 +1,10 @@
 #ifndef rpl_opt_dispatcher_hpp
 #define rpl_opt_dispatcher_hpp
 
-#include "dispatchers/dispatcher.hpp"
 #include "parameters.hpp"
-#include "optimizers.hpp"
-#include "rpl_environment.hpp"
+#include "dispatcher.hpp"
+#include "environment/rpl_environment.hpp"
+#include "visitors/optimizers/optimizers.hpp"
 #include <memory>
 
 struct opt_dispatcher : public dispatcher<std::string, std::unique_ptr<optrule>>

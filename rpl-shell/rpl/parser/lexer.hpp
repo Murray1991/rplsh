@@ -7,7 +7,7 @@
 #ifndef rpl_lexer_hpp
 #define rpl_lexer_hpp
 
-#include "error_report.hpp"
+#include "error/error_report.hpp"
 #include "token.hpp"
 #include <iostream>
 #include <string>

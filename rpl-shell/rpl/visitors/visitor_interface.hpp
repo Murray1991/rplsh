@@ -1,7 +1,7 @@
 #ifndef rpl_Ivisitor_hpp
 #define rpl_Ivisitor_hpp
 
-#include "node_forwards.hpp"
+#include "nodes/node_forwards.hpp"
 #include <string>
 
 struct visitor

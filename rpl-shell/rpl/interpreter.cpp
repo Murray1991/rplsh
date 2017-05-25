@@ -1,5 +1,5 @@
 #include "interpreter.hpp"
-#include "rewriter.hpp"
+#include "rewriting/rewriter.hpp"
 #include "utils/mytuple.hpp"
 #include "utils/rank.hpp"
 #include "utils/utils.hpp"

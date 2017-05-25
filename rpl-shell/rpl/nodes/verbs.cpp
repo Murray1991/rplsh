@@ -1,5 +1,5 @@
 #include "verbs.hpp"
-#include "visitor_interface.hpp"
+#include "visitors/visitor_interface.hpp"
 
 using namespace std;
 ///////////////////////////////////////////////////////////////////////////////
