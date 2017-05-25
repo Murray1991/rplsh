@@ -12,7 +12,7 @@
 #include "dispatchers/opt_dispatcher.hpp"
 #include "dispatchers/rr_dispatcher.hpp"
 #include "dispatchers/visitor_dispatcher.hpp"
-#include "error/error_report.hpp"
+#include "error_report/error_report.hpp"
 #include "nodes/skeletons.hpp"
 #include "nodes/verbs.hpp"
 

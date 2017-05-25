@@ -10,4 +10,4 @@ set (
 
 add_library(parser ${parser_files})
 
-target_link_libraries(parser error nodes)
+target_link_libraries(parser error_report nodes)

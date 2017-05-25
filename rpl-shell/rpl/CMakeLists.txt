@@ -4,12 +4,12 @@ project (rpl)
 include_directories(.)
 
 # Add subdirectories
-add_subdirectory (error)
 add_subdirectory (nodes)
 add_subdirectory (parser)
 add_subdirectory (visitors)
 add_subdirectory (rewriting)
 add_subdirectory (environment)
+add_subdirectory (error_report)
 
 # Add source file
 add_library(rpl interpreter.cpp)
