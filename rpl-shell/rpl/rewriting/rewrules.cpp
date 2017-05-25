@@ -34,29 +34,6 @@ inline skelptr Map(skelptr s) {
 rewrule::rewrule( skel_node*&& left, skel_node*&& right)
     : left(left), right(right) {}
 
-bool rewrule::match( skel_node* root, skel_node* rule, bool reset)
-{
-    if (reset)
-        leaves.clear();
-
-    if ( dynamic_cast<_*>(rule) ) {
-        leaves.push_back(root);
-        return true;
-    }
-
-    size_t sizel = root->size();
-    size_t sizer = rule->size();
-    bool res = *root == *rule && sizel == sizer;
-
-    for (size_t i = 0; res && i < sizel; i++) {
-        skel_node* n1 = root->get(i);
-        skel_node* n2 = rule->get(i);
-        res = res && match(n1, n2, false);
-    }
-
-    return res;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 
 farmintro::farmintro() : rewrule (

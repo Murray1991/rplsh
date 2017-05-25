@@ -1,21 +1,20 @@
 #ifndef rpl_rewrules_hpp
 #define rpl_rewrules_hpp
 
+#include "nodes/tree_matcher.hpp"
 #include "nodes/skeletons.hpp"
 #include <memory>
 
 struct rewrule;
 
-struct rewrule
+struct rewrule : public tree_matcher <skel_node, _>
 {
     rewrule( skel_node*&& left, skel_node*&& right = nullptr );
     virtual skel_node* rewrite( skel_node& tree ) = 0;
 
 protected:
-    bool match( skel_node *root, skel_node *rule, bool reset = true );
     std::unique_ptr<skel_node> left;
     std::unique_ptr<skel_node> right;
-    std::vector<skel_node*> leaves;
 };
 
 struct farmintro : rewrule {
