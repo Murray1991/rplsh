@@ -33,8 +33,6 @@ struct skel_visitor : public visitor
     void visit(ann_node& n)    {};
     void visit(rwr_node& n)    {};
     void visit(opt_node& n)    {};
-
-    virtual std::string print(skel_node& sk) { return ""; };
 };
 
 #endif
