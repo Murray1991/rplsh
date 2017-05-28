@@ -42,19 +42,20 @@ void interpreter::visit(show_node& n) {
             return;
         }
 
+        printer p;
         auto range = env.range( n.id );
         vector<mytuple> tuples;
-        for ( auto it = range.first; it != range.second; it++ ) {
+        for ( auto it = range.first; it != range.second; it++ )
+        {
             tuples.push_back(mytuple());
             auto& last  = tuples.back();
             auto& skptr = *it;
-            for (const string& par : n.parameters) {
-                auto& shower = *vdispatch[ par ];
-                if ( par != "show_default" )
-                    last.add( unique_ptr<wrapper>(new double_wrapper(shower.print(*skptr))) );
-                else
-                    last.add( unique_ptr<wrapper>(new string_wrapper(shower.print(*skptr))) );
-            }
+            for (const string& par : n.parameters)
+                if ( par != "show_default" ) {
+                    printable& shower = *vdispatch[ par ];
+                    last.add( unique_ptr<wrapper>(new double_wrapper( shower.print(*skptr))) );
+                } else
+                    last.add( unique_ptr<wrapper>(new string_wrapper( p.print(*skptr))) );
         }
 
         // sort the tuples by calling stable_sort multiple times

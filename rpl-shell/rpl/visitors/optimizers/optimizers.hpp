@@ -3,6 +3,7 @@
 
 #include "visitors/visitor_interface.hpp"
 #include "visitors/visitors.hpp"
+#include "visitors/evaluators/evaluators.hpp"
 #include "environment/rpl_environment.hpp"
 
 /*
@@ -13,13 +14,13 @@
 */
 struct optrule : public skel_visitor
 {
-    void visit(seq_node& n);
-    void visit(comp_node& n);
-    void visit(pipe_node& n);
-    void visit(farm_node& n);
-    void visit(map_node& n);
-    void visit(reduce_node& n);
-    void visit(id_node& n);
+    virtual void visit(seq_node& n);
+    virtual void visit(comp_node& n);
+    virtual void visit(pipe_node& n);
+    virtual void visit(farm_node& n);
+    virtual void visit(map_node& n);
+    virtual void visit(reduce_node& n);
+    virtual void visit(id_node& n);
     virtual void operator() ( skel_node& n ) = 0;
 
 protected:

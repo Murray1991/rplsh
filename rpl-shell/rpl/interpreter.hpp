@@ -11,7 +11,7 @@
 #include "dispatchers/get_dispatcher.hpp"
 #include "dispatchers/opt_dispatcher.hpp"
 #include "dispatchers/rr_dispatcher.hpp"
-#include "dispatchers/visitor_dispatcher.hpp"
+#include "dispatchers/eval_dispatcher.hpp"
 #include "error_report/error_report.hpp"
 #include "nodes/skeletons.hpp"
 #include "nodes/verbs.hpp"
@@ -53,7 +53,7 @@ private:
     set_dispatcher sdispatch;
     get_dispatcher gdispatch;
     opt_dispatcher odispatch;
-    visitor_dispatcher vdispatch;
+    eval_dispatcher vdispatch;
     bool success;
 };
 
