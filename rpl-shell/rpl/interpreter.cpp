@@ -156,9 +156,8 @@ void interpreter::visit(reduce_node& n) {
 }
 
 void interpreter::visit(id_node& n) {
-    try {
-        auto ptr = env.get(n.id);                 // check if it exists
-    } catch (out_of_range& e) {
+    auto ptr = env.get(n.id);                 // check if it exists
+    if (ptr == nullptr) {
         success  = false;
         err_repo.add( make_shared<error_not_exist>(n.id) );
     }
