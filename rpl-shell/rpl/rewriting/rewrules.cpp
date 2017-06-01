@@ -31,8 +31,10 @@ inline skelptr Map(skelptr s) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-rewrule::rewrule( skel_node*&& left, skel_node*&& right)
-    : left(left), right(right) {}
+rewrule::rewrule( skel_node*&& left0, skel_node*&& left1 ) :
+    left0( left0 ),
+    left1( left1 )
+{}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +43,7 @@ farmintro::farmintro() : rewrule (
 ){}
 
 skel_node* farmintro::rewrite( skel_node& tree ) {
-    return match( &tree, left.get() ) ?
+    return match( &tree, left0.get() ) ?
         Farm( POS(0) ) :
         nullptr;
 }
@@ -53,7 +55,7 @@ farmelim::farmelim() : rewrule (
 ){}
 
 skel_node* farmelim::rewrite( skel_node& tree ) {
-    return match( &tree, left.get() ) ?
+    return match( &tree, left0.get() ) ?
         POS(0) : nullptr;
 }
 
@@ -64,7 +66,7 @@ pipeintro::pipeintro() : rewrule (
 ){}
 
 skel_node* pipeintro::rewrite( skel_node& tree ) {
-    return match(&tree, left.get()) ?
+    return match(&tree, left0.get()) ?
         Pipe( POS(0) , POS(1) ) :
         nullptr;
 }
@@ -76,7 +78,7 @@ pipeelim::pipeelim() : rewrule (
 ){}
 
 skel_node* pipeelim::rewrite( skel_node& tree ) {
-    return match(&tree, left.get()) ?
+    return match(&tree, left0.get()) ?
         Comp( POS(0), POS(1) ) :
         nullptr;
 }
@@ -90,9 +92,9 @@ pipeassoc::pipeassoc() : rewrule (
 
 skel_node* pipeassoc::rewrite( skel_node& tree ) {
     skel_node* r = nullptr;
-    if ( match(&tree, left.get()) )
+    if ( match(&tree, left0.get()) )
         return Pipe(POS(0), Pipe(POS(1), POS(2)));
-    if ( match(&tree, right.get()))
+    if ( match(&tree, left1.get()))
         return Pipe(Pipe(POS(0), POS(1)), POS(2));
     return r;
 }
@@ -106,9 +108,9 @@ compassoc::compassoc() : rewrule (
 
 skel_node* compassoc::rewrite( skel_node& tree ) {
     skel_node* r = nullptr;
-    if ( match(&tree, left.get()) )
+    if ( match(&tree, left0.get()) )
         return Comp(POS(0), Comp(POS(1), POS(2)));
-    if ( match(&tree, right.get()))
+    if ( match(&tree, left1.get()))
         return Comp(Comp(POS(0), POS(1)), POS(2));
     return r;
 }
@@ -120,7 +122,7 @@ mapofcomp::mapofcomp() : rewrule (
 ){}
 
 skel_node* mapofcomp::rewrite( skel_node& tree ) {
-    return match(&tree, left.get()) ?
+    return match(&tree, left0.get()) ?
         Map(Comp(POS(0), POS(1))) :
         nullptr;
 }
@@ -132,7 +134,7 @@ compofmap::compofmap() : rewrule (
 ){}
 
 skel_node* compofmap::rewrite( skel_node& tree ) {
-    return match(&tree, left.get()) ?
+    return match(&tree, left0.get()) ?
         Comp(Map(POS(0)), Map(POS(1))) :
         nullptr;
 }
@@ -144,7 +146,7 @@ mapofpipe::mapofpipe() : rewrule (
 ){}
 
 skel_node* mapofpipe::rewrite( skel_node& tree ) {
-    return match(&tree, left.get()) ?
+    return match(&tree, left0.get()) ?
         Map(Pipe(POS(0), POS(1))) :
         nullptr;
 }
@@ -156,7 +158,7 @@ pipeofmap::pipeofmap() : rewrule (
 ){}
 
 skel_node* pipeofmap::rewrite( skel_node& tree ) {
-    return match(&tree, left.get()) ?
+    return match(&tree, left0.get()) ?
         Pipe(Map(POS(0)), Map(POS(1))) :
         nullptr;
 }

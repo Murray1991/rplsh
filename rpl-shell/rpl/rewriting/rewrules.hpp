@@ -9,12 +9,12 @@ struct rewrule;
 
 struct rewrule : public tree_matcher <skel_node, _>
 {
-    rewrule( skel_node*&& left, skel_node*&& right = nullptr );
+    rewrule( skel_node*&& left0, skel_node*&& left1 = nullptr );
     virtual skel_node* rewrite( skel_node& tree ) = 0;
 
 protected:
-    std::unique_ptr<skel_node> left;
-    std::unique_ptr<skel_node> right;
+    std::unique_ptr<skel_node> left0;
+    std::unique_ptr<skel_node> left1;
 };
 
 struct farmintro : rewrule {
