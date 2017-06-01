@@ -37,8 +37,8 @@ void interpreter::visit(assign_node& n) {
 void interpreter::visit(show_node& n) {
     try {
 
-        if ( n.id == "" && n.parameters.size() == 0) {
-            cout << utils::to_string( gdispatch[n.prop]() ) << endl;
+        if ( n.id == "" && n.parameters.size() == 1) {
+            cout << utils::to_string( gdispatch[n.parameters[0]]() ) << endl;
             return;
         }
 
@@ -94,19 +94,19 @@ void interpreter::visit(ann_node& n) {
 
 void interpreter::visit(rwr_node& n) {
     try {
-
         string id = n.id;
-        string rule = n.prop;
-        auto p = env.range(id);
-        node_set _set;
-        rewriter _rewriter;
-        _set = ( rule == "allrules" ) ?
-            _rewriter.apply_allrules( p.first, p.second, rdispatch) :
-            _rewriter.apply_rule( p.first, p.second, *rdispatch[ rule ]);
+        for (const string& rule : n.parameters ) {
+            auto p = env.range(id);
+            node_set _set;
+            rewriter _rewriter;
+            _set = ( rule == "allrules" ) ?
+                _rewriter.apply_allrules( p.first, p.second, rdispatch) :
+                _rewriter.apply_rule( p.first, p.second, *rdispatch[ rule ]);
 
-        env.clear( id );
-        for ( auto& p : _set )
-            env.add( id, p.second );
+            env.clear( id );
+            for ( auto& p : _set )
+                env.add( id, p.second );
+        }
 
     } catch (out_of_range& e) {
         err_repo.add( make_shared<error_not_exist>(n.id) );
@@ -115,14 +115,14 @@ void interpreter::visit(rwr_node& n) {
 
 void interpreter::visit(opt_node& n) {
     try {
-
-        auto p = env.range( n.id );
-        optrule& optrule = *odispatch[ n.prop ];
-        for (auto it = p.first; it != p.second; it++) {
-            auto& skptr = *it;
-            optrule( *skptr );
+        for (const string& opt : n.parameters ) {
+            auto p = env.range( n.id );
+            optrule& optrule = *odispatch[ opt ];
+            for (auto it = p.first; it != p.second; it++) {
+                auto& skptr = *it;
+                optrule( *skptr );
+            }
         }
-
     } catch (out_of_range& e) {
         err_repo.add( make_shared<error_not_exist>(n.id) );
     }

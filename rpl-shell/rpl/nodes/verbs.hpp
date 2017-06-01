@@ -26,17 +26,19 @@ struct verb_node : public rpl_node {
     void accept(visitor& v);
 protected:
     verb_node(verb& _verb, const std::string& id, const std::string& prop);
+    verb_node(verb& _verb, const std::string& id, const std::vector<std::string>& parameters);
+
 private:
     verb& _verb;
 public:
     std::string id;
     std::string prop;
+    const std::vector<std::string> parameters;
 };
 
 // Node representing the "show" verb
 struct show_node : public verb_node<show_node> {
-    show_node(const std::string& id, const int& lines, const std::string& prop, std::vector<std::string> parameters);
-    std::vector<std::string> parameters;
+    show_node(const std::string& id, const int& lines, const std::vector<std::string>& parameters);
     const int lines_to_print;
 };
 
@@ -54,12 +56,12 @@ struct ann_node : public verb_node<ann_node> {
 
 // Node representing the "rewrite" verb
 struct rwr_node : public verb_node<rwr_node> {
-    rwr_node(const std::string& id, const std::string& rule);
+    rwr_node(const std::string& id, const std::vector<std::string>& parameters);
 };
 
 // Node representing the "optimize" verb
 struct opt_node : public verb_node<opt_node> {
-    opt_node(const std::string& id, const std::string& opt);
+    opt_node(const std::string& id, const std::vector<std::string>& parameters);
 };
 
 #endif

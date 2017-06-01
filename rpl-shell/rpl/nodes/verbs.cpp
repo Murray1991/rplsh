@@ -15,7 +15,11 @@ void assign_node::accept(visitor &v) {
 
 template <typename verb>
 verb_node<verb>::verb_node( verb& _verb, const string& id, const string& prop )
-    : _verb(_verb), id(id), prop(prop) {}
+    : _verb(_verb), id(id), prop(prop), parameters({}) {}
+
+template <typename verb>
+verb_node<verb>::verb_node( verb& _verb, const string& id, const std::vector<string>& parameters )
+    : _verb(_verb), id(id), prop(""), parameters(parameters) {}
 
 template <typename verb>
 void verb_node<verb>::accept( visitor& v ) {
@@ -24,8 +28,8 @@ void verb_node<verb>::accept( visitor& v ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-show_node::show_node(const string& id, const int& lines, const string& prop, vector<string> parameters)
-    : verb_node(*this, id, prop), parameters(parameters), lines_to_print(lines) {}
+show_node::show_node(const string& id, const int& lines, const vector<string>& parameters)
+    : verb_node(*this, id, parameters), lines_to_print(lines) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -39,10 +43,10 @@ ann_node::ann_node(const string& id, const string& prop, double value)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-rwr_node::rwr_node(const string& id, const string& rule)
-    : verb_node(*this, id, rule) {}
+rwr_node::rwr_node(const string& id, const vector<string>& parameters)
+    : verb_node(*this, id, parameters) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
-opt_node::opt_node(const string& id, const string& opt)
-    : verb_node(*this, id, opt) {}
+opt_node::opt_node(const string& id, const vector<string>& parameters)
+    : verb_node(*this, id, parameters) {}

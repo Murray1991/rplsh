@@ -114,7 +114,8 @@ rpl_node* parser::show_rule(token& tok)
     if ( tok.kind == token::parameter ) {
         expect(tok, token::parameter, par);
         expect(tok, token::eol);
-        return new show_node("", 0, par, parameters);
+        parameters.push_back(par);
+        return new show_node("", 0, parameters);
     }
 
     expect(tok, token::word, id);
@@ -144,7 +145,7 @@ rpl_node* parser::show_rule(token& tok)
     }
 
     expect(tok, token::eol);
-    return new show_node(id, num, parameters[0], parameters);
+    return new show_node(id, num, parameters);
 }
 
 //  <set> ::= set <word> with <pattern> <integer>
@@ -177,28 +178,46 @@ rpl_node* parser::ann_rule(token& tok)
     return new ann_node(id, par, value);
 }
 
-// <rwr> ::= rewrite <word> with <rwr-rule>
-// <rwr-rule> ::= farmelim | farmfarmelim | farmintro | ...
+// <rwr> ::= rewrite <word> with <rwr-rule-list>...
 rpl_node* parser::rwr_rule(token& tok)
 {
     string id, par;
+    vector<string> parameters;
+
     expect(tok, token::rewrite);
     expect(tok, token::word, id);
     expect(tok, token::with);
-    expect(tok, token::word, par);                      //TODO rewrite rule token here...
-    return new rwr_node(id, par);
+    expect(tok, token::word, par);
+    while ( tok.kind == token::comma ) {
+        parameters.push_back(par);
+        expect(tok, token::comma);
+        expect(tok, token::word, par);
+    }
+    parameters.push_back(par);
+
+    expect(tok, token::eol);
+    return new rwr_node(id, parameters);
 }
 
-// <opt> ::= optimize <word> with <opt-rule>
-// <opt-rule> ::= pipeopt | farmopt | ...
+// <opt> ::= optimize <word> with <opt-rule-list>
 rpl_node* parser::opt_rule(token& tok)
 {
     string id, par;
+    vector<string> parameters;
+
     expect(tok, token::optimize);
     expect(tok, token::word, id);
     expect(tok, token::with);
-    expect(tok, token::word, par);                      //TODO opt rule token here
-    return new opt_node(id, par);
+    expect(tok, token::word, par);
+    while ( tok.kind == token::comma ) {
+        parameters.push_back(par);
+        expect(tok, token::comma);
+        expect(tok, token::word, par);
+    }
+    parameters.push_back(par);
+
+    expect(tok, token::eol);
+    return new opt_node(id, parameters);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
