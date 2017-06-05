@@ -5,6 +5,7 @@
 
 //  The base node interface of the rpl tree
 struct rpl_node {
+    virtual ~rpl_node()             = default;
     virtual void accept(visitor& v) = 0;
 };
 
