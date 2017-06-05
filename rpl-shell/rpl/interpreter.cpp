@@ -20,6 +20,7 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
     gdispatch(env),
     odispatch(env),
     vdispatch(env),
+    normform(env),
     success(true)
 {}
 
@@ -117,10 +118,17 @@ void interpreter::visit(opt_node& n) {
     try {
         for (const string& opt : n.parameters ) {
             auto p = env.range( n.id );
-            optrule& optrule = *odispatch[ opt ];
-            for (auto it = p.first; it != p.second; it++) {
-                auto& skptr = *it;
-                optrule( *skptr );
+            if (opt == "normalform") {
+                skel_node* newsk = normform( **p.first );
+                unranktorank2(*newsk, snc);
+                env.clear( n.id );
+                env.add( n.id, newsk );
+            } else {
+                optrule& optrule = *odispatch[ opt ];
+                for (auto it = p.first; it != p.second; it++) {
+                    auto& skptr = *it;
+                    optrule( *skptr );
+                }
             }
         }
     } catch (out_of_range& e) {

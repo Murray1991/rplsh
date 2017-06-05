@@ -13,6 +13,7 @@
 #include "dispatchers/rr_dispatcher.hpp"
 #include "dispatchers/eval_dispatcher.hpp"
 #include "error_report/error_report.hpp"
+#include "visitors/optimizers/normalform.hpp"
 #include "nodes/skeletons.hpp"
 #include "nodes/verbs.hpp"
 
@@ -54,6 +55,7 @@ private:
     get_dispatcher gdispatch;
     opt_dispatcher odispatch;
     eval_dispatcher vdispatch;
+    normalform normform;
     bool success;
 };
 
