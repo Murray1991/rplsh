@@ -12,13 +12,13 @@ parser::parser(lexer& scanner, error_container& err_repo)
         error::line = scanner.getline();
 }
 
-shared_ptr<rpl_node> parser::parse()
+unique_ptr<rpl_node> parser::parse()
 {
     token tok = scanner.next();
     rpl_node* tree = start_rule(tok);
     if (scanner.has_next() && err_repo.size() > 0)
         return nullptr;
-    return shared_ptr<rpl_node>(tree);
+    return unique_ptr<rpl_node>(tree);
 }
 
 //  Useful functions in parsing: check if the token tok has the expected output
