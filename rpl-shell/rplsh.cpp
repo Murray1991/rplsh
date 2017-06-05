@@ -49,7 +49,7 @@ int main(int argc, char * argv[])
         scanner_t _scanner(line, err_repo);
         parser_t _parser(_scanner, err_repo);
 
-        shared_ptr<rpl_node> t = _parser.parse();
+        unique_ptr<rpl_node> t = _parser.parse();
         if (err_repo.size() == 0)
             t->accept(_interpr);
         if (err_repo.size() > 0)
