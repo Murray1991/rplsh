@@ -25,13 +25,20 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
 {}
 
 void interpreter::visit(assign_node& n) {
-    n.rvalue->accept(*this);                // recurse for semantic check in skel tree
-    if ( success ) {
+    // recurse for semantic check in skel tree
+    id_node* idnode = dynamic_cast<id_node*>(n.rvalue);
+    n.rvalue->accept(*this);
+
+    if ( success && !idnode) {
         unranktorank2(*n.rvalue, snc);
         env.put(n.id, n.rvalue);
-    }
-    else
+    } else if ( success ) {
+        skel_node& skel = *env.get(idnode->id);
+        env.put(n.id, skel.clone());
         delete n.rvalue;
+    } else
+        delete n.rvalue;
+
 }
 
 /* dirty implementation */
