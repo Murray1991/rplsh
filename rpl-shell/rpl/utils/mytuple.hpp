@@ -6,6 +6,7 @@
 
 struct wrapper
 {
+    virtual ~wrapper()                              = default;
     virtual bool compare( const wrapper& wr ) const = 0;
     std::string tostring() const { return strrep; }
 protected:
