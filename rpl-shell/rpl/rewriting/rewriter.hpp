@@ -67,14 +67,15 @@ node_set rewriter::apply_allrules ( Iterator& begin, Iterator& end, rr_dispatche
 }
 
 skel_node* rewriter::rewrite( skel_node& n, rewrule& r ) {
-    return r.rewrite(n);
+    skel_node* newptr = r.rewrite(n);
+    return newptr == nullptr ? n.clone() : newptr;
 }
 
 node_set rewriter::fullrecrewrite( skel_node& n, rewrule& r ) {
     node_set set;
-    skel_node* rn = rewrite(n, r);
+    unique_ptr<skel_node> rn( rewrite(n, r) );
     insert_or_delete( set, n.clone() );
-    insert_or_delete( set, rewrite(n, r) );
+    insert_or_delete( set, rn->clone() );
 
     if ( n.size() == 1 )
         combine(n, fullrecrewrite(*n.get(0), r), set);
@@ -84,7 +85,6 @@ node_set rewriter::fullrecrewrite( skel_node& n, rewrule& r ) {
             combine(*rn, allpairs(fullrecrewrite(*rn->get(0),r), fullrecrewrite(*rn->get(1), r)), set);
     }
 
-    delete rn;
     return set;
 }
 
