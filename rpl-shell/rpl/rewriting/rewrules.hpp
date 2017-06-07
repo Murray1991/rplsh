@@ -67,4 +67,9 @@ struct pipeofmap : rewrule {
     skel_node* rewrite( skel_node& tree );
 };
 
+struct mapelim : rewrule {
+    mapelim();
+    skel_node* rewrite( skel_node& tree );
+};
+
 #endif

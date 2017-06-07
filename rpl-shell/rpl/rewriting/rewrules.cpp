@@ -162,3 +162,15 @@ skel_node* pipeofmap::rewrite( skel_node& tree ) {
         Pipe(Map(POS(0)), Map(POS(1))) :
         nullptr;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+mapelim::mapelim() : rewrule (
+    Map(__)
+){}
+
+skel_node* mapelim::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        POS(0) :
+        nullptr;
+}
