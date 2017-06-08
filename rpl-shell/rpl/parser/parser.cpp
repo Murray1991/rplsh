@@ -43,13 +43,13 @@ bool parser::expect(token& tok, token::type exp, string& data)
 
 bool parser::expect(token& tok, token::type exp, int& data)
 {
-    data = exp == token::integer ? stoi(tok.data) : 0;
+    data = exp == tok.kind ? stoi(tok.data) : 0;
     return expect(tok, exp);
 }
 
 bool parser::expect(token& tok, token::type exp, double& data)
 {
-    data = (exp == token::integer || exp == token::number) ? stod(tok.data) : 0;
+    data = (exp == tok.kind || exp == tok.kind) ? stod(tok.data) : 0;
     return expect(tok, exp);
 }
 
