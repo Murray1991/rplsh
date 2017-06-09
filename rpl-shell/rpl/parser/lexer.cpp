@@ -34,7 +34,7 @@ token get_token(const string& word, int wpos, error_container& err_repo)
 token lexer::next() {
     string word;
 
-    while ((pos = line.find_first_of(" ,()=-+", prev)) != string::npos ) {
+    while ((pos = line.find_first_of(" ,()[]=-+", prev)) != string::npos ) {
         word = line.substr(prev, pos - prev + (pos == prev)*1 );
         int wpos = prev; prev = pos + (pos == prev)*1;
         if (!word.empty() && !isspace(word[0]))
