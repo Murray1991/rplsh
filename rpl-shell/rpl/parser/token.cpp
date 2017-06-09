@@ -14,6 +14,8 @@ map<string, token::type> token::st_map =
    /* symbols */
    {"(",        token::open},
    {")",        token::close},
+   {"[",        token::open_square},
+   {"]",        token::close_square},
    {",",        token::comma},
    {"=",        token::equals},
    {"+",        token::plus },

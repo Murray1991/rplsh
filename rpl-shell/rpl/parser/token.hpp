@@ -15,6 +15,8 @@ struct token
     {
         open = 1,
         close,
+        open_square,
+        close_square,
         comma,
         equals,
         show,
