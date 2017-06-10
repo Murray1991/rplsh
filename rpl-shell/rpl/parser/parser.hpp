@@ -43,7 +43,7 @@ private:
     skel_node* reduce_rule(token& tok);
 
     bool expect(token& tok, token::type exp);
-    bool expect(token& tok, token::type exp, std::pair<std::string, std::size_t>& el);
+    bool expect(token& tok, token::type exp, std::pair<std::string, int>& el);
     bool expect(token& tok, token::type exp, std::string& data);
     bool expect(token& tok, token::type exp, int& data);
     bool expect(token& tok, token::type exp, double& data);

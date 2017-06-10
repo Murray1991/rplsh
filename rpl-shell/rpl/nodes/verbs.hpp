@@ -27,13 +27,13 @@ struct verb_node : public rpl_node {
 protected:
     verb_node(verb& _verb, const std::string& id, const std::string& prop);
     verb_node(verb& _verb, const std::string& id, const std::vector<std::string>& parameters);
-    verb_node(verb& _verb, const std::pair<std::string, std::size_t>& id, const std::string& prop);
-    verb_node(verb& _verb, const std::pair<std::string, std::size_t>& id, const std::vector<std::string>& parameters);
+    verb_node(verb& _verb, const std::pair<std::string,int>& id, const std::string& prop);
+    verb_node(verb& _verb, const std::pair<std::string,int>& id, const std::vector<std::string>& parameters);
 private:
     verb& _verb;
 public:
     std::string id;
-    std::size_t index;
+    int index;
     std::string prop;
     const std::vector<std::string> parameters;
 };
@@ -41,7 +41,7 @@ public:
 // Node representing the "show" verb
 struct show_node : public verb_node<show_node> {
     show_node(const std::string& id, const int& lines, const std::vector<std::string>& parameters);
-    show_node(const std::pair<std::string, std::size_t>& id, const int& lines, const std::vector<std::string>& parameters);
+    show_node(const std::pair<std::string,int>& id, const int& lines, const std::vector<std::string>& parameters);
     const int lines_to_print;
 };
 
@@ -54,20 +54,20 @@ struct set_node : public verb_node<set_node> {
 // Node representing the "annotate" verb
 struct ann_node : public verb_node<ann_node> {
     ann_node(const std::string& id, const std::string& prop, double value);
-    ann_node(const std::pair<std::string,std::size_t>& id, const std::string& prop, double value);
+    ann_node(const std::pair<std::string,int>& id, const std::string& prop, double value);
     double value;
 };
 
 // Node representing the "rewrite" verb
 struct rwr_node : public verb_node<rwr_node> {
     rwr_node(const std::string& id, const std::vector<std::string>& parameters);
-    rwr_node(const std::pair<std::string,std::size_t>& id, const std::vector<std::string>& parameters);
+    rwr_node(const std::pair<std::string,int>& id, const std::vector<std::string>& parameters);
 };
 
 // Node representing the "optimize" verb
 struct opt_node : public verb_node<opt_node> {
     opt_node(const std::string& id, const std::vector<std::string>& parameters);
-    opt_node(const std::pair<std::string,std::size_t>& id, const std::vector<std::string>& parameters);
+    opt_node(const std::pair<std::string,int>& id, const std::vector<std::string>& parameters);
 };
 
 #endif

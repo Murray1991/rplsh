@@ -41,9 +41,9 @@ bool parser::expect(token& tok, token::type exp, string& data)
     return expect(tok, exp);
 }
 
-bool parser::expect(token& tok, token::type exp, pair<string, size_t>& el) {
+bool parser::expect(token& tok, token::type exp, pair<string, int>& el) {
     string w = "";
-    int s = 0;
+    int s = -1;
 
     bool rtv = expect(tok, exp, w);
     if ( rtv && tok.kind == token::open_square ) {
@@ -123,7 +123,7 @@ rpl_node* parser::show_rule(token& tok)
 {
     int num = numeric_limits<int>::max();
     string par = "show_default";
-    pair<string,size_t> ident;
+    pair<string,int> ident;
     vector<string> parameters;
 
     expect(tok, token::show);
@@ -184,7 +184,7 @@ rpl_node* parser::set_rule(token& tok)
 rpl_node* parser::ann_rule(token& tok)
 {
     string par; double value;
-    pair<string,size_t> id;
+    pair<string,int> id;
     expect(tok, token::annotate);
     expect(tok, token::word, id);
     expect(tok, token::with);
@@ -200,7 +200,7 @@ rpl_node* parser::ann_rule(token& tok)
 rpl_node* parser::rwr_rule(token& tok)
 {
     string par;
-    pair<string,size_t> id;
+    pair<string,int> id;
     vector<string> parameters;
 
     expect(tok, token::rewrite);
@@ -222,7 +222,7 @@ rpl_node* parser::rwr_rule(token& tok)
 rpl_node* parser::opt_rule(token& tok)
 {
     string par;
-    pair<string,size_t> id;
+    pair<string,int> id;
     vector<string> parameters;
 
     expect(tok, token::optimize);
