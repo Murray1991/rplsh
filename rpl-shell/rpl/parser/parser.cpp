@@ -364,7 +364,8 @@ skel_node* parser::reduce_rule(token& tok)
 //  Identifier parse rule, it just eat the id token
 skel_node* parser::id_rule(token& tok)
 {
-    string word = tok.data;
-    expect(tok, token::word);
-    return new id_node(word);
+    pair<string, int> id;
+    expect(tok, token::word, id);
+    id.second = id.second < 0 ? 0 : id.second;
+    return new id_node(id.first, id.second);
 }
