@@ -157,6 +157,15 @@ void interpreter::visit(opt_node& n) {
     }
 }
 
+void interpreter::visit(history_node& n) {
+    if (n.id == "")
+        phistory.print();
+    else {
+        history h(n.id, phistory);
+        h.print(true);
+    }
+}
+
 void interpreter::visit(seq_node& n) {
     if (n.get(0) != nullptr)
         n.get(0)->accept(*this);
@@ -190,4 +199,8 @@ void interpreter::visit(id_node& n) {
         success  = false;
         err_repo.add( make_shared<error_not_exist>(n.id) );
     }
+}
+
+history& interpreter::get_history() {
+    return phistory;
 }

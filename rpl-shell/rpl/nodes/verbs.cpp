@@ -70,3 +70,8 @@ opt_node::opt_node(const string& id, const vector<string>& parameters)
 
 opt_node::opt_node(const pair<string,int>& id, const vector<string>& parameters)
     : verb_node(*this, id, parameters) {}
+
+///////////////////////////////////////////////////////////////////////////////
+
+history_node::history_node(const string& id)
+    : verb_node(*this, id, id) {}

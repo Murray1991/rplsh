@@ -16,6 +16,7 @@
 #include "visitors/optimizers/normalform.hpp"
 #include "nodes/skeletons.hpp"
 #include "nodes/verbs.hpp"
+#include "history.hpp"
 
 #include <exception>
 #include <iostream>
@@ -38,6 +39,7 @@ struct interpreter : public visitor
     void visit(ann_node& n);
     void visit(rwr_node& n);
     void visit(opt_node& n);
+    void visit(history_node& n);
     void visit(seq_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
@@ -45,6 +47,7 @@ struct interpreter : public visitor
     void visit(map_node& n);
     void visit(reduce_node& n);
     void visit(id_node& n);
+    history& get_history();
 
 private:
     rpl_environment& env;
@@ -56,6 +59,7 @@ private:
     opt_dispatcher odispatch;
     eval_dispatcher vdispatch;
     normalform normform;
+    history phistory;
     bool success;
 };
 

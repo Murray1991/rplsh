@@ -34,8 +34,10 @@ bool is_quit_input(string& line) {
 
 int main(int argc, char * argv[])
 {
-    string line;              // input line
-    rpl_environment env;      // environment: <name, skel_tree> bindings
+    string line;                                // input line
+    rpl_environment env;                        // environment: <name, skel_tree> bindings
+    error_container err_repo;                   // filled with errors
+    interpr_t _interpr( env, err_repo );        // interpreter
 
     while ( print_rpl() && getline(cin, line) )
     {
@@ -44,16 +46,18 @@ int main(int argc, char * argv[])
         if (is_quit_input(line))
             break;
 
-        error_container err_repo;                   // filled with errors
-        interpr_t _interpr(env, err_repo);
+        err_repo.reset();
         scanner_t _scanner(line, err_repo);
         parser_t _parser(_scanner, err_repo);
 
         unique_ptr<rpl_node> t = _parser.parse();
         if (err_repo.size() == 0)
             t->accept(_interpr);
+        if (err_repo.size() == 0)
+            _interpr.get_history().add(line);
         if (err_repo.size() > 0)
             cout << err_repo.get(0);
+
     }
 
     return 0;

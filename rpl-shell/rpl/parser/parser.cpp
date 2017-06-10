@@ -95,6 +95,8 @@ rpl_node* parser::start_rule(token& tok)
             return rwr_rule(tok);
         case token::optimize:
             return opt_rule(tok);
+        case token::history:
+            return history_rule(tok);
         default:
             err_repo.add( make_shared<error_unexp>(tok.data, tok.pos) );
             return nullptr;
@@ -238,6 +240,16 @@ rpl_node* parser::opt_rule(token& tok)
 
     expect(tok, token::eol);
     return new opt_node(id, parameters);
+}
+
+rpl_node* parser::history_rule(token& tok)
+{
+    pair<string,int> id;
+    expect(tok, token::history);
+    if (tok.kind == token::word)
+        expect(tok, token::word, id);
+    expect(tok, token::eol);
+    return new history_node(id.first);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

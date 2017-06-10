@@ -12,7 +12,7 @@ add_subdirectory (environment)
 add_subdirectory (error_report)
 
 # Add source file
-add_library(rpl interpreter.cpp)
+add_library(rpl interpreter.cpp history.cpp)
 
 # Target link libraries
 target_link_libraries(rpl parser visitors rewriting)

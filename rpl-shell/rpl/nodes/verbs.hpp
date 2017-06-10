@@ -70,4 +70,9 @@ struct opt_node : public verb_node<opt_node> {
     opt_node(const std::pair<std::string,int>& id, const std::vector<std::string>& parameters);
 };
 
+// Node representing the "history" verb
+struct history_node : public verb_node<history_node> {
+    history_node(const std::string& id);
+};
+
 #endif

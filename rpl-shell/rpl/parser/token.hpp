@@ -24,6 +24,7 @@ struct token
         annotate,
         rewrite,
         optimize,
+        history,
         seq,
         comp,
         pipe,

@@ -18,6 +18,7 @@ struct set_node;
 struct ann_node;
 struct rwr_node;
 struct opt_node;
+struct history_node;
 struct seq_node;
 struct comp_node;
 struct pipe_node;
