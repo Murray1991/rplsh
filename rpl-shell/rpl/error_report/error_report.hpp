@@ -45,7 +45,8 @@ struct error_not_exist : public error
 struct error_container
 {
     void add(shared_ptr<error> err);
-    error& get(int pos);
+    error& get(int pos) const;
+    void reset();
     int size();
 private:
     std::vector<std::shared_ptr<error>> errors;

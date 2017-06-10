@@ -79,12 +79,16 @@ void error_illegal::print(ostream& os) const {
 //  Implementation of the class error_container
 //
 ///////////////////////////////////////////////////////////////////////////////
-error& error_container::get(int pos) {
+error& error_container::get(int pos) const {
     return *errors[pos];
 }
 
 void error_container::add(shared_ptr<error> err) {
     errors.push_back(move(err));
+}
+
+void error_container::reset() {
+    errors.clear();
 }
 
 int error_container::size() {
