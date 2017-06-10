@@ -41,6 +41,22 @@ bool parser::expect(token& tok, token::type exp, string& data)
     return expect(tok, exp);
 }
 
+bool parser::expect(token& tok, token::type exp, pair<string, size_t>& el) {
+    string w = "";
+    int s = 0;
+
+    bool rtv = expect(tok, exp, w);
+    if ( rtv && tok.kind == token::open_square ) {
+        rtv = rtv && expect(tok, token::open_square);
+        rtv = rtv && expect(tok, token::integer, s);
+        rtv = rtv && expect(tok, token::close_square);
+    }
+
+    el.first = w;
+    el.second = s;
+    return rtv;
+}
+
 bool parser::expect(token& tok, token::type exp, int& data)
 {
     data = exp == tok.kind ? stoi(tok.data) : 0;
@@ -85,7 +101,6 @@ rpl_node* parser::start_rule(token& tok)
     }
 }
 
-//  <assign> ::= <word> = <pattexp>
 //  TODO add possibility to put rewriting/opt rules as functions in the right part
 rpl_node* parser::assign_rule(token& tok)
 {
@@ -106,11 +121,13 @@ rpl_node* parser::assign_rule(token& tok)
 //  <parameter> ::= servicetime | latency | ...
 rpl_node* parser::show_rule(token& tok)
 {
-    string id, par = "show_default";
-    vector<string> parameters;
     int num = numeric_limits<int>::max();
+    string par = "show_default";
+    pair<string,size_t> ident;
+    vector<string> parameters;
 
     expect(tok, token::show);
+
     if ( tok.kind == token::parameter ) {
         expect(tok, token::parameter, par);
         expect(tok, token::eol);
@@ -118,7 +135,7 @@ rpl_node* parser::show_rule(token& tok)
         return new show_node("", 0, parameters);
     }
 
-    expect(tok, token::word, id);
+    expect(tok, token::word, ident);
     if (tok.kind == token::by) {
         expect(tok, token::by);
         expect(tok, token::parameter, par);
@@ -145,7 +162,7 @@ rpl_node* parser::show_rule(token& tok)
     }
 
     expect(tok, token::eol);
-    return new show_node(id, num, parameters);
+    return new show_node(ident, num, parameters);
 }
 
 //  <set> ::= set <word> with <pattern> <integer>
@@ -166,7 +183,8 @@ rpl_node* parser::set_rule(token& tok)
 //  <ann> ::= set <word> with <parameter> <value>
 rpl_node* parser::ann_rule(token& tok)
 {
-    string id, par; double value;
+    string par; double value;
+    pair<string,size_t> id;
     expect(tok, token::annotate);
     expect(tok, token::word, id);
     expect(tok, token::with);
@@ -181,7 +199,8 @@ rpl_node* parser::ann_rule(token& tok)
 // <rwr> ::= rewrite <word> with <rwr-rule-list>...
 rpl_node* parser::rwr_rule(token& tok)
 {
-    string id, par;
+    string par;
+    pair<string,size_t> id;
     vector<string> parameters;
 
     expect(tok, token::rewrite);
@@ -202,7 +221,8 @@ rpl_node* parser::rwr_rule(token& tok)
 // <opt> ::= optimize <word> with <opt-rule-list>
 rpl_node* parser::opt_rule(token& tok)
 {
-    string id, par;
+    string par;
+    pair<string,size_t> id;
     vector<string> parameters;
 
     expect(tok, token::optimize);
