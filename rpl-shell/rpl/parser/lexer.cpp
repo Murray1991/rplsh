@@ -17,13 +17,13 @@ token get_token(const string& word, int wpos, error_container& err_repo)
 {
     token::type kind = token::st_map[word];
 
-    if (kind > 0)                                                   // keyword
+    if (kind > 0)                                                         // keyword
         return token(kind, word, wpos);
-    else if (regex_match(word, regex("[a-zA-z][a-zA-Z_0-9]*")))     // word
+    else if (regex_match(word, regex("[a-zA-z][a-zA-Z_0-9]*")))           // word
         return token(token::word, word, wpos);
-    else if (regex_match(word, regex("[1-9][0-9]*[.][0-9]*")))      // number
+    else if (regex_match(word, regex("([0]|[1-9][0-9]*)[.][0-9]*")))      // number
         return token(token::number, word, wpos);
-    else if (regex_match(word, regex("[1-9][0-9]*")))               // integer
+    else if (regex_match(word, regex("([0]|[1-9][0-9]*)")))               // integer
         return token(token::integer, word, wpos);
 
     // nothing found
