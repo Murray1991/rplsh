@@ -16,6 +16,9 @@ struct skel_node : public rvalue_node {
     virtual bool operator==( const skel_node& rhs ) = 0;
     virtual bool operator!=( const skel_node& rhs ) = 0;
 
+    /* common annotations */
+    double inputsize;
+
     /* iterable interface */
     skel_node* get( std::size_t idx ) const;
     skel_node* pop();
@@ -80,9 +83,10 @@ struct map_node : public concrete_skel_node<map_node> {
 
 struct reduce_node : public concrete_skel_node<reduce_node> {
     reduce_node( std::initializer_list<skel_node*> init );
-    reduce_node( skel_node* pattexp );
+    reduce_node( skel_node* pattexp, int pardegree = 1 );
     reduce_node( const reduce_node& other );
     skel_node* clone();
+    int pardegree;
 };
 
 struct id_node : public concrete_skel_node<id_node> {

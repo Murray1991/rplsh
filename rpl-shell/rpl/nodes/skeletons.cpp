@@ -158,8 +158,8 @@ skel_node * map_node::clone() {
 reduce_node::reduce_node(initializer_list<skel_node*> init)
     : concrete_skel_node( *this, init ) {}
 
-reduce_node::reduce_node( skel_node* pattexp )
-        : concrete_skel_node( *this ) {
+reduce_node::reduce_node( skel_node* pattexp, int pardegree )
+        : concrete_skel_node( *this ), pardegree(pardegree) {
     add(pattexp);
 }
 
