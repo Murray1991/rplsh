@@ -1,5 +1,6 @@
-#include "nodes/skeletons.hpp"
 #include "evaluators.hpp"
+#include "nodes/skeletons.hpp"
+#include "visitors/visitors.hpp"
 #include <iostream>
 #include <functional>
 #include <algorithm>
@@ -31,7 +32,7 @@ servicetime::servicetime(rpl_environment& env) :
 {}
 
 void servicetime::visit(seq_node& n) {
-    res = n.servicetime;
+    res = n.servicetime*n.inputsize;
 }
 
 void servicetime::visit(comp_node& n) {
@@ -47,17 +48,20 @@ void servicetime::visit(farm_node& n) {
 }
 
 void servicetime::visit(map_node& n) {
-    res = (*this)(*n.get(0)) / n.pardegree;
+    res = (*this)(*n.get(0));
 }
 
-// TODO WRONG -> for reduce is important the dim of input
+// approximately is something like that
 void servicetime::visit(reduce_node& n) {
-    res = log2( (*this)(*n.get(0)) );
+    res = (*this)(*n.get(0));
+    res += log2( res/n.inputsize );
 }
 
 void servicetime::visit(id_node& n) {
     try {
         auto ptr = env.get(n.id);
+        assign_resources assignres;
+        assignres(*ptr, n.inputsize);
         res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
@@ -82,7 +86,7 @@ latencytime::latencytime(rpl_environment& env) :
 
 
 void latencytime::visit(seq_node& n) {
-    res = n.servicetime;
+    res = n.servicetime*n.inputsize;
 }
 
 void latencytime::visit(comp_node& n) {
@@ -98,17 +102,20 @@ void latencytime::visit(farm_node& n) {
 }
 
 void latencytime::visit(map_node& n) {
-    res = (*this)( *n.get(0) ) / n.pardegree;
+    res = (*this)( *n.get(0) );
 }
 
-// TODO WRONG -> for reduce is important the dim of input
+// approximately something like that
 void latencytime::visit(reduce_node& n) {
-    res = log2( (*this)( *n.get(0) ) );
+    res = (*this)(*n.get(0));
+    res += log2( res/n.inputsize );
 }
 
 void latencytime::visit(id_node& n) {
     try {
         auto ptr = env.get(n.id);
+        assign_resources assignres;
+        assignres(*ptr, n.inputsize);
         res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
@@ -152,11 +159,11 @@ void completiontime::visit( pipe_node& n ) {
 }
 
 void completiontime::visit( farm_node& n ) {
-    res = env.get_dim() / n.pardegree * lat(n);
+    res = env.get_dim() * ts(n) / n.pardegree + lat(n);
 }
 
 void completiontime::visit( map_node& n ) {
-    res = env.get_dim() / n.pardegree * ts(n);
+    res = env.get_dim()*lat(n);
 }
 
 void completiontime::visit( reduce_node& n ) {
@@ -166,6 +173,8 @@ void completiontime::visit( reduce_node& n ) {
 void completiontime::visit( id_node& n ) {
     try {
         auto ptr = env.get(n.id);
+        assign_resources assignres;
+        assignres(*ptr, n.inputsize);
         res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
@@ -211,7 +220,7 @@ void pardegree::visit( map_node& n ) {
 // TODO also reduce should be have a configurable
 // parallelism degree like farm and map!!
 void pardegree::visit( reduce_node& n ) {
-    res = 1;
+    res = n.pardegree * (*this)(*n.get(0));
 }
 
 void pardegree::visit( id_node& n ) {
@@ -259,10 +268,8 @@ void resources::visit( map_node& n ) {
     res = n.pardegree * (*this)(*n.get(0)) + 2;  //scatter + gather
 }
 
-// TODO also reduce should be have a configurable
-// parallelism degree like farm and map!!
 void resources::visit( reduce_node& n ) {
-    res = 1;
+    res = n.pardegree * (*this)(*n.get(0));
 }
 
 void resources::visit( id_node& n ) {
