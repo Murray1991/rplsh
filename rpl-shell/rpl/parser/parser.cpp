@@ -268,11 +268,11 @@ skel_node* parser::pattexp_rule(token& tok)
         case token::pipe:
             return comp_pipe_rule(tok);
         case token::farm:
-            return farm_map_rule(tok);
+            return farm_map_reduce_rule(tok);
         case token::map:
-            return farm_map_rule(tok);
+            return farm_map_reduce_rule(tok);
         case token::reduce:
-            return reduce_rule(tok);
+            return farm_map_reduce_rule(tok);
         case token::word:
             return id_rule(tok);
         default:
@@ -339,14 +339,17 @@ skel_node* parser::comp_pipe_rule(token& tok)
     return comp_pipe;
 }
 
-//  <farm_map> ::= ('farm' | 'map') '(' <pattexp> [',' <integer>] ')'
-skel_node* parser::farm_map_rule(token& tok)
+//  <farm_map_reduce> ::= ('farm' | 'map' | 'reduce') '(' <pattexp> [',' <integer>] ')'
+skel_node* parser::farm_map_reduce_rule(token& tok)
 {
     skel_node* pattexp;
     token::type kind = tok.kind;
     int nw           = 1;                   // default number of workers
 
-    expect(tok, token::farm, token::map);
+    if (tok.kind == token::reduce)
+        expect(tok, token::reduce);
+    else
+        expect(tok, token::farm, token::map);
     expect(tok, token::open);
     pattexp = pattexp_rule(tok);
     if (tok.kind == token::comma) {
@@ -357,20 +360,9 @@ skel_node* parser::farm_map_rule(token& tok)
 
     if (kind == token::farm)
         return new farm_node(pattexp, nw);
+    if (kind == token::reduce)
+        return new reduce_node(pattexp, nw);
     return new map_node(pattexp, nw);
-}
-
-//  <comp> ::= token::open <pattexp> token::close
-//
-///////////////////////////////////////////////////////////////////////////////
-skel_node* parser::reduce_rule(token& tok)
-{
-    skel_node* pattexp;
-    expect(tok, token::reduce);
-    expect(tok, token::open);
-    pattexp = pattexp_rule(tok);
-    expect(tok, token::close);
-    return new reduce_node(pattexp);
 }
 
 //  Identifier parse rule, it just eat the id token

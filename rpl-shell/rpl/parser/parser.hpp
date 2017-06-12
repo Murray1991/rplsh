@@ -40,8 +40,7 @@ private:
     skel_node* id_rule(token& tok);
     skel_node* seq_rule(token& tok);
     skel_node* comp_pipe_rule(token& tok);
-    skel_node* farm_map_rule(token& tok);
-    skel_node* reduce_rule(token& tok);
+    skel_node* farm_map_reduce_rule(token& tok);
 
     bool expect(token& tok, token::type exp);
     bool expect(token& tok, token::type exp, std::pair<std::string, int>& el);
