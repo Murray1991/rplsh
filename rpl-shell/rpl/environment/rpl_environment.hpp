@@ -27,9 +27,13 @@ struct rpl_environment : public environment<std::string, skel_node>
     double get_scatter_time();
     double get_gather_time();
 
-    /* setters and getters for stream input size */
+    /* setters and getters for stream input dimension */
     void set_dim( std::size_t dim );
     std::size_t get_dim();
+
+    /* setters and getters for item input size */
+    void set_inputsize( std::size_t inputsize );
+    std::size_t get_inputsize();
 
     /* setters and getters for resources */
     void set_res( std::size_t res );

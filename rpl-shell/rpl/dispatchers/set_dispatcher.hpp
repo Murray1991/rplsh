@@ -15,6 +15,7 @@ struct set_dispatcher : public dispatcher<std::string, std::function<void (doubl
         add(par::gather_time,    [&]( double value ) { env.set_gather_time(value); });
         add(par::resources,      [&]( double value ) { env.set_res(value); });
         add(par::dimension,      [&]( double value ) { env.set_dim(value); });
+        add(par::inputsize,      [&]( double value ) { env.set_inputsize(value); });
         //add(par::arch,           [&]( double value ) { env.set_emitter_time(value); });
     }
 };

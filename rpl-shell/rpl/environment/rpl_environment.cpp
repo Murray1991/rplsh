@@ -8,6 +8,7 @@ rpl_environment::rpl_environment() {
     set_scatter_time(1);
     set_gather_time(1);
     set_dim(1);
+    set_inputsize(1);
     set_res(16);
 }
 
@@ -49,6 +50,14 @@ void rpl_environment::set_dim(size_t dim) {
 
 size_t rpl_environment::get_dim() {
     return (size_t) sd_map["dim"];
+}
+
+void rpl_environment::set_inputsize(size_t inputsize) {
+    sd_map["inputsize"] = inputsize;
+}
+
+size_t rpl_environment::get_inputsize() {
+    return (size_t) sd_map["inputsize"];
 }
 
 void rpl_environment::set_res(size_t res) {

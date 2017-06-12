@@ -60,6 +60,7 @@ map<string, token::type> token::st_map =
    {par::scatter_time,  token::parameter},
    {par::gather_time,   token::parameter},
    {par::dimension,     token::parameter},
+   {par::inputsize,     token::parameter},
    {par::arch,          token::parameter},
 };
 

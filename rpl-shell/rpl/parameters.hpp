@@ -44,6 +44,7 @@ namespace par
     const std::string scatter_time   = "scatter_time";
     const std::string gather_time    = "gather_time";
     const std::string dimension      = "dimension";
+    const std::string inputsize      = "inputsize";
     const std::string arch           = "arch";
 
     /* other std::string constants */

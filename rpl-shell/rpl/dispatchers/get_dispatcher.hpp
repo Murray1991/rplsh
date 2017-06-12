@@ -15,6 +15,7 @@ struct get_dispatcher : public dispatcher<std::string, std::function<double (voi
         add(par::gather_time,    [&]() { return env.get_gather_time(); });
         add(par::resources,      [&]() { return env.get_res(); });
         add(par::dimension,      [&]() { return env.get_dim(); });
+        add(par::inputsize,      [&]() { return env.get_inputsize(); });
     }
 };
 
