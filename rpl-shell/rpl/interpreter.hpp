@@ -14,6 +14,7 @@
 #include "dispatchers/eval_dispatcher.hpp"
 #include "error_report/error_report.hpp"
 #include "visitors/optimizers/normalform.hpp"
+#include "visitors/visitors.hpp"
 #include "nodes/skeletons.hpp"
 #include "nodes/verbs.hpp"
 #include "history.hpp"
@@ -58,6 +59,7 @@ private:
     get_dispatcher gdispatch;
     opt_dispatcher odispatch;
     eval_dispatcher vdispatch;
+    assign_resources assignres;
     normalform normform;
     history phistory;
     bool success;

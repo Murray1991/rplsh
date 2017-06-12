@@ -209,3 +209,38 @@ bool reduce_resources::operator()(skel_node& n) {
     n.accept(*this);
     return res;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+void assign_resources::visit( seq_node& n ) {
+}
+
+void assign_resources::visit( comp_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        (*this)(*n.get(i), n.inputsize);
+}
+
+void assign_resources::visit( pipe_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        (*this)(*n.get(i), n.inputsize);
+}
+
+void assign_resources::visit( farm_node& n ) {
+    (*this)(*n.get(0), n.inputsize);
+}
+
+void assign_resources::visit( map_node& n ) {
+    (*this)(*n.get(0), n.inputsize/n.pardegree);
+}
+
+void assign_resources::visit( reduce_node& n ) {
+    (*this)(*n.get(0), n.inputsize/n.pardegree);
+}
+
+void assign_resources::visit( id_node& n ) {
+}
+
+void assign_resources::operator()(skel_node& n, double inputsize) {
+    n.inputsize = inputsize;
+    n.accept(*this);
+}

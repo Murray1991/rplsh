@@ -61,6 +61,7 @@ void interpreter::visit(show_node& n) {
             tuples.push_back(mytuple());
             auto& last  = tuples.back();
             auto& skptr = *it;
+            assignres(*skptr, env.get_inputsize());
 
             for (const string& par : n.parameters)
                 if ( par != "show_default" ) {
@@ -148,6 +149,7 @@ void interpreter::visit(opt_node& n) {
                 optrule& optrule = *odispatch[ opt ];
                 for (auto it = begin; it != end; it++) {
                     auto& skptr = *it;
+                    assignres( *skptr, env.get_inputsize() );
                     optrule( *skptr );
                 }
             }
