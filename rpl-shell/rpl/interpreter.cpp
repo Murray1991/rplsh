@@ -102,7 +102,8 @@ void interpreter::visit(set_node& n) {
 }
 
 void interpreter::visit(ann_node& n) {
-    skel_node& sk = *env.get(n.id, n.index);
+    std::size_t i = n.index < 0 ? 0 : n.index;
+    skel_node& sk = *env.get(n.id, i);
     bool response = (*adispatch[ n.prop ])( sk, n.value );
     cout << "response: " << (response? "annotated!" : "not annotated!") << endl;
 }
