@@ -33,6 +33,8 @@ struct token
         reduce,
         integer,
         number,
+        bool_true,
+        bool_false,
         word,
         with,
         by,

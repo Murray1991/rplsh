@@ -20,6 +20,8 @@ map<string, token::type> token::st_map =
    {"=",        token::equals},
    {"+",        token::plus },
    {"-",        token::minus },
+   {"true",     token::bool_true },
+   {"false",    token::bool_false },
 
    /* verb's keywords */
    {"with",     token::with},
