@@ -285,31 +285,32 @@ skel_node* parser::pattexp_rule(token& tok)
 //  TODO maybe also <word> should be optional -> possibility to do "a = seq()"
 skel_node* parser::seq_rule(token& tok)
 {
-    skel_node* pattexp;
-    double ts = -1;
+    bool bool_value = false;
+    double ts = 1;
+
     expect(tok, token::seq);
     expect(tok, token::open);
-    // cases without pattern expressions
+
+    // case without pattern expressions: seq()
     if ( tok.kind == token::close ) {                                   //e.g seq()
         expect(tok, token::close);
         return new seq_node(ts);
     }
-    if (tok.kind == token::integer || tok.kind == token::number) {      //e.g seq(5)
+
+    // case with number: seq(19 [, bool])
+    if ( tok.kind == token::integer || tok.kind == token::number ) {
         ts = stod(tok.data);
         expect(tok, token::integer, token::number);
-        expect(tok, token::close);
-        return new seq_node(ts);
     }
-    // cases with pattern expressions
-    pattexp = pattexp_rule(tok);
-    if ( tok.kind == token::comma ) {
-        expect(tok, token::comma);                      //success for sure
-        if ( tok.kind == token::integer || tok.kind == token::number)
-            ts = stod(tok.data);
-        expect(tok, token::integer, token::number);
+
+    if (tok.kind == token::comma) {
+        expect(tok, token::comma);
+        bool_value = tok.kind == token::bool_true;
+        expect(tok, token::bool_true, token::bool_false);
     }
+
     expect(tok, token::close);
-    return new seq_node(pattexp, ts);
+    return new seq_node(ts, bool_value);
 }
 
 

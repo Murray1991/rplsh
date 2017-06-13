@@ -80,16 +80,17 @@ concrete_skel_node<skeleton>::concrete_skel_node( skeleton& sk, initializer_list
 
 ///////////////////////////////////////////////////////////////////////////////
 
-seq_node::seq_node ( double servicetime )
-    : concrete_skel_node( *this ), servicetime(servicetime) {}
+seq_node::seq_node( double servicetime, bool datap_flag ) :
+    concrete_skel_node( *this ),
+    servicetime(servicetime),
+    datap_flag(datap_flag)
+{}
 
-seq_node::seq_node( skel_node* pattexp, double servicetime )
-    : concrete_skel_node( *this ), servicetime(servicetime) {
-        add(pattexp);
-}
-
-seq_node::seq_node( const seq_node& other )
-    : concrete_skel_node( *this, other ), servicetime(other.servicetime) {}
+seq_node::seq_node( const seq_node& other ) :
+    concrete_skel_node( *this, other ),
+    servicetime(other.servicetime),
+    datap_flag(other.datap_flag)
+{}
 
 skel_node* seq_node::clone() {
     return new seq_node(*this);

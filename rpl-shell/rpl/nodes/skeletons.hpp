@@ -45,11 +45,11 @@ private:
 };
 
 struct seq_node : public concrete_skel_node<seq_node> {
-    seq_node( double servicetime );
-    seq_node( skel_node* pattexp, double servicetime = 1.0 );   //TODO check this...
+    seq_node( double servicetime, bool datap_flag = false);
     seq_node( const seq_node& other );
     skel_node* clone();
     double servicetime;
+    bool datap_flag;
 };
 
 //TODO templated constructor taking iterators begin end?
