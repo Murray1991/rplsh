@@ -32,7 +32,10 @@ servicetime::servicetime(rpl_environment& env) :
 {}
 
 void servicetime::visit(seq_node& n) {
-    res = n.servicetime*n.inputsize;
+    if (n.datap_flag)
+        res = n.servicetime * n.inputsize;
+    else
+        res = n.servicetime;
 }
 
 void servicetime::visit(comp_node& n) {
@@ -86,7 +89,10 @@ latencytime::latencytime(rpl_environment& env) :
 
 
 void latencytime::visit(seq_node& n) {
-    res = n.servicetime*n.inputsize;
+    if (n.datap_flag)
+        res = n.servicetime * n.inputsize;
+    else
+        res = n.servicetime;
 }
 
 void latencytime::visit(comp_node& n) {
@@ -98,11 +104,11 @@ void latencytime::visit(pipe_node& n) {
 }
 
 void latencytime::visit(farm_node& n) {
-    res = (*this)( *n.get(0) );
+    res = env.get_emitter_time() + (*this)( *n.get(0) ) + env.get_collector_time();
 }
 
 void latencytime::visit(map_node& n) {
-    res = (*this)( *n.get(0) );
+    res = env.get_scatter_time() + (*this)( *n.get(0) ) + env.get_gather_time();
 }
 
 // approximately something like that
@@ -146,7 +152,10 @@ completiontime::completiontime( rpl_environment& env ) :
 {}
 
 void completiontime::visit( seq_node& n ) {
-    res = n.servicetime;
+    if (n.datap_flag)
+        res = n.servicetime * n.inputsize;
+    else
+        res = n.servicetime;
 }
 
 void completiontime::visit( comp_node& n ) {
@@ -159,7 +168,7 @@ void completiontime::visit( pipe_node& n ) {
 }
 
 void completiontime::visit( farm_node& n ) {
-    res = env.get_dim() * ts(n) / n.pardegree + lat(n);
+    res = (env.get_dim()-1) * ts(*n.get(0)) / n.pardegree + lat(n);
 }
 
 void completiontime::visit( map_node& n ) {
