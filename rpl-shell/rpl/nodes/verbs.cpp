@@ -75,3 +75,8 @@ opt_node::opt_node(const pair<string,int>& id, const vector<string>& parameters)
 
 history_node::history_node(const string& id)
     : verb_node(*this, id, id) {}
+
+///////////////////////////////////////////////////////////////////////////////
+
+import_node::import_node(const string& id)
+    : verb_node(*this, id, id) {}

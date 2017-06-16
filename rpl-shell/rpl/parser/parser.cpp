@@ -97,6 +97,8 @@ rpl_node* parser::start_rule(token& tok)
             return opt_rule(tok);
         case token::history:
             return history_rule(tok);
+        case token::import:
+            return import_rule(tok);
         default:
             err_repo.add( make_shared<error_unexp>(tok.data, tok.pos) );
             return nullptr;
@@ -250,6 +252,15 @@ rpl_node* parser::history_rule(token& tok)
         expect(tok, token::word, id);
     expect(tok, token::eol);
     return new history_node(id.first);
+}
+
+rpl_node* parser::import_rule(token& tok)
+{
+    string word;
+    expect(tok, token::import);
+    expect(tok, token::file, word);
+    expect(tok, token::eol);
+    return new import_node(word);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

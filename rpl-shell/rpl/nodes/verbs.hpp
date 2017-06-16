@@ -75,4 +75,9 @@ struct history_node : public verb_node<history_node> {
     history_node(const std::string& id);
 };
 
+// Node representing the "import" verb
+struct import_node : public verb_node<import_node> {
+    import_node(const std::string& id);
+};
+
 #endif

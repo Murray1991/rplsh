@@ -41,6 +41,7 @@ struct interpreter : public visitor
     void visit(rwr_node& n);
     void visit(opt_node& n);
     void visit(history_node& n);
+    void visit(import_node& n);
     void visit(seq_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);

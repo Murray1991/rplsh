@@ -35,6 +35,7 @@ private:
     rpl_node* opt_rule(token& tok);
     rpl_node* rwr_rule(token& tok);
     rpl_node* history_rule(token& tok);
+    rpl_node* import_rule(token& tok);
 
     skel_node* pattexp_rule(token& tok);
     skel_node* id_rule(token& tok);

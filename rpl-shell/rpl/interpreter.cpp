@@ -1,4 +1,5 @@
 #include "interpreter.hpp"
+#include "cpp_parser/cpp_parser.hpp"
 #include "rewriting/rewriter.hpp"
 #include "utils/mytuple.hpp"
 #include "utils/rank.hpp"
@@ -166,6 +167,20 @@ void interpreter::visit(history_node& n) {
     else {
         history h(n.id, phistory);
         h.print(true);
+    }
+}
+
+void interpreter::visit(import_node& n) {
+    try {
+        string path = utils::get_real_path(n.id);
+        cout << "importing from: " << path << endl;
+        cpp_parser cp(path);
+        auto p = cp.parse();
+        for (auto it =  p.first; it != p.second; it++) {
+            cout << it->name << endl;
+        }
+    } catch (std::logic_error) {
+        cout << "impossible import code from " << n.id << endl; 
     }
 }
 

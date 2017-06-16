@@ -34,6 +34,7 @@ map<string, token::type> token::st_map =
    {"rewrite",  token::rewrite},
    {"optimize", token::optimize},
    {"history",  token::history},
+   {"import",   token::import},
 
    /* skeleton patterns */
    {"seq",      token::seq},

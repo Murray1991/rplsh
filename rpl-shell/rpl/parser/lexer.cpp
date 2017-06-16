@@ -16,7 +16,7 @@ const string& lexer::getline() const {
 token get_token(const string& word, int wpos, error_container& err_repo)
 {
     token::type kind = token::st_map[word];
-
+    smatch match;
     if (kind > 0)                                                         // keyword
         return token(kind, word, wpos);
     else if (regex_match(word, regex("[a-zA-z][a-zA-Z_0-9]*")))           // word
@@ -25,6 +25,9 @@ token get_token(const string& word, int wpos, error_container& err_repo)
         return token(token::number, word, wpos);
     else if (regex_match(word, regex("([0]|[1-9][0-9]*)")))               // integer
         return token(token::integer, word, wpos);
+    else if (regex_match(word, match, regex("\"([^\"]*)\""))) {
+        return token(token::file, match[1], wpos);
+    }
 
     // nothing found
     err_repo.add( shared_ptr<error>(new error_illegal(word, wpos)));
