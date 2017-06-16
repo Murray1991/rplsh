@@ -3,6 +3,8 @@
 
 #include <string>
 #include <cmath>
+#include <climits>
+#include <cstdlib>
 
 namespace utils {
 
@@ -34,6 +36,16 @@ namespace utils {
         std::size_t num_spaces = count_digits(max_idx) - count_digits(idx);
         return get_spaces(num_spaces) + "[" + std::to_string(idx) + "]";
     }
+
+
+    std::string get_real_path(const std::string& str) {
+        // unix method
+        char * full_path = realpath(str.c_str(), NULL);
+        std::string fstr(full_path);
+        free(full_path);
+        return fstr;
+    }
+
 
 }
 
