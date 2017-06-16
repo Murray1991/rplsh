@@ -1,11 +1,14 @@
 #include "cpp_parser.hpp"
+#include <iostream>
 #include <fstream>
 #include <regex>
 
 using namespace std;
 
-string trim ( const string& word ) {
-    return regex_replace(word, std::regex("^ +"), "");
+string trim(const string& str) {
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last-first+1));
 }
 
 cpp_parser::cpp_parser( const string& path ) :
@@ -24,8 +27,8 @@ pair<cpp_parser::iterator, cpp_parser::iterator> cpp_parser::parse() {
     // name: $3, typein: $9
     regex drn_regex("(class|struct)([ ]*)(.+)([ ]*):([ ]*)public([ ]*)drain([ ]*)<([ ]*)(.+)([ ]*)>");
 
-    std::string line;
-    std::smatch match;
+    string line;
+    smatch match;
     while (std::getline(file, line)) {
         if( std::regex_search(line, match, seq_regex) ) {
             vec.push_back( wrapper_info( trim(match[3]), wrapper_info::seq,
