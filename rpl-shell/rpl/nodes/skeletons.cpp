@@ -86,10 +86,22 @@ seq_node::seq_node( double servicetime, bool datap_flag ) :
     datap_flag(datap_flag)
 {}
 
+seq_node::seq_node( string typein, string typeout, string file ) :
+    concrete_skel_node( *this ),
+    servicetime(1.0),
+    datap_flag(false),
+    typein(typein),
+    typeout(typeout),
+    file(file)
+{}
+
 seq_node::seq_node( const seq_node& other ) :
     concrete_skel_node( *this, other ),
     servicetime(other.servicetime),
-    datap_flag(other.datap_flag)
+    datap_flag(other.datap_flag),
+    typein(other.typein),
+    typeout(other.typeout),
+    file(other.file)
 {}
 
 skel_node* seq_node::clone() {

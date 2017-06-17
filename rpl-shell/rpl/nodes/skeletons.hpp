@@ -45,11 +45,15 @@ private:
 };
 
 struct seq_node : public concrete_skel_node<seq_node> {
-    seq_node( double servicetime, bool datap_flag = false);
+    seq_node( std::string typein, std::string typeout, std::string file );
+    seq_node( double servicetime, bool datap_flag = false );
     seq_node( const seq_node& other );
     skel_node* clone();
     double servicetime;
     bool datap_flag;
+    std::string typein;
+    std::string typeout;
+    std::string file;
 };
 
 //TODO templated constructor taking iterators begin end?
