@@ -16,6 +16,8 @@ struct visitor
     virtual void visit(import_node& n)= 0;
 
     virtual void visit(seq_node& n)     = 0;
+    virtual void visit(source_node& n)  = 0;
+    virtual void visit(drain_node& n)   = 0;
     virtual void visit(comp_node& n)    = 0;
     virtual void visit(pipe_node& n)    = 0;
     virtual void visit(farm_node& n)    = 0;
@@ -29,6 +31,12 @@ struct visitor
 struct skel_visitor : public visitor
 {
     using visitor::visit;
+
+    // notice hat source and drain have
+    // the base_class implementation
+    virtual void visit(source_node& n) {};
+    virtual void visit(drain_node& n)  {};
+
     void visit(assign_node& n) {};
     void visit(show_node& n)   {};
     void visit(set_node& n)    {};

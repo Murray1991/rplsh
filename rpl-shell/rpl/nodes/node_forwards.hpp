@@ -21,6 +21,8 @@ struct opt_node;
 struct history_node;
 struct import_node;
 struct seq_node;
+struct source_node;
+struct drain_node;
 struct comp_node;
 struct pipe_node;
 struct farm_node;

@@ -27,6 +27,8 @@ struct token
         history,
         import,
         seq,
+        source,
+        drain,
         comp,
         pipe,
         farm,

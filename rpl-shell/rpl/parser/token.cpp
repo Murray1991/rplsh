@@ -39,6 +39,10 @@ map<string, token::type> token::st_map =
    /* skeleton patterns */
    {"seq",      token::seq},
    {"Seq",      token::seq},
+   {"source",   token::source},
+   {"Source",   token::source},
+   {"drain",    token::drain},
+   {"Drain",    token::drain},
    {"comp",     token::comp},
    {"Comp",     token::comp},
    {"pipe",     token::pipe},

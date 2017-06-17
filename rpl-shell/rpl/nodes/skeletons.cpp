@@ -110,6 +110,56 @@ skel_node* seq_node::clone() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+source_node::source_node( double servicetime ) :
+    concrete_skel_node( *this ),
+    servicetime(servicetime)
+{}
+
+source_node::source_node( string typeout, string file ) :
+    concrete_skel_node( *this ),
+    servicetime(1.0),
+    typeout(typeout),
+    file(file)
+{}
+
+source_node::source_node( const source_node& other ) :
+    concrete_skel_node( *this, other ),
+    servicetime(other.servicetime),
+    typeout(other.typeout),
+    file(other.file)
+{}
+
+skel_node* source_node::clone() {
+    return new source_node(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+drain_node::drain_node( double servicetime ) :
+    concrete_skel_node( *this ),
+    servicetime(servicetime)
+{}
+
+drain_node::drain_node( string typein, string file ) :
+    concrete_skel_node( *this ),
+    servicetime(1.0),
+    typein(typein),
+    file(file)
+{}
+
+drain_node::drain_node( const drain_node& other ) :
+    concrete_skel_node( *this, other ),
+    servicetime(other.servicetime),
+    typein(other.typein),
+    file(other.file)
+{}
+
+skel_node* drain_node::clone() {
+    return new drain_node(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 comp_node::comp_node( initializer_list<skel_node*> init )
     : concrete_skel_node( *this, init ) {}
 

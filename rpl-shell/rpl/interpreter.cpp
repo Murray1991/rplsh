@@ -26,6 +26,7 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
 {}
 
 void interpreter::visit(assign_node& n) {
+    cout << "assignnnnn <" << n.id << ">" << endl;
     // recurse for semantic check in skel tree
     id_node* idnode = dynamic_cast<id_node*>(n.rvalue);
     n.rvalue->accept(*this);
@@ -172,21 +173,48 @@ void interpreter::visit(history_node& n) {
 
 void interpreter::visit(import_node& n) {
     try {
+
         string path = utils::get_real_path(n.id);
         cout << "importing from: " << path << endl;
+
         cpp_parser cp(path);
         auto p = cp.parse();
+
         for (auto it =  p.first; it != p.second; it++) {
-            cout << it->name << endl;
+
+            cout << "importing " << it->name << endl;
+
+            skel_node* sk;
+            string tin  = it->typein;
+            string tout = it->typeout;
+
+            if (it->wtype == wrapper_info::seq)
+                sk = new seq_node(tin, tout, path);
+            else if (it->wtype == wrapper_info::source)
+                sk = new source_node(tout, path);
+            else if (it->wtype == wrapper_info::drain)
+                sk = new drain_node(tin, path);
+            else
+                cout << "error: no type recognized" << endl;
+
+            assign_node a ( it->name, sk );
+            visit(a);
+
         }
     } catch (std::logic_error) {
-        cout << "impossible import code from " << n.id << endl; 
+        cout << "impossible import code from " << n.id << endl;
     }
 }
 
 void interpreter::visit(seq_node& n) {
     if (n.get(0) != nullptr)
         n.get(0)->accept(*this);
+}
+
+void interpreter::visit(source_node& n) {
+}
+
+void interpreter::visit(drain_node& n) {
 }
 
 void interpreter::visit(comp_node& n) {

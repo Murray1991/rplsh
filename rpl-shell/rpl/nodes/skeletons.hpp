@@ -56,6 +56,26 @@ struct seq_node : public concrete_skel_node<seq_node> {
     std::string file;
 };
 
+struct source_node : public concrete_skel_node<source_node> {
+    source_node( std::string typeout, std::string file );
+    source_node( double servicetime );
+    source_node( const source_node& other );
+    skel_node* clone();
+    double servicetime;
+    std::string typeout;
+    std::string file;
+};
+
+struct drain_node : public concrete_skel_node<drain_node> {
+    drain_node( std::string typein, std::string file );
+    drain_node( double servicetime );
+    drain_node( const drain_node& other );
+    skel_node* clone();
+    double servicetime;
+    std::string typein;
+    std::string file;
+};
+
 //TODO templated constructor taking iterators begin end?
 struct comp_node : public concrete_skel_node<comp_node> {
     comp_node( std::initializer_list<skel_node*> init );

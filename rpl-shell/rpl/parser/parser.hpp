@@ -40,6 +40,8 @@ private:
     skel_node* pattexp_rule(token& tok);
     skel_node* id_rule(token& tok);
     skel_node* seq_rule(token& tok);
+    skel_node* source_rule(token& tok);
+    skel_node* drain_rule(token& tok);
     skel_node* comp_pipe_rule(token& tok);
     skel_node* farm_map_reduce_rule(token& tok);
 

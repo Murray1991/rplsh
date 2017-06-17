@@ -274,6 +274,10 @@ skel_node* parser::pattexp_rule(token& tok)
     {
         case token::seq:
             return seq_rule(tok);
+        case token::source:
+            return source_rule(tok);
+        case token::drain:
+            return drain_rule(tok);
         case token::comp:
             return comp_pipe_rule(tok);
         case token::pipe:
@@ -322,6 +326,35 @@ skel_node* parser::seq_rule(token& tok)
 
     expect(tok, token::close);
     return new seq_node(ts, bool_value);
+}
+
+skel_node* parser::source_rule(token& tok) {
+    double ts = 1;
+    expect(tok, token::source);
+    expect(tok, token::open);
+
+    if ( tok.kind == token::integer || tok.kind == token::number ) {
+        ts = stod(tok.data);
+        expect(tok, token::integer, token::number);
+    }
+
+    expect(tok, token::close);
+    return new source_node(ts);
+}
+
+skel_node* parser::drain_rule(token& tok) {
+    double ts = 1;
+    expect(tok, token::drain);
+    expect(tok, token::open);
+
+    if ( tok.kind == token::integer || tok.kind == token::number ) {
+        ts = stod(tok.data);
+        expect(tok, token::integer, token::number);
+    }
+
+    expect(tok, token::close);
+    return new drain_node(ts);
+
 }
 
 
