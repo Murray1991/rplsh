@@ -185,19 +185,20 @@ void interpreter::visit(import_node& n) {
             cout << "importing " << it->name << endl;
 
             skel_node* sk;
+            string name = it->name;
             string tin  = it->typein;
             string tout = it->typeout;
 
             if (it->wtype == wrapper_info::seq)
-                sk = new seq_node(tin, tout, path);
+                sk = new seq_node(name, tin, tout, path);
             else if (it->wtype == wrapper_info::source)
-                sk = new source_node(tout, path);
+                sk = new source_node(name,tout, path);
             else if (it->wtype == wrapper_info::drain)
-                sk = new drain_node(tin, path);
+                sk = new drain_node(name,tin, path);
             else
                 cout << "error: no type recognized" << endl;
 
-            assign_node a ( it->name, sk );
+            assign_node a ( name, sk );
             visit(a);
 
         }
