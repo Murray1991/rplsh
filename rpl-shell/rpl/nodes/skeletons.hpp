@@ -45,33 +45,36 @@ private:
 };
 
 struct seq_node : public concrete_skel_node<seq_node> {
-    seq_node( std::string typein, std::string typeout, std::string file );
+    seq_node( std::string name, std::string typein, std::string typeout, std::string file );
     seq_node( double servicetime, bool datap_flag = false );
     seq_node( const seq_node& other );
     skel_node* clone();
     double servicetime;
     bool datap_flag;
+    std::string name;
     std::string typein;
     std::string typeout;
     std::string file;
 };
 
 struct source_node : public concrete_skel_node<source_node> {
-    source_node( std::string typeout, std::string file );
+    source_node( std::string name, std::string typeout, std::string file );
     source_node( double servicetime );
     source_node( const source_node& other );
     skel_node* clone();
     double servicetime;
+    std::string name;
     std::string typeout;
     std::string file;
 };
 
 struct drain_node : public concrete_skel_node<drain_node> {
-    drain_node( std::string typein, std::string file );
+    drain_node( std::string name, std::string typein, std::string file );
     drain_node( double servicetime );
     drain_node( const drain_node& other );
     skel_node* clone();
     double servicetime;
+    std::string name;
     std::string typein;
     std::string file;
 };

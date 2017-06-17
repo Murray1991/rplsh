@@ -86,10 +86,11 @@ seq_node::seq_node( double servicetime, bool datap_flag ) :
     datap_flag(datap_flag)
 {}
 
-seq_node::seq_node( string typein, string typeout, string file ) :
+seq_node::seq_node( std::string name, string typein, string typeout, string file ) :
     concrete_skel_node( *this ),
     servicetime(1.0),
     datap_flag(false),
+    name(name),
     typein(typein),
     typeout(typeout),
     file(file)
@@ -99,6 +100,7 @@ seq_node::seq_node( const seq_node& other ) :
     concrete_skel_node( *this, other ),
     servicetime(other.servicetime),
     datap_flag(other.datap_flag),
+    name(other.name),
     typein(other.typein),
     typeout(other.typeout),
     file(other.file)
@@ -115,9 +117,10 @@ source_node::source_node( double servicetime ) :
     servicetime(servicetime)
 {}
 
-source_node::source_node( string typeout, string file ) :
+source_node::source_node( string name, string typeout, string file ) :
     concrete_skel_node( *this ),
     servicetime(1.0),
+    name(name),
     typeout(typeout),
     file(file)
 {}
@@ -125,6 +128,7 @@ source_node::source_node( string typeout, string file ) :
 source_node::source_node( const source_node& other ) :
     concrete_skel_node( *this, other ),
     servicetime(other.servicetime),
+    name(other.name),
     typeout(other.typeout),
     file(other.file)
 {}
@@ -140,9 +144,10 @@ drain_node::drain_node( double servicetime ) :
     servicetime(servicetime)
 {}
 
-drain_node::drain_node( string typein, string file ) :
+drain_node::drain_node( string name, string typein, string file ) :
     concrete_skel_node( *this ),
     servicetime(1.0),
+    name(name),
     typein(typein),
     file(file)
 {}
@@ -150,6 +155,7 @@ drain_node::drain_node( string typein, string file ) :
 drain_node::drain_node( const drain_node& other ) :
     concrete_skel_node( *this, other ),
     servicetime(other.servicetime),
+    name(other.name),
     typein(other.typein),
     file(other.file)
 {}
