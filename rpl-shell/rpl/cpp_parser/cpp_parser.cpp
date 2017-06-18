@@ -37,7 +37,7 @@ pair<cpp_parser::iterator, cpp_parser::iterator> cpp_parser::parse() {
             vec.push_back( wrapper_info( trim(match[3]), wrapper_info::source,
                 "", match[9]));
         } else if( std::regex_search(line, match, drn_regex) ) {
-            vec.push_back( wrapper_info( trim(match[3]), wrapper_info::source,
+            vec.push_back( wrapper_info( trim(match[3]), wrapper_info::drain,
                 match[9], ""));
         }
     }

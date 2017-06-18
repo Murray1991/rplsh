@@ -14,6 +14,7 @@
 #include "dispatchers/eval_dispatcher.hpp"
 #include "error_report/error_report.hpp"
 #include "visitors/optimizers/normalform.hpp"
+#include "visitors/generators/ffcode.hpp"
 #include "visitors/visitors.hpp"
 #include "nodes/skeletons.hpp"
 #include "nodes/verbs.hpp"
@@ -42,6 +43,8 @@ struct interpreter : public visitor
     void visit(opt_node& n);
     void visit(history_node& n);
     void visit(import_node& n);
+    void visit(gencode_node& n);
+
     void visit(seq_node& n);
     void visit(source_node& n);
     void visit(drain_node& n);
@@ -64,6 +67,7 @@ private:
     eval_dispatcher vdispatch;
     assign_resources assignres;
     normalform normform;
+    ffcode ff;
     history phistory;
     bool success;
 };

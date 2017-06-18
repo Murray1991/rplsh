@@ -80,3 +80,8 @@ history_node::history_node(const string& id)
 
 import_node::import_node(const string& id)
     : verb_node(*this, id, id) {}
+
+///////////////////////////////////////////////////////////////////////////////
+
+gencode_node::gencode_node(const string& id)
+    : verb_node(*this, id, id) {}

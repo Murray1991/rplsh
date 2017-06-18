@@ -26,6 +26,7 @@ struct token
         optimize,
         history,
         import,
+        gencode,
         seq,
         source,
         drain,

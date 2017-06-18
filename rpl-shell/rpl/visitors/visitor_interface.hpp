@@ -13,7 +13,8 @@ struct visitor
     virtual void visit(rwr_node& n)    = 0;
     virtual void visit(opt_node& n)    = 0;
     virtual void visit(history_node& n)= 0;
-    virtual void visit(import_node& n)= 0;
+    virtual void visit(import_node& n) = 0;
+    virtual void visit(gencode_node& n)= 0;
 
     virtual void visit(seq_node& n)     = 0;
     virtual void visit(source_node& n)  = 0;
@@ -44,7 +45,8 @@ struct skel_visitor : public visitor
     void visit(rwr_node& n)    {};
     void visit(opt_node& n)    {};
     void visit(history_node& n){};
-    void visit(import_node& n){};
+    void visit(import_node& n) {};
+    void visit(gencode_node& n){};
 };
 
 #endif

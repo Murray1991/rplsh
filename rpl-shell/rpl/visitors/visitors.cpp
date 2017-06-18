@@ -1,5 +1,6 @@
 #include "nodes/skeletons.hpp"
 #include "visitors.hpp"
+#include "utils/rank.hpp"
 #include <iostream>
 #include <functional>
 #include <algorithm>
@@ -242,5 +243,113 @@ void assign_resources::visit( id_node& n ) {
 
 void assign_resources::operator()(skel_node& n, double inputsize) {
     n.inputsize = inputsize;
+    n.accept(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+get_seq_wrappers::get_seq_wrappers( rpl_environment& env ) :
+        env(env)
+{}
+
+void get_seq_wrappers::visit( seq_node& n ) {
+    seq_nodes.push_back(&n);
+}
+
+void get_seq_wrappers::visit( source_node& n ) {
+    src_nodes.push_back(&n);
+}
+
+void get_seq_wrappers::visit( drain_node& n ) {
+    drn_nodes.push_back(&n);
+}
+
+void get_seq_wrappers::visit( comp_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void get_seq_wrappers::visit( pipe_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void get_seq_wrappers::visit( farm_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void get_seq_wrappers::visit( map_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void get_seq_wrappers::visit( reduce_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void get_seq_wrappers::visit( id_node& n ) {
+    auto ptr = env.get(n.id);
+    if (ptr != nullptr)
+        ptr->accept(*this);
+    else
+        cout << n.id << " whaaaat?" << endl;
+}
+
+vector<seq_node*> get_seq_wrappers::get_seq_nodes() {
+    return seq_nodes;
+}
+
+vector<source_node*> get_seq_wrappers::get_source_nodes() {
+    return src_nodes;
+}
+
+vector<drain_node*> get_seq_wrappers::get_drain_nodes() {
+    return drn_nodes;
+}
+
+void get_seq_wrappers::operator()(skel_node& n) {
+    seq_nodes.clear();
+    src_nodes.clear();
+    drn_nodes.clear();
+    n.accept(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+unranker::unranker( rpl_environment& env ) :
+    env(env)
+{}
+
+void unranker::visit( seq_node& n ) {
+}
+
+void unranker::visit( comp_node& n ) {
+    skel_node* ptr = &n;
+    ranktounrank(ptr,ptr);
+}
+
+void unranker::visit( pipe_node& n ) {
+    skel_node* ptr = &n;
+    ranktounrank(ptr,ptr);
+}
+
+void unranker::visit( farm_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void unranker::visit( map_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void unranker::visit( reduce_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void unranker::visit( id_node& n ) {
+    auto ptr = env.get(n.id);
+    if (ptr != nullptr)
+        ptr->accept(*this);
+}
+
+void unranker::operator()( skel_node& n ) {
     n.accept(*this);
 }

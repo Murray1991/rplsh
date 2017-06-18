@@ -80,4 +80,9 @@ struct import_node : public verb_node<import_node> {
     import_node(const std::string& id);
 };
 
+// Node representing the "gencode" verb
+struct gencode_node : public verb_node<gencode_node> {
+    gencode_node(const std::string& id);
+};
+
 #endif

@@ -6,6 +6,7 @@
 #include "utils/utils.hpp"
 #include <memory>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -22,11 +23,11 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
     odispatch(env),
     vdispatch(env),
     normform(env),
+    ff(env),
     success(true)
 {}
 
 void interpreter::visit(assign_node& n) {
-    cout << "assignnnnn <" << n.id << ">" << endl;
     // recurse for semantic check in skel tree
     id_node* idnode = dynamic_cast<id_node*>(n.rvalue);
     n.rvalue->accept(*this);
@@ -204,6 +205,32 @@ void interpreter::visit(import_node& n) {
         }
     } catch (std::logic_error) {
         cout << "impossible import code from " << n.id << endl;
+    }
+}
+
+void interpreter::visit(gencode_node& n) {
+    int i = 0;
+    string code;
+    string fname;
+    printer print;
+    unranker unrank(env);
+
+    auto ptr = env.get(n.id);
+
+    if (ptr != nullptr) {
+        // unrank and generate code
+        unrank(*ptr);
+        code = ff(*ptr);
+
+        // find name and store
+        while ( utils::file_exists("ff"+to_string(++i)+".cpp") );
+        fname = "ff" + to_string(i) + ".cpp";
+        cout << "-- " << fname << endl;
+        std::ofstream out(fname);
+        out << code;
+
+        // rerank
+        unranktorank2(*ptr, snc);
     }
 }
 

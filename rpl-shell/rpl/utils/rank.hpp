@@ -17,7 +17,7 @@ void ranktounrank(Node* curr_node, Node* root_node)
         if (curr_node != root_node)
             delete curr_node;
     }
-    else
+    else if ( *curr_node != *root_node)
         root_node->add(curr_node);
 }
 

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <climits>
 #include <cstdlib>
+#include <fstream>
 
 namespace utils {
 
@@ -37,15 +38,18 @@ namespace utils {
         return get_spaces(num_spaces) + "[" + std::to_string(idx) + "]";
     }
 
+    bool file_exists (const std::string& name) {
+        std::ifstream f(name.c_str());
+        return f.good();
+    }
 
     std::string get_real_path(const std::string& str) {
-        // unix method
+        // TODO unix only, do also for windows??
         char * full_path = realpath(str.c_str(), NULL);
         std::string fstr(full_path);
         free(full_path);
         return fstr;
     }
-
 
 }
 

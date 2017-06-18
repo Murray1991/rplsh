@@ -82,4 +82,42 @@ struct assign_resources : public skel_visitor {
     void operator()(skel_node& n, double inputsize);
 };
 
+struct get_seq_wrappers : public skel_visitor {
+    get_seq_wrappers(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+
+    std::vector<seq_node*> get_seq_nodes();
+    std::vector<drain_node*> get_drain_nodes();
+    std::vector<source_node*> get_source_nodes();
+
+    void operator()(skel_node& n);
+private:
+    rpl_environment& env;
+    std::vector<seq_node*> seq_nodes;
+    std::vector<drain_node*> drn_nodes;
+    std::vector<source_node*> src_nodes;
+};
+
+struct unranker : public skel_visitor {
+    unranker(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+    void operator()(skel_node& n);
+private:
+    rpl_environment& env;
+};
+
 #endif

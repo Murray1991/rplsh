@@ -99,6 +99,8 @@ rpl_node* parser::start_rule(token& tok)
             return history_rule(tok);
         case token::import:
             return import_rule(tok);
+        case token::gencode:
+            return gencode_rule(tok);
         default:
             err_repo.add( make_shared<error_unexp>(tok.data, tok.pos) );
             return nullptr;
@@ -261,6 +263,15 @@ rpl_node* parser::import_rule(token& tok)
     expect(tok, token::file, word);
     expect(tok, token::eol);
     return new import_node(word);
+}
+
+rpl_node* parser::gencode_rule(token& tok)
+{
+    string word;
+    expect(tok, token::gencode);
+    expect(tok, token::word, word);
+    expect(tok, token::eol);
+    return new gencode_node(word);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

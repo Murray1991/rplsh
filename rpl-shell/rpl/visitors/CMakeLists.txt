@@ -3,6 +3,7 @@ project (visitors)
 
 add_subdirectory (annotators)
 add_subdirectory (optimizers)
+add_subdirectory (generators)
 add_subdirectory (evaluators)
 
 set (
@@ -11,5 +12,4 @@ set (
 )
 
 add_library(visitors ${visitors_files})
-
-target_link_libraries(visitors evaluators optimizers annotators environment)
+target_link_libraries(visitors evaluators optimizers generators annotators environment)
