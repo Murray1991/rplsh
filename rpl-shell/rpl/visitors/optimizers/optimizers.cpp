@@ -68,6 +68,56 @@ void farmopt::operator()( skel_node& sk ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+mapopt::mapopt( rpl_environment& env ) :
+    optrule(env)
+{}
+
+void mapopt::visit( map_node& n ) {
+    /* reassign resources assuming only one worker */
+    assign_resources assignres;
+    n.pardegree = 1;
+    assignres(n, n.inputsize);
+
+    /* compute the "optimal" pardegree */
+    double tsc = env.get_scatter_time();
+    double tsg = env.get_emitter_time();
+    double tw  = ts( *n.get(0) );
+    size_t nw  = ceil( sqrt( tw / max(tsc,tsg) ) );
+    n.pardegree = nw;
+
+    /* reassign resources with the new pardegree */
+    assignres(n, n.inputsize);
+
+    /* recurse */
+    (*this)( *n.get(0) );
+}
+
+void mapopt::operator()( skel_node& sk ) {
+    sk.accept( *this );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+reduceopt::reduceopt( rpl_environment& env ) :
+    optrule(env)
+{}
+
+void reduceopt::visit( reduce_node& n ) {
+    /* compute the optimal number of workers */
+    assign_resources assignres;
+    n.pardegree = ( ((double) n.inputsize) * log(2) );
+    assignres(n, n.inputsize);
+
+    /* recurse */
+    (*this)( *n.get(0) );
+}
+
+void reduceopt::operator()( skel_node& sk ) {
+    sk.accept( *this );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 pipeopt::pipeopt( rpl_environment& env ) :
     optrule( env ), balance( env )
 {}

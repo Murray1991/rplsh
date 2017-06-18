@@ -39,6 +39,30 @@ struct farmopt : public optrule
     void operator()( skel_node& n );
 };
 
+// choose parallelism degree such that
+// the new servicetime is equal to the
+// max of scatter-gather service times
+struct mapopt : public optrule
+{
+    mapopt( rpl_environment& env );
+    void visit( map_node& n );
+    void operator()( skel_node& n );
+private:
+    assign_resources assignres;
+};
+
+// choose parallelism degree such that
+// the new servicetime is equal to the
+// max of scatter-gather service times
+struct reduceopt : public optrule
+{
+    reduceopt( rpl_environment& env );
+    void visit( reduce_node& n );
+    void operator()( skel_node& n );
+private:
+    assign_resources assignres;
+};
+
 // given a skeleton pipe node it tries
 // to reduce the parallelism degree of
 // its fastest children
