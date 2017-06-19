@@ -189,7 +189,9 @@ rpl_node* parser::set_rule(token& tok)
 //  <ann> ::= set <word> with <parameter> <value>
 rpl_node* parser::ann_rule(token& tok)
 {
-    string par; double value;
+    string par;
+    double value = 0;
+    bool bvalue = false;
     pair<string,int> id;
     expect(tok, token::annotate);
     expect(tok, token::word, id);
@@ -197,9 +199,14 @@ rpl_node* parser::ann_rule(token& tok)
     expect(tok, token::parameter, par);
     if ( tok.kind == token::integer )
         expect(tok, token::integer, value);
-    else
+    else if (tok.kind == token::number)
         expect(tok, token::number, value);
-    return new ann_node(id, par, value);
+    else {
+        bvalue = tok.kind == token::bool_true;
+        value = bvalue? 1 : 0;
+        expect(tok, token::bool_true, token::bool_false);
+    }
+    return new ann_node(id, par, value, bvalue);
 }
 
 // <rwr> ::= rewrite <word> with <rwr-rule-list>...

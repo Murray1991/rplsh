@@ -213,6 +213,7 @@ void interpreter::visit(gencode_node& n) {
     string code;
     string fname;
     printer print;
+    ranker rank(env);
     unranker unrank(env);
 
     auto ptr = env.get(n.id);
@@ -230,7 +231,7 @@ void interpreter::visit(gencode_node& n) {
         out << code;
 
         // rerank
-        unranktorank2(*ptr, snc);
+        rank(*ptr);
     }
 }
 

@@ -72,6 +72,134 @@ string drain_declaration( const drain_node& n ) {
     return ss.str();
 }
 
+string map_declaration( map_node& n, rpl_environment& env ) {
+    // two-tier model: inside map nodes only seq or compseq are allowed:
+    // if stream/datap inside, ignore it when compile and show a warning
+
+    pardegree nw(env);         // setup the pardegree visitor
+    get_seq_wrappers gsw(env); // setup the get_seq_wrappers visitor
+
+    gsw(n); // find the sequential wrappers
+    auto src_nodes = gsw.get_source_nodes();
+    auto drn_nodes = gsw.get_drain_nodes();
+    auto seq_nodes = gsw.get_seq_nodes();
+    if (!src_nodes.empty() || !drn_nodes.empty() || ((int) nw(n)) != n.pardegree)
+        cout << "warning: two tier modeling application for generation of code" << endl;
+
+    stringstream ss;
+    string typein  = seq_nodes.front()->typein;
+    string typeout = seq_nodes.back()->typeout;
+
+    ss << "class map" << n.getid() << "_stage : public ff_node" << "{\n";   //TODO use ff_Map
+    ss << "protected:\n";
+    for (size_t i = 0; i < seq_nodes.size(); i++)
+        ss << "\t" << seq_nodes[i]->name << " wrapper" << i << ";\n";
+
+    ss << "public:\n";
+    ss << "\tvoid * svc(void *t) {\n";
+    ss << "\t\t" << typein << " task = *((" << typein << "*) t);\n";
+    ss << "\t\t" << typeout << "* out = new " << typeout << "();\n";
+    ss << "\t\tout->resize(task.size());\n"; //TODO really necessary?
+
+    // start parallel for
+    size_t i;
+    string par;
+    ss << "\t\tParallelFor pf;\n";
+    ss << "\t\tpf.parallel_for(0, task.size(),";
+    // begin lambda
+    ss << "[this, &task, &out](const long i) {\n";
+    for (i = 0; i < seq_nodes.size()-1; i++) {
+        par = !i ? "task[i]" : ("res" + to_string(i-1));
+        ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
+    }
+    par = !i ? "task[i]" : ("res" + to_string(i-1));
+    ss << "\t\t\t(*out)[i] = wrapper" << i << ".op(" << par << ");\n";
+    ss << "\t\t}";
+    // end lambda
+    ss << "," << to_string(n.pardegree) << ");\n";
+    // end parallel for
+
+    //TODO memory leak of previous node
+    ss << "\t\t" << "return (void*) out;\n";
+    ss << "\t}\n";
+    ss << "};\n\n";
+
+    return ss.str();
+}
+
+string red_declaration( reduce_node& n, rpl_environment& env ) {
+    // two-tier model: inside reduce nodes only seq or compseq are allowed:
+    // if stream/datap inside, ignore it when compile and show a warning
+
+    pardegree nw(env);         // setup the pardegree visitor
+    get_seq_wrappers gsw(env); // setup the get_seq_wrappers visitor
+
+    gsw(n); // find the sequential wrappers
+    auto src_nodes = gsw.get_source_nodes();
+    auto drn_nodes = gsw.get_drain_nodes();
+    auto seq_nodes = gsw.get_seq_nodes();
+    if (!src_nodes.empty() || !drn_nodes.empty() || ((int) nw(n)) != n.pardegree)
+        cout << "warning: two tier modeling application for generation of code" << endl;
+
+    // in case of multiple sequential nodes:
+    // reduce(comp(a,b,c)) == pipe(map(comp(a,b)),c)
+    // where c is the only node implementing a binary operation f: v1 x v2 -> res
+
+    stringstream ss;
+    string typein  = seq_nodes.front()->typein;
+    string typeout = seq_nodes.back()->typeout;
+
+    ss << "class reduce" << n.getid() << "_stage : public ff_node" << "{\n";
+    ss << "protected:\n";
+    for (size_t i = 0; i < seq_nodes.size(); i++)
+        ss << "\t" << seq_nodes[i]->name << " wrapper" << i << ";\n";
+
+    ss << "public:\n";
+    ss << "\tvoid * svc(void *t) {\n";
+    string task = "task";
+    ss << "\t\t" << typein << " task = *((" << typein << "*) t);\n";
+
+    if ( seq_nodes.size() > 1) {
+        string mapout  = seq_nodes[seq_nodes.size()-2]->typeout;
+        ss << "\t\t" << mapout << "* mapout = new " << mapout << "();\n";
+        ss << "\t\tmapout->resize(task.size());\n"; //TODO really necessary?
+        task = "mapout";
+
+        // start parallel for
+        size_t i;
+        string par;
+        ss << "\t\tParallelFor pf;\n";
+        ss << "\t\tpf.parallel_for(0, task.size(),";
+        // begin lambda
+        ss << "[this, &task, &mapout](const long i) {\n";
+        for (i = 0; i < seq_nodes.size()-2; i++) {
+            par = !i ? "task[i]" : ("res" + to_string(i-1));
+            ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
+        }
+        par = !i ? "task[i]" : ("res" + to_string(i-1));
+        ss << "\t\t\t(*mapout)[i] = wrapper" << i << ".op(" << par << ");\n";
+        ss << "\t\t}\n";
+        // end lambda
+        ss << "," << to_string(n.pardegree) << ");\n";
+        // end parallel for
+
+    }
+
+    size_t idx = seq_nodes.size()-1;
+    ss << "\t\t" << typeout << "* out  = new " << typeout << "();\n";
+    ss << "\t\t" << "ParallelForReduce<"<<typeout<<"> pfr;\n";
+    ss << "\t\tauto reduceF = [this]("<<typeout<<"& sum, "<<typeout<<" elem) {sum = wrapper"<<idx<<".op(sum, elem);};\n";
+    ss << "\t\tauto bodyF = [this,&task](const long i, "<<typeout<<"& sum) {sum = wrapper"<<idx<<".op(sum, task[i]);};\n";
+    ss << "\t\tpfr.parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string(n.pardegree)<<");\n";
+
+    //TODO memory leak of previous node
+    ss << "\t\t" << "return (void*) out;\n";
+    ss << "\t}\n";
+    ss << "};\n\n";
+
+    return ss.str();
+}
+
 // header includes and namespaces
 string includes() {
     stringstream ss;
@@ -79,7 +207,8 @@ string includes() {
     ss << "#include <vector>\n\n";
     ss << "// specify include directory for fastflow\n";
     ss << "#include <ff/farm.hpp>\n";
-    ss << "#include <ff/pipeline.hpp>\n\n";
+    ss << "#include <ff/pipeline.hpp>\n";
+    ss << "#include <ff/parallel_for.hpp>\n\n";
     ss << "// specify include directory for RPL-Shell\n";
     ss << "#include <aux/types.hpp>\n";
     ss << "#include <aux/wrappers.hpp>\n";
@@ -105,7 +234,8 @@ string main_wrapper( const string& code ) {
 
 ffcode::ffcode( rpl_environment& env ) :
     env(env),
-    gsw(env)
+    gsw(env),
+    tds(env)
 {}
 
 void ffcode::visit( seq_node& n ) {
@@ -158,32 +288,46 @@ void ffcode::visit( farm_node& n ) {
 }
 
 void ffcode::visit( map_node& n ) {
+    stringstream ss;
+    string var = new_name("_map"+to_string(n.getid())+"_");
+    ss << "map" << n.getid() << "_stage " << var << ";\n";
+    code_lines.push({var, ss.str()});
 }
 
 void ffcode::visit( reduce_node& n ) {
+    stringstream ss;
+    string var = new_name("_red"+to_string(n.getid())+"_");
+    ss << "reduce" << n.getid() << "_stage " << var << ";\n";
+    code_lines.push({var, ss.str()});
 }
 
 void ffcode::visit( id_node& n ) {
-    auto ptr = env.get(n.id);
+    auto ptr = env.get(n.id, n.index);
     ptr->accept(*this);
 }
 
 string ffcode::operator()(skel_node& n) {
 
-    // clear names and code_lines global environments
+    // clear global environment:
+    // names, business_headers, queue
     names.clear();
     business_headers.clear();
     queue<pair<string,string>> empty;
     swap( code_lines, empty );
 
-    gsw(n); // start visit for getting wrappers
-
+    gsw(n);     // start visit for getting seq wrappers
     auto src_nodes = gsw.get_source_nodes();
     auto drn_nodes = gsw.get_drain_nodes();
     auto seq_nodes = gsw.get_seq_nodes();
 
+    tds(n);     // start visit for getting datap wrappers
+    auto map_nodes = tds.get_map_nodes();
+    auto red_nodes = tds.get_reduce_nodes();
+
+    size_t idx;
     string code  = "";
     string decls = "";
+
     for (auto src : src_nodes) {
         business_headers[src->file] = true;
         decls += source_declaration(*src);
@@ -197,6 +341,18 @@ string ffcode::operator()(skel_node& n) {
     for (auto seq : seq_nodes) {
         business_headers[seq->file] = true;
         decls += stage_declaration(*seq);
+    }
+
+    idx = 0;
+    for (auto mapn : map_nodes) {
+        mapn->setid(idx++);
+        decls += map_declaration(*mapn, env);
+    }
+
+    idx = 0;
+    for (auto redn : red_nodes) {
+        redn->setid(idx++);
+        decls += red_declaration(*redn, env);
     }
 
     n.accept(*this);
@@ -229,7 +385,7 @@ void ffcode::comp_pipe(const string& type, const string& name, skel_node& n) {
     string var  = new_name(name);
 
     // recursion over the children
-    // and pick from code_line
+    // and pick from code_lines
     std::vector<pair<string,string>> vec;
     for (size_t i = 0; i < n.size(); i++) {
         n.get(i)->accept(*this);

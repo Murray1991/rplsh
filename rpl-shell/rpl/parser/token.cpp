@@ -62,6 +62,7 @@ map<string, token::type> token::st_map =
    {par::compltime,     token::parameter},
    {par::pardegree,     token::parameter},
    {par::resources,     token::parameter},
+   {par::datap,         token::parameter},
 
    {par::emitter_time,  token::parameter},
    {par::collector_time,token::parameter},

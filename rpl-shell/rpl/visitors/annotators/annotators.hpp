@@ -48,4 +48,16 @@ private:
     std::size_t nw;
 };
 
+struct ann_datap : public ann_visitor
+{
+    ann_datap( rpl_environment& env );
+    void visit(seq_node& n);
+
+    /* Return true if the value is correctly annotated, false otherwise. */
+    bool operator()( skel_node& n, double value );
+
+private:
+    bool datap;
+};
+
 #endif

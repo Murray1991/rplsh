@@ -37,6 +37,7 @@ namespace par
     const std::string compltime      = "compltime";
     const std::string pardegree      = "pardegree";
     const std::string resources      = "resources";
+    const std::string datap          = "datap";
 
     /* environment variables */
     const std::string emitter_time   = "emitter_time";

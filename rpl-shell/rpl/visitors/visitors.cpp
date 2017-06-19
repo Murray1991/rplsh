@@ -315,6 +315,108 @@ void get_seq_wrappers::operator()(skel_node& n) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+
+top_datap_skeletons::top_datap_skeletons( rpl_environment& env ) :
+        env(env)
+{}
+
+void top_datap_skeletons::visit( seq_node& n ) {
+}
+
+void top_datap_skeletons::visit( source_node& n ) {
+}
+
+void top_datap_skeletons::visit( drain_node& n ) {
+}
+
+void top_datap_skeletons::visit( comp_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void top_datap_skeletons::visit( pipe_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void top_datap_skeletons::visit( farm_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void top_datap_skeletons::visit( map_node& n ) {
+    map_nodes.push_back(&n);
+}
+
+void top_datap_skeletons::visit( reduce_node& n ) {
+    red_nodes.push_back(&n);
+}
+
+void top_datap_skeletons::visit( id_node& n ) {
+    auto ptr = env.get(n.id);
+    if (ptr != nullptr)
+        ptr->accept(*this);
+    else
+        cout << n.id << " whaaaat?" << endl;
+}
+
+vector<map_node*> top_datap_skeletons::get_map_nodes() {
+    return map_nodes;
+}
+
+vector<reduce_node*> top_datap_skeletons::get_reduce_nodes() {
+    return red_nodes;
+}
+
+void top_datap_skeletons::operator()(skel_node& n) {
+    map_nodes.clear();
+    red_nodes.clear();
+    n.accept(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+ranker::ranker( rpl_environment& env ) :
+    env(env)
+{}
+
+void ranker::visit( seq_node& n ) {
+}
+
+void ranker::visit( comp_node& n ) {
+    for (size_t i=0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void ranker::visit( pipe_node& n ) {
+    for (size_t i=0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void ranker::visit( farm_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void ranker::visit( map_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void ranker::visit( reduce_node& n ) {
+    n.get(0)->accept(*this);
+}
+
+void ranker::visit( id_node& n ) {
+    auto ptr = env.get(n.id, n.index);
+    if (ptr != nullptr)
+        (*this) (*ptr);
+}
+
+void ranker::operator()( skel_node& n ) {
+    unranktorank2(n, snc);
+    n.accept(*this);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 unranker::unranker( rpl_environment& env ) :
     env(env)
 {}
@@ -345,7 +447,7 @@ void unranker::visit( reduce_node& n ) {
 }
 
 void unranker::visit( id_node& n ) {
-    auto ptr = env.get(n.id);
+    auto ptr = env.get(n.id, n.index);
     if (ptr != nullptr)
         ptr->accept(*this);
 }

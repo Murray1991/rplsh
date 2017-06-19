@@ -33,6 +33,8 @@ protected:
 template <typename skeleton>
 struct concrete_skel_node : skel_node {
     virtual void accept(visitor& v);
+    virtual void setid(std::size_t id);
+    virtual std::size_t getid() const;
     bool operator==( const skel_node& rhs );
     bool operator!=( const skel_node& rhs );
 protected:
@@ -42,6 +44,7 @@ protected:
 private:
     bool match( const skel_node& rhs );
     skeleton& _sk;
+    std::size_t id;
 };
 
 struct seq_node : public concrete_skel_node<seq_node> {

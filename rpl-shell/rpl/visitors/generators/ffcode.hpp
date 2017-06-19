@@ -31,6 +31,7 @@ private:
 protected:
     rpl_environment& env;
     get_seq_wrappers gsw;
+    top_datap_skeletons tds;
 
     std::queue<std::pair<std::string,std::string>> code_lines;
 };

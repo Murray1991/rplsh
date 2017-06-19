@@ -106,6 +106,43 @@ private:
     std::vector<source_node*> src_nodes;
 };
 
+struct top_datap_skeletons : public skel_visitor {
+    top_datap_skeletons(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+
+    std::vector<map_node*> get_map_nodes();
+    std::vector<reduce_node*> get_reduce_nodes();
+
+    void operator()(skel_node& n);
+private:
+    rpl_environment& env;
+    std::vector<map_node*> map_nodes;
+    std::vector<reduce_node*> red_nodes;
+};
+
+struct ranker : public skel_visitor {
+    ranker(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+    void operator()(skel_node& n);
+private:
+    rpl_environment& env;
+    single_node_cloner snc;
+};
+
 struct unranker : public skel_visitor {
     unranker(rpl_environment& env);
     void visit(seq_node& n);

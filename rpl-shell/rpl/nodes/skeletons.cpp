@@ -47,6 +47,16 @@ void concrete_skel_node<skeleton>::accept( visitor & v ) {
 }
 
 template <typename skeleton>
+void concrete_skel_node<skeleton>::setid( size_t _id ) {
+    id = _id;
+}
+
+template <typename skeleton>
+size_t concrete_skel_node<skeleton>::getid() const {
+    return id;
+}
+
+template <typename skeleton>
 bool concrete_skel_node<skeleton>::match ( const skel_node& rhs ) {
     return dynamic_cast<const skeleton*>(&rhs);
 }

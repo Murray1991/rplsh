@@ -74,3 +74,20 @@ bool ann_pardegree::operator()( skel_node& n, double value ) {
     n.accept( *this );
     return result;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+ann_datap::ann_datap( rpl_environment& env ) :
+    ann_visitor ( env )
+{}
+
+void ann_datap::visit( seq_node& n ) {
+    n.datap_flag = datap;
+    result       = true;
+}
+
+bool ann_datap::operator()( skel_node& n, double value ) {
+    this->datap = value == 0 ? false : true;
+    n.accept( *this );
+    return result;
+}
