@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <memory>
 #include <iostream>
+#include <algorithm>
 #include "wrappers.hpp"
 
 class split {
@@ -66,6 +67,7 @@ public:
 
     // interface iterating the container
     void add ( const T& t );
+    void resize( std::size_t value );
     T get ( const std::size_t& idx ) const;
     T& operator[]( const std::size_t& idx ) const;
     T& operator[]( const std::size_t& idx );
@@ -100,6 +102,12 @@ template <typename T>
 void Container<T>::add( const T& t ) {
     vec->push_back(t);
     upper = vec->size();
+}
+
+template <typename T>
+void Container<T>::resize( std::size_t value ) {
+    vec->reserve(value);
+    vec->resize(value);
 }
 
 template <typename T>
