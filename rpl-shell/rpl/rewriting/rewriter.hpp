@@ -96,12 +96,22 @@ void rewriter::insert_or_delete( node_set& set, skel_node* rn ) {
     }
 }
 
-template <typename ... T>
-void comb_and_ins( node_set& s, skel_node& n, T* ... args ) {
+void comb_and_ins( node_set& s, skel_node& n, skel_node* p1 ) {
     single_node_cloner snc;
     skel_node * rn = snc(n);
     printer print;
-    (rn->add(args) , ...);
+    rn->add(p1);
+    auto p = s.insert({print(*rn), rn});
+    if (!p.second)
+        delete rn;
+}
+
+void comb_and_ins( node_set& s, skel_node& n, skel_node* p1, skel_node* p2 ) {
+    single_node_cloner snc;
+    skel_node * rn = snc(n);
+    printer print;
+    rn->add(p1);
+    rn->add(p2);
     auto p = s.insert({print(*rn), rn});
     if (!p.second)
         delete rn;
