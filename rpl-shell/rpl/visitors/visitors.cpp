@@ -230,7 +230,11 @@ void reduce_resources::visit( map_node& n ) {
 }
 
 void reduce_resources::visit( reduce_node& n ) {
-    res = false;
+    res = n.pardegree > 1;
+    if ( res )
+        n.pardegree--;
+    else
+        (*this)( *n.get(0) );
 }
 
 void reduce_resources::visit( id_node& n ) {

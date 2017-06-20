@@ -88,7 +88,7 @@ void mapopt::visit( map_node& n ) {
     /* reassign resources with the new pardegree */
     assignres(n, n.inputsize);
 
-    /* recurse */
+    /* recurse; TODO or not? */
     (*this)( *n.get(0) );
 }
 
@@ -108,7 +108,7 @@ void reduceopt::visit( reduce_node& n ) {
     n.pardegree = ( ((double) n.inputsize) * log(2) );
     assignres(n, n.inputsize);
 
-    /* recurse */
+    /* recurse; TODO Or not?*/
     (*this)( *n.get(0) );
 }
 
@@ -199,6 +199,10 @@ void maxresources::visit( farm_node& n ) {
 }
 
 void maxresources::visit( map_node& n ) {
+    while ( res(n) > maxres && reduce_res(n) );
+}
+
+void maxresources::visit( reduce_node& n ) {
     while ( res(n) > maxres && reduce_res(n) );
 }
 
