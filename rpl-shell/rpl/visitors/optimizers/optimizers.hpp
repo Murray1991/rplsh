@@ -72,6 +72,7 @@ struct pipebalance : public optrule
     void visit(pipe_node& n);
     void visit(farm_node& n);
     void visit(map_node& n);
+    void visit(reduce_node& n);
     void operator()( skel_node& n );
 private:
     void operator()( skel_node& n, double max );

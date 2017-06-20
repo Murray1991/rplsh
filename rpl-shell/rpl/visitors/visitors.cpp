@@ -288,18 +288,22 @@ void reduce_resources::visit( farm_node& n ) {
 }
 
 void reduce_resources::visit( map_node& n ) {
+    assign_resources assignres;
     res = n.pardegree > 1;
-    if ( res )
+    if ( res ) {
         n.pardegree--;
-    else
+        assignres(n, n.inputsize);
+    } else
         (*this)( *n.get(0) );
 }
 
 void reduce_resources::visit( reduce_node& n ) {
+    assign_resources assignres;
     res = n.pardegree > 1;
-    if ( res )
+    if ( res ) {
         n.pardegree--;
-    else
+        assignres(n, n.inputsize);
+    } else
         (*this)( *n.get(0) );
 }
 

@@ -163,12 +163,37 @@ void pipebalance::visit( pipe_node& n ) {
 
 void pipebalance::visit( farm_node& n ) {
     double tw  = ts( *n.get(0) );
-    n.pardegree = ceil( tw / ts_max );
+    n.pardegree = floor( tw / ts_max );
+    if (!n.pardegree)
+        n.pardegree = 1;
 }
 
 void pipebalance::visit( map_node& n ) {
+    /* in order to get the inner time...  */
+    assign_resources assignres;
+    n.pardegree = 1;
+    assignres(n, n.inputsize);
+
     double tw  = ts( *n.get(0) );
-    n.pardegree = ceil( tw / ts_max );
+    n.pardegree = floor( tw / ts_max );
+    if (!n.pardegree)
+        n.pardegree = 1;
+    assignres(n, n.inputsize);
+}
+
+void pipebalance::visit( reduce_node& n ) {
+    // iterative solution
+    double t = ts(n);
+    assign_resources assignres;
+
+    while (t < ts_max && 1 < n.pardegree) {
+
+        n.pardegree--;
+        assignres(n, n.inputsize);
+        t = ts(n);
+
+    }
+
 }
 
 void pipebalance::operator()( skel_node& n ) {
