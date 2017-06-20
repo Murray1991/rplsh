@@ -28,6 +28,8 @@ namespace par
     /* optimization parameter names */
     const std::string farmopt      = "farmopt";
     const std::string pipeopt      = "pipeopt";
+    const std::string mapopt       = "mapopt";
+    const std::string reduceopt    = "reduceopt";
     const std::string maxresources = "maxresources";
 
     /* non functional name parameters used for performance evaluation */
