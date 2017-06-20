@@ -24,6 +24,14 @@ void printer::visit(seq_node& n) {
     tostring("seq", n);
 }
 
+void printer::visit(source_node& n) {
+    tostring("source", n);
+}
+
+void printer::visit(drain_node& n) {
+    tostring("drain", n);
+}
+
 void printer::visit(comp_node& n) {
     tostring("comp", n);
 }
@@ -64,6 +72,14 @@ void label_printer::visit( seq_node& n ) {
     str = "seq";
 }
 
+void label_printer::visit( source_node& n ) {
+    str = "source";
+}
+
+void label_printer::visit( drain_node& n ) {
+    str = "drain";
+}
+
 void label_printer::visit( comp_node& n ) {
     str = "comp";
 }
@@ -97,6 +113,14 @@ string label_printer::operator()( skel_node& sk ) {
 
 void single_node_cloner::visit( seq_node& n ) {
     tmp = new seq_node(n);
+}
+
+void single_node_cloner::visit( source_node& n ) {
+    tmp = new source_node(n);
+}
+
+void single_node_cloner::visit( drain_node& n ) {
+    tmp = new drain_node(n);
 }
 
 void single_node_cloner::visit( comp_node& n ) {
@@ -135,6 +159,14 @@ reduce_resources::reduce_resources( rpl_environment& env ) :
 {}
 
 void reduce_resources::visit( seq_node& n ) {
+    res = false;
+}
+
+void reduce_resources::visit( source_node& n ) {
+    res = false;
+}
+
+void reduce_resources::visit( drain_node& n ) {
     res = false;
 }
 

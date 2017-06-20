@@ -14,6 +14,8 @@
 struct printer : public skel_visitor, public printable
 {
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -31,6 +33,8 @@ private:
 // implementation of a visitor
 struct label_printer : public skel_visitor {
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -44,6 +48,8 @@ private:
 
 struct single_node_cloner : public skel_visitor {
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -58,6 +64,8 @@ private:
 struct reduce_resources : public skel_visitor {
     reduce_resources( rpl_environment& env );
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
