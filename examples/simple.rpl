@@ -45,7 +45,7 @@ rewrite d with allrules, allrules
 
 # optimize s and d
 optimize s with farmopt, pipeopt, maxresources
-#optimize d with mapopt, farmopt, pipeopt, maxresources
+optimize d with mapopt, farmopt, pipeopt, maxresources
 
 # show the top-5 results in servicetime for s and d
 show s by servicetime, compltime, resources +5
