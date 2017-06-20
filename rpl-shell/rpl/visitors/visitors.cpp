@@ -68,6 +68,72 @@ string printer::operator()(skel_node& sk){
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void ann_printer::tostring(const string& name, const string& ann, const skel_node& n) {
+    res += name + "(";
+    for (size_t i = 0; i < n.size(); i++) {
+        n.get(i)->accept(*this);
+        res += (i != n.size()-1 ? "," : "");
+    }
+    res = res + ") " + ann;
+}
+
+void ann_printer::tostring(const string& name, const skel_node& n) {
+    res += name + "(";
+    for (size_t i = 0; i < n.size(); i++) {
+        n.get(i)->accept(*this);
+        res += (i != n.size()-1 ? "," : "");
+    }
+    res += ")";
+}
+
+void ann_printer::visit(seq_node& n) {
+    tostring("seq", "with [ ts: " + to_string(n.servicetime) + "]", n);
+}
+
+void ann_printer::visit(source_node& n) {
+    tostring("source", "with [ ts: " + to_string(n.servicetime) + "]", n);
+}
+
+void ann_printer::visit(drain_node& n) {
+    tostring("drain", "with [ ts: " + to_string(n.servicetime) + "]", n);
+}
+
+void ann_printer::visit(comp_node& n) {
+    tostring("comp", n);
+}
+
+void ann_printer::visit(pipe_node& n) {
+    tostring("pipe", n);
+}
+
+void ann_printer::visit(farm_node& n) {
+    tostring("farm", "with [ nw: " + to_string(n.pardegree) + "]", n);
+}
+
+void ann_printer::visit(map_node& n) {
+    tostring("map", "with [ nw: " + to_string(n.pardegree) + "]", n);
+}
+
+void ann_printer::visit(reduce_node& n) {
+    tostring("reduce", "with [ nw: " + to_string(n.pardegree) + "]", n);
+}
+
+void ann_printer::visit(id_node& n) {
+    res += n.id;
+}
+
+string ann_printer::print( skel_node& sk ){
+    return (*this)( sk );
+}
+
+string ann_printer::operator()(skel_node& sk){
+    res.clear();
+    sk.accept(*this);
+    return res;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void label_printer::visit( seq_node& n ) {
     str = "seq";
 }

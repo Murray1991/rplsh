@@ -30,6 +30,26 @@ private:
     void tostring(const std::string& name, const skel_node& n);
 };
 
+struct ann_printer : public skel_visitor, public printable
+{
+    void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+
+    std::string print(skel_node& sk);
+    std::string operator()(skel_node& sk);
+private:
+    std::string res;
+    void tostring(const std::string& name, const skel_node& n);
+    void tostring(const std::string& name, const std::string& ann, const skel_node& n);
+};
+
 // implementation of a visitor
 struct label_printer : public skel_visitor {
     void visit(seq_node& n);
