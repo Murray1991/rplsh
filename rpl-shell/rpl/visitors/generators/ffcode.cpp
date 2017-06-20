@@ -97,22 +97,22 @@ string map_declaration( map_node& n, rpl_environment& env ) {
 
     ss << "public:\n";
     ss << "\tvoid * svc(void *t) {\n";
-    ss << "\t\t" << typein << " task = *((" << typein << "*) t);\n";
+    ss << "\t\t" << typein << " _task = *((" << typein << "*) t);\n";
     ss << "\t\t" << typeout << "* out = new " << typeout << "();\n";
-    ss << "\t\tout->resize(task.size());\n"; //TODO really necessary?
+    ss << "\t\tout->resize(_task.size());\n"; //TODO really necessary?
 
     // start parallel for
     size_t i;
     string par;
     ss << "\t\tParallelFor pf;\n";
-    ss << "\t\tpf.parallel_for(0, task.size(),";
+    ss << "\t\tpf.parallel_for(0, _task.size(),";
     // begin lambda
-    ss << "[this, &task, &out](const long i) {\n";
+    ss << "[this, &_task, &out](const long i) {\n";
     for (i = 0; i < seq_nodes.size()-1; i++) {
-        par = !i ? "task[i]" : ("res" + to_string(i-1));
+        par = !i ? "_task[i]" : ("res" + to_string(i-1));
         ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
     }
-    par = !i ? "task[i]" : ("res" + to_string(i-1));
+    par = !i ? "_task[i]" : ("res" + to_string(i-1));
     ss << "\t\t\t(*out)[i] = wrapper" << i << ".op(" << par << ");\n";
     ss << "\t\t}";
     // end lambda
@@ -156,27 +156,27 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
 
     ss << "public:\n";
     ss << "\tvoid * svc(void *t) {\n";
-    string task = "task";
-    ss << "\t\t" << typein << " task = *((" << typein << "*) t);\n";
+    string task = "_task";
+    ss << "\t\t" << typein << " _task = *((" << typein << "*) t);\n";
 
     if ( seq_nodes.size() > 1) {
         string mapout  = seq_nodes[seq_nodes.size()-2]->typeout;
         ss << "\t\t" << mapout << "* mapout = new " << mapout << "();\n";
-        ss << "\t\tmapout->resize(task.size());\n"; //TODO really necessary?
+        ss << "\t\tmapout->resize(_task.size());\n"; //TODO really necessary?
         task = "mapout";
 
         // start parallel for
         size_t i;
         string par;
         ss << "\t\tParallelFor pf;\n";
-        ss << "\t\tpf.parallel_for(0, task.size(),";
+        ss << "\t\tpf.parallel_for(0, _task.size(),";
         // begin lambda
-        ss << "[this, &task, &mapout](const long i) {\n";
+        ss << "[this, &_task, &mapout](const long i) {\n";
         for (i = 0; i < seq_nodes.size()-2; i++) {
-            par = !i ? "task[i]" : ("res" + to_string(i-1));
+            par = !i ? "_task[i]" : ("res" + to_string(i-1));
             ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
         }
-        par = !i ? "task[i]" : ("res" + to_string(i-1));
+        par = !i ? "_task[i]" : ("res" + to_string(i-1));
         ss << "\t\t\t(*mapout)[i] = wrapper" << i << ".op(" << par << ");\n";
         ss << "\t\t}\n";
         // end lambda
@@ -189,7 +189,7 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
     ss << "\t\t" << typeout << "* out  = new " << typeout << "();\n";
     ss << "\t\t" << "ParallelForReduce<"<<typeout<<"> pfr;\n";
     ss << "\t\tauto reduceF = [this]("<<typeout<<"& sum, "<<typeout<<" elem) {sum = wrapper"<<idx<<".op(sum, elem);};\n";
-    ss << "\t\tauto bodyF = [this,&task](const long i, "<<typeout<<"& sum) {sum = wrapper"<<idx<<".op(sum, task[i]);};\n";
+    ss << "\t\tauto bodyF = [this,&_task](const long i, "<<typeout<<"& sum) {sum = wrapper"<<idx<<".op(sum, _task[i]);};\n";
     ss << "\t\tpfr.parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string(n.pardegree)<<");\n";
 
     //TODO memory leak of previous node
