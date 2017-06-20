@@ -1,0 +1,35 @@
+# set global environment variables
+set inputsize with 100
+set dimension with 50
+set resources with 16
+
+# set variables
+a = seq(15)
+b = seq(5)
+
+annotate a with datap true
+annotate b with datap true
+
+show a servicetime
+show b servicetime
+
+p = pipe(map(a), reduce(b))
+optimize p with mapopt, reduceopt
+
+# show the results of the optimizations
+# notice the servicetime for map (limited by the scatter_time)
+show p by servicetime, resources
+
+# optimize in order to match the resources used
+# with the available ones
+optimize p with maxresources
+
+# show the results of the optimization
+# we would like to have a balanced pipe
+show p by servicetime, resources
+
+# if pipeopt optimization does not change the
+# number of workers in the nested reduce and map,
+# then it looks ok!!
+optimize p with pipeopt
+show p by servicetime, resources

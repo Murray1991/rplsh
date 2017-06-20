@@ -32,7 +32,7 @@ s = pipe(inc, square, redplus)
 show s by servicetime, compltime, resources
 
 # alternative datap expressions
-d = pipe(map(inc), map(square), reduce(redplus))
+d = pipe(map(inc), map(square), redplus)
 
 # first program: the assignment k = s
 #  is necessary since we will rewrite s
