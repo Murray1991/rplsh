@@ -52,7 +52,7 @@ void interpreter::visit(show_node& n) {
             return;
         }
 
-        printer p;
+        ann_printer p;
         vector<mytuple> tuples;
         auto range = env.range( n.id );
         auto index = n.index < 0 ? 0 : n.index;
