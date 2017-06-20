@@ -21,7 +21,7 @@ annotate redplus with servicetime 5
 set inputsize with 100
 
 # dimension variable affects only completion time
-set dimension with 100
+set dimension with 50
 
 # resources variable affects optimizations
 set resources with 16
@@ -45,7 +45,7 @@ rewrite d with allrules, allrules
 
 # optimize s and d
 optimize s with farmopt, pipeopt, maxresources
-optimize d with mapopt, farmopt, pipeopt, maxresources
+#optimize d with mapopt, farmopt, pipeopt, maxresources
 
 # show the top-5 results in servicetime for s and d
 show s by servicetime, compltime, resources +5

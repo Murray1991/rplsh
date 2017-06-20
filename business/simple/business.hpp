@@ -40,12 +40,13 @@ public:
         out->reserve(dim);
         for (auto i = 0; i < dim; i++ )
             out->push_back( get_random() );
+        start++;
         return out;
     }
 
 private:
     std::size_t start{0};
-    std::size_t end{100};
+    std::size_t end{50};
     std::size_t dim{100};
 };
 
