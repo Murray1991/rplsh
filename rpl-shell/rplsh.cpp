@@ -13,6 +13,7 @@
 #include <sstream>
 #include <string>
 #include <locale>
+#include <regex>
 
 using namespace std;
 
@@ -30,6 +31,11 @@ bool print_rpl() {
 
 bool is_empty_input(string& line) {
     return line.empty() || line == string(line.length(), ' ');
+}
+
+bool is_comment(string& line) {
+    regex comment("^([ ]*)#(.*)");
+    return regex_match(line, comment);
 }
 
 bool is_quit_input(string& line) {
@@ -60,7 +66,7 @@ int main(int argc, char * argv[])
         ifstream infile(argv[1]);
         while ( getline(infile, line) ) {
             print_rpl(); cout << line << endl;
-            if (is_empty_input(line))
+            if (is_empty_input(line) || is_comment(line))
                 continue;
             process(_interpr, line);
         }
@@ -68,7 +74,7 @@ int main(int argc, char * argv[])
 
     while ( print_rpl() && getline(cin, line) ) {
         // interactive mode
-        if (is_empty_input(line))
+        if (is_empty_input(line) || is_comment(line))
             continue;
         if (is_quit_input(line))
             break;
