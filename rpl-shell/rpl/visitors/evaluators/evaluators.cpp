@@ -38,6 +38,14 @@ void servicetime::visit(seq_node& n) {
         res = n.servicetime;
 }
 
+void servicetime::visit(source_node& n) {
+    res = n.servicetime;
+}
+
+void servicetime::visit(drain_node& n) {
+    res = n.servicetime;
+}
+
 void servicetime::visit(comp_node& n) {
     res = compute(*this, n, std::plus<double>());
 }
@@ -51,17 +59,23 @@ void servicetime::visit(farm_node& n) {
 }
 
 void servicetime::visit(map_node& n) {
+    // assumption: inputsize has been already propagated
     res = (*this)(*n.get(0));
 }
 
-// approximately is something like that
 void servicetime::visit(reduce_node& n) {
-    res = (*this)(*n.get(0));
-    res += log2( res/n.inputsize );
+    // assuming Tf is the servicetime  of the reduce function f:
+    // ts(n) = Tf / nw + log2(nw) * Tf
+
+    // assumption: inputsize has been already propagated
+    int nw = n.pardegree;
+    res = (*this)(*n.get(0));                   // res == Tf / nw
+    res = res + log2(n.pardegree) * (res*nw);   // Tf == res*nw
 }
 
 void servicetime::visit(id_node& n) {
     try {
+        // we need to assign resources before
         auto ptr = env.get(n.id);
         assign_resources assignres;
         assignres(*ptr, n.inputsize);
@@ -95,6 +109,14 @@ void latencytime::visit(seq_node& n) {
         res = n.servicetime;
 }
 
+void latencytime::visit(source_node& n) {
+    res = n.servicetime;
+}
+
+void latencytime::visit(drain_node& n) {
+    res = n.servicetime;
+}
+
 void latencytime::visit(comp_node& n) {
     res = compute(*this, n, std::plus<double>());
 }
@@ -111,10 +133,14 @@ void latencytime::visit(map_node& n) {
     res = env.get_scatter_time() + (*this)( *n.get(0) ) + env.get_gather_time();
 }
 
-// approximately something like that
 void latencytime::visit(reduce_node& n) {
-    res = (*this)(*n.get(0));
-    res += log2( res/n.inputsize );
+    // assuming Tf is the servicetime  of the reduce function f:
+    // lat(n) = Tf / nw + log2(nw) * Tf
+
+    // assumption: inputsize has been already propagated
+    int nw = n.pardegree;
+    res = (*this)(*n.get(0));                   // res == Tf / nw
+    res = res + log2(n.pardegree) * (res*nw);   // Tf == res*nw
 }
 
 void latencytime::visit(id_node& n) {
@@ -156,6 +182,16 @@ void completiontime::visit( seq_node& n ) {
         res = n.servicetime * n.inputsize;
     else
         res = n.servicetime;
+
+    res = res * env.get_dim();
+}
+
+void completiontime::visit(source_node& n) {
+    res = n.servicetime * env.get_dim();
+}
+
+void completiontime::visit(drain_node& n) {
+    res = n.servicetime * env.get_dim();
 }
 
 void completiontime::visit( comp_node& n ) {
@@ -168,15 +204,16 @@ void completiontime::visit( pipe_node& n ) {
 }
 
 void completiontime::visit( farm_node& n ) {
-    res = (env.get_dim()-1) * ts(*n.get(0)) / n.pardegree + lat(n);
+    // latency + ts
+    res = (env.get_dim()-1) * ts(n) + lat(n);
 }
 
 void completiontime::visit( map_node& n ) {
-    res = env.get_dim()*lat(n);
+    res = env.get_dim() * lat(n);
 }
 
 void completiontime::visit( reduce_node& n ) {
-    res = lat(n);
+    res = env.get_dim() * lat(n);
 }
 
 void completiontime::visit( id_node& n ) {
@@ -207,6 +244,14 @@ pardegree::pardegree( rpl_environment& env ) :
 {}
 
 void pardegree::visit( seq_node& n ) {
+    res = 1;
+}
+
+void pardegree::visit( source_node& n ) {
+    res = 1;
+}
+
+void pardegree::visit( drain_node& n ) {
     res = 1;
 }
 
@@ -258,6 +303,14 @@ resources::resources( rpl_environment& env ) :
 {}
 
 void resources::visit( seq_node& n ) {
+    res = 1;
+}
+
+void resources::visit( source_node& n ) {
+    res = 1;
+}
+
+void resources::visit( drain_node& n ) {
     res = 1;
 }
 

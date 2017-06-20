@@ -16,6 +16,8 @@ struct servicetime: public eval_visitor
 {
     servicetime(rpl_environment& env);
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -33,6 +35,8 @@ struct latencytime: public eval_visitor
 {
     latencytime(rpl_environment& env);
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -50,6 +54,8 @@ struct completiontime: public eval_visitor
 {
     completiontime(rpl_environment& env);
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -69,6 +75,8 @@ struct pardegree: public eval_visitor
 {
     pardegree(rpl_environment& env);
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
@@ -86,6 +94,8 @@ struct resources: public eval_visitor
 {
     resources(rpl_environment& env);
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);
