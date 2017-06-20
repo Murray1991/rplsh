@@ -47,6 +47,16 @@ void ann_servicetime::visit( seq_node& n ) {
     result        = true;
 }
 
+void ann_servicetime::visit( source_node& n ) {
+    n.servicetime = servicetime;
+    result        = true;
+}
+
+void ann_servicetime::visit( drain_node& n ) {
+    n.servicetime = servicetime;
+    result        = true;
+}
+
 bool ann_servicetime::operator()( skel_node& n, double value ) {
     servicetime = value;
     n.accept( *this );

@@ -27,6 +27,8 @@ struct ann_servicetime : public ann_visitor
 {
     ann_servicetime( rpl_environment& env );
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
 
     /* Return true if the value is correctly annotated, false otherwise. */
     bool operator()( skel_node& n, double value );
