@@ -70,7 +70,7 @@ void servicetime::visit(reduce_node& n) {
     // assumption: inputsize has been already propagated
     int nw = n.pardegree;
     res = (*this)(*n.get(0));                   // res == Tf / nw
-    res = res + log2(n.pardegree) * (res*nw);   // Tf == res*nw
+    res = res + log2(n.pardegree) * (res/nw);   // Tf == res*nw
 }
 
 void servicetime::visit(id_node& n) {
@@ -140,7 +140,7 @@ void latencytime::visit(reduce_node& n) {
     // assumption: inputsize has been already propagated
     int nw = n.pardegree;
     res = (*this)(*n.get(0));                   // res == Tf / nw
-    res = res + log2(n.pardegree) * (res*nw);   // Tf == res*nw
+    res = res + log2(n.pardegree) * (res/nw);   // Tf == res*nw
 }
 
 void latencytime::visit(id_node& n) {
