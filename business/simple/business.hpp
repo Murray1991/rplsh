@@ -6,7 +6,7 @@
 #include <thread>
 #include <chrono>
 
-//////////////// Some utils functions ///////////////////////
+//////////////// some utils functions ///////////////////////
 
 template <typename Iterator>
 void print(Iterator begin, Iterator end, const std::string& info) {
@@ -28,7 +28,7 @@ int get_random() {
 template <typename T>
 using task = std::vector<T>;
 
-///////////////////// Source wrapper /////////////////////
+///////////////////// source wrapper /////////////////////
 class vec_source : public source<task<int>> {
 public:
     bool has_next() {
@@ -50,15 +50,15 @@ private:
     std::size_t dim{100};
 };
 
-///////////////////// Drain wrapper /////////////////////
-class vec_drain : public drain<float> {
+///////////////////// drain wrapper /////////////////////
+class float_drain : public drain<float> {
 public:
     void process(float* res) {
         std::cout << "res: " << *res << std::endl;
     }
 };
 
-///////////////////// Inc seq_wrapper /////////////////////
+///////////////////// inc seq_wrapper /////////////////////
 class inc : public seq_wrapper<task<int>, task<float>> {
 public:
     task<float> compute( task<int>& input ) {
@@ -77,7 +77,7 @@ public:
     }
 };
 
-///////////////////// Square seq_wrapper /////////////////////
+///////////////////// square seq_wrapper /////////////////////
 class square : public seq_wrapper<task<float>, task<float>> {
 public:
     task<float> compute( task<float>& input ) {
@@ -92,7 +92,7 @@ public:
     }
 };
 
-///////////////////// Reduce seq_wrapper /////////////////////
+///////////////////// reduce seq_wrapper /////////////////////
 class redplus : public seq_wrapper<task<float>, float> {
 public:
     float compute( task<float>& input ) {

@@ -32,20 +32,20 @@ s = pipe(inc, square, redplus)
 show s by servicetime, compltime, resources
 
 # alternative datap expressions
-d = pipe(map(inc), map(square), redplus)
+d = pipe(map(inc), map(square), reduce(redplus))
 
 # first program: the assignment k = s
 #  is necessary since we will rewrite s
 k = s
-p1 = pipe(vec_source, k, vec_drain)
+p1 = pipe(vec_source, k, float_drain)
 
 # rewrite s and d
-rewrite s with allrules, allrules
-rewrite d with allrules, allrules
+rewrite s with allrules
+rewrite d with allrules
 
 # optimize s and d
 optimize s with farmopt, pipeopt, maxresources
-optimize d with mapopt, farmopt, pipeopt, maxresources
+optimize d with mapopt, reduceopt, pipeopt, maxresources
 
 # show the top-5 results in servicetime for s and d
 show s by servicetime, compltime, resources +5
