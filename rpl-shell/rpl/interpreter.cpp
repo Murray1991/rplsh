@@ -216,7 +216,7 @@ void interpreter::visit(gencode_node& n) {
     ranker rank(env);
     unranker unrank(env);
 
-    auto ptr = env.get(n.id);
+    auto ptr = env.get(n.id, n.index);
 
     if (ptr != nullptr) {
         // unrank and generate code
@@ -269,7 +269,7 @@ void interpreter::visit(reduce_node& n) {
 }
 
 void interpreter::visit(id_node& n) {
-    auto ptr = env.get(n.id);                 // check if it exists
+    auto ptr = env.get(n.id, n.index);                 // check if it exists
     if (ptr == nullptr) {
         success  = false;
         err_repo.add( make_shared<error_not_exist>(n.id) );

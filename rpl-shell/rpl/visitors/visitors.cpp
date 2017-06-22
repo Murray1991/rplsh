@@ -393,7 +393,7 @@ void get_seq_wrappers::visit( reduce_node& n ) {
 }
 
 void get_seq_wrappers::visit( id_node& n ) {
-    auto ptr = env.get(n.id);
+    auto ptr = env.get(n.id, n.index);
     if (ptr != nullptr)
         ptr->accept(*this);
     else
@@ -459,7 +459,7 @@ void top_datap_skeletons::visit( reduce_node& n ) {
 }
 
 void top_datap_skeletons::visit( id_node& n ) {
-    auto ptr = env.get(n.id);
+    auto ptr = env.get(n.id, n.index);
     if (ptr != nullptr)
         ptr->accept(*this);
     else

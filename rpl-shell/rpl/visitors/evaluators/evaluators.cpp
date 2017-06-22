@@ -76,7 +76,7 @@ void servicetime::visit(reduce_node& n) {
 void servicetime::visit(id_node& n) {
     try {
         // we need to assign resources before
-        auto ptr = env.get(n.id);
+        auto ptr = env.get(n.id, n.index);
         assign_resources assignres;
         assignres(*ptr, n.inputsize);
         res = (*this)(*ptr);
@@ -145,7 +145,7 @@ void latencytime::visit(reduce_node& n) {
 
 void latencytime::visit(id_node& n) {
     try {
-        auto ptr = env.get(n.id);
+        auto ptr = env.get(n.id, n.index);
         assign_resources assignres;
         assignres(*ptr, n.inputsize);
         res = (*this)(*ptr);
@@ -218,7 +218,7 @@ void completiontime::visit( reduce_node& n ) {
 
 void completiontime::visit( id_node& n ) {
     try {
-        auto ptr = env.get(n.id);
+        auto ptr = env.get(n.id, n.index);
         assign_resources assignres;
         assignres(*ptr, n.inputsize);
         res = (*this)(*ptr);
@@ -279,7 +279,7 @@ void pardegree::visit( reduce_node& n ) {
 
 void pardegree::visit( id_node& n ) {
     try {
-        auto ptr = env.get(n.id);
+        auto ptr = env.get(n.id, n.index);
         res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
@@ -336,7 +336,7 @@ void resources::visit( reduce_node& n ) {
 
 void resources::visit( id_node& n ) {
     try {
-        auto ptr = env.get(n.id);
+        auto ptr = env.get(n.id, n.index);
         res = (*this)(*ptr);
     } catch (out_of_range& e) {
         //TODO handle in a better way
