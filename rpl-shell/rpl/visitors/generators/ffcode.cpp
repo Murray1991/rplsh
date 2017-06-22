@@ -89,23 +89,22 @@ string map_declaration( map_node& n, rpl_environment& env ) {
     stringstream ss;
     string typein  = seq_nodes.front()->typein;
     string typeout = seq_nodes.back()->typeout;
-
-    ss << "class map" << n.getid() << "_stage : public ff_node" << "{\n";   //TODO use ff_Map
+    string ffMap   = "ff_Map<"+typein+","+typeout+">";
+    ss << "class map" << n.getid() << "_stage : public " << ffMap << " {\n";
     ss << "protected:\n";
     for (size_t i = 0; i < seq_nodes.size(); i++)
         ss << "\t" << seq_nodes[i]->name << " wrapper" << i << ";\n";
 
     ss << "public:\n";
-    ss << "\tvoid * svc(void *t) {\n";
-    ss << "\t\t" << typein << " _task = *((" << typein << "*) t);\n";
+    ss << "\t" << typeout << "* svc("<< typein << " *t) {\n";
+    ss << "\t\t" << typein << "& _task = t;\n";
     ss << "\t\t" << typeout << "* out = new " << typeout << "();\n";
     ss << "\t\tout->resize(_task.size());\n"; //TODO really necessary?
 
     // start parallel for
     size_t i;
     string par;
-    ss << "\t\tParallelFor pf;\n";
-    ss << "\t\tpf.parallel_for(0, _task.size(),";
+    ss << "\t\t" << ffMap << "::parallel_for(0, _task.size(),";
     // begin lambda
     ss << "[this, &_task, &out](const long i) {\n";
     for (i = 0; i < seq_nodes.size()-1; i++) {
@@ -120,7 +119,7 @@ string map_declaration( map_node& n, rpl_environment& env ) {
     // end parallel for
 
     //TODO memory leak of previous node
-    ss << "\t\t" << "return (void*) out;\n";
+    ss << "\t\t" << "return out;\n";
     ss << "\t}\n";
     ss << "};\n\n";
 
@@ -130,7 +129,6 @@ string map_declaration( map_node& n, rpl_environment& env ) {
 string red_declaration( reduce_node& n, rpl_environment& env ) {
     // two-tier model: inside reduce nodes only seq or compseq are allowed:
     // if stream/datap inside, ignore it when compile and show a warning
-
     pardegree nw(env);         // setup the pardegree visitor
     get_seq_wrappers gsw(env); // setup the get_seq_wrappers visitor
 
@@ -138,38 +136,39 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
     auto src_nodes = gsw.get_source_nodes();
     auto drn_nodes = gsw.get_drain_nodes();
     auto seq_nodes = gsw.get_seq_nodes();
-    if (!src_nodes.empty() || !drn_nodes.empty() || ((int) nw(n)) != n.pardegree)
-        cout << "warning: two tier modeling application for generation of code" << endl;
+    if (((int) nw(n)) != n.pardegree)
+        cout << "warning: two tier modeling will be applied for generation of code" << endl;
+    if (!src_nodes.empty() || !drn_nodes.empty())
+        cout << "warning: source/drain nodes inside reduce" << endl;
 
     // in case of multiple sequential nodes:
     // reduce(comp(a,b,c)) == pipe(map(comp(a,b)),c)
     // where c is the only node implementing a binary operation f: v1 x v2 -> res
-
     stringstream ss;
     string typein  = seq_nodes.front()->typein;
     string typeout = seq_nodes.back()->typeout;
+    string ffMap   = "ff_Map<"+typein+","+typeout+","+typeout+">";
 
-    ss << "class reduce" << n.getid() << "_stage : public ff_node" << "{\n";
+    ss << "class reduce" << n.getid() << "_stage : public " << ffMap << " {\n";
     ss << "protected:\n";
     for (size_t i = 0; i < seq_nodes.size(); i++)
         ss << "\t" << seq_nodes[i]->name << " wrapper" << i << ";\n";
-
     ss << "public:\n";
-    ss << "\tvoid * svc(void *t) {\n";
+    ss << "\t" << typeout << "* svc("<< typein <<"* t) {\n";
     string task = "_task";
-    ss << "\t\t" << typein << " _task = *((" << typein << "*) t);\n";
+    ss << "\t\t" << typein << "& _task = *t;\n";
 
     if ( seq_nodes.size() > 1) {
+        cout << "warning: reduce(comp(s1, s2, ..., sk, sn)) -> comp(map(s1,...,sk), reduce(sn))" << endl;
         string mapout  = seq_nodes[seq_nodes.size()-2]->typeout;
         ss << "\t\t" << mapout << "* mapout = new " << mapout << "();\n";
         ss << "\t\tmapout->resize(_task.size());\n"; //TODO really necessary?
         task = "mapout";
 
-        // start parallel for
         size_t i;
         string par;
-        ss << "\t\tParallelFor pf;\n";
-        ss << "\t\tpf.parallel_for(0, _task.size(),";
+        // start parallel for
+        ss << "\t\t"<<ffMap<<"::parallel_for(0, _task.size(),";
         // begin lambda
         ss << "[this, &_task, &mapout](const long i) {\n";
         for (i = 0; i < seq_nodes.size()-2; i++) {
@@ -187,13 +186,12 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
 
     size_t idx = seq_nodes.size()-1;
     ss << "\t\t" << typeout << "* out  = new " << typeout << "();\n";
-    ss << "\t\t" << "ParallelForReduce<"<<typeout<<"> pfr;\n";
     ss << "\t\tauto reduceF = [this]("<<typeout<<"& sum, "<<typeout<<" elem) {sum = wrapper"<<idx<<".op(sum, elem);};\n";
     ss << "\t\tauto bodyF = [this,&_task](const long i, "<<typeout<<"& sum) {sum = wrapper"<<idx<<".op(sum, _task[i]);};\n";
-    ss << "\t\tpfr.parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string(n.pardegree)<<");\n";
+    ss << "\t\t" << ffMap <<"::parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string(n.pardegree)<<");\n";
 
     //TODO memory leak of previous node
-    ss << "\t\t" << "return (void*) out;\n";
+    ss << "\t\t" << "return out;\n";
     ss << "\t}\n";
     ss << "};\n\n";
 
@@ -207,6 +205,7 @@ string includes() {
     ss << "#include <vector>\n\n";
     ss << "// specify include directory for fastflow\n";
     ss << "#include <ff/farm.hpp>\n";
+    ss << "#include <ff/map.hpp>\n";
     ss << "#include <ff/pipeline.hpp>\n";
     ss << "#include <ff/parallel_for.hpp>\n\n";
     ss << "// specify include directory for RPL-Shell\n";
@@ -303,7 +302,10 @@ void ffcode::visit( reduce_node& n ) {
 
 void ffcode::visit( id_node& n ) {
     auto ptr = env.get(n.id, n.index);
-    ptr->accept(*this);
+    if (ptr != nullptr)
+        ptr->accept(*this);
+    else
+        cout << n.id << " whaaaat?" << endl;
 }
 
 string ffcode::operator()(skel_node& n) {
