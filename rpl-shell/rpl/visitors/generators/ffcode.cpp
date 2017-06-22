@@ -97,7 +97,7 @@ string map_declaration( map_node& n, rpl_environment& env ) {
 
     ss << "public:\n";
     ss << "\t" << typeout << "* svc("<< typein << " *t) {\n";
-    ss << "\t\t" << typein << "& _task = t;\n";
+    ss << "\t\t" << typein << "& _task = *t;\n";
     ss << "\t\t" << typeout << "* out = new " << typeout << "();\n";
     ss << "\t\tout->resize(_task.size());\n"; //TODO really necessary?
 
