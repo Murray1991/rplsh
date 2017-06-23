@@ -46,8 +46,8 @@ node_set rewriter::apply_rule ( Iterator& begin, Iterator& end, rewrule& r) {
 node_set rewriter::apply_allrules ( skel_node& tree, rr_dispatcher& rr_disp) {
     node_set set;;
     vector<node_set> sets;
-    for (auto& p : rr_disp.get_map())
-        sets.push_back( fullrecrewrite(tree, *p.second) );
+    for (auto& str : rr_disp.get_allrules())
+        sets.push_back( fullrecrewrite(tree, *rr_disp[str]) );
     for (auto& curr : sets)
         set = merge(set, curr);
     return set;
