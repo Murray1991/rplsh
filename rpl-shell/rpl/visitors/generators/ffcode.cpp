@@ -24,6 +24,27 @@ string new_name(const string& name) {
     return name + apnd;
 }
 
+// insert a debug print that determines the CPU
+// on which the calling thread is running
+string dtrace_core( string where1, string where2, string tabs ) {
+    stringstream ss;
+    ss << tabs << "#ifdef TRACE_CORE\n";
+    ss << tabs << "std::cout << \"" << where1 << " -- " << where2 << " -- id = \"";
+    ss << tabs << "<< get_my_id() << \" -- tid = \" << std::this_thread::get_id() << \" -- core = \" << sched_getcpu() << std::endl;\n";
+    ss << tabs << "#endif\n";
+    return ss.str();
+}
+
+// insert svc_init stage with debug print
+string svc_init_decl(string where) {
+    stringstream ss;
+    ss << "\tint svc_init() {\n";
+    ss << dtrace_core("svc_init", where, "\t\t");
+    ss << "\t\treturn 0;\n";
+    ss << "\t}\n";
+    return ss.str();
+}
+
 // return the ff_node calling the function
 // typein and typeout MUST implement copy
 // assignment operator and default constructor
@@ -32,6 +53,7 @@ string stage_declaration( const seq_node& n ) {
     ss << "class " << n.name << "_stage : public ff_node {\n";
     ss << "protected:\n\t" << n.name << " wrapper; \n";
     ss << "public:\n";
+    ss << svc_init_decl(n.name) << "\n";
     ss << "\tvoid * svc(void *t) {\n";
     ss << "\t\t" << n.typein << " _in  = *((" << n.typein << "*) t);\n";
     ss << "\t\t" << n.typeout << "* _out  = new " << n.typeout << "();\n";
@@ -49,6 +71,7 @@ string source_declaration( const source_node& n ) {
     ss << "protected:\n\tstd::unique_ptr<" << n.name << "> src; \n\n";
     ss << "public:\n";
     ss << "\t" << n.name << "_stage() : src(new " << n.name << "()) {}\n";
+    ss << svc_init_decl(n.name) << "\n";
     ss << "\tvoid * svc(void *t) {\n";
     ss << "\t\twhile( src->has_next() )\n";
     ss << "\t\t\tff_send_out((void*) src->next() );\n";
@@ -64,6 +87,7 @@ string drain_declaration( const drain_node& n ) {
     ss << "protected:\n\tstd::unique_ptr<" << n.name << "> drn; \n\n";
     ss << "public:\n";
     ss << "\t" << n.name << "_stage() : drn(new " << n.name << "()) {}\n";
+    ss << svc_init_decl(n.name) << "\n";
     ss << "\tvoid * svc(void *t) {\n";
     ss << "\t\tdrn->process((" << n.typein << "*) t);\n";
     ss << "\t\treturn (GO_ON);\n";
@@ -364,6 +388,10 @@ string ffcode::operator()(skel_node& n) {
     ss << p.first << ".run_and_wait_end();\n";
     ss << "std::cout << \"Spent:\" << ";
     ss <<  p.first << ".ffTime() << \"msecs\" << std::endl;\n\n";
+    ss << "#ifdef TRACE_FASTFLOW\n";
+    ss << "std::cout << \"Stats:\" << std::endl;\n";
+    ss << p.first << ".ffStats(std::cout);\n";
+    ss << "#endif\n";
     ss << "return 0;\n";
 
     code_lines.pop();
