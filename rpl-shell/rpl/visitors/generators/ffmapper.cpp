@@ -63,28 +63,26 @@ void ffmapper::visit(farm_node& n) {
     mw.push_back(startID++ % endID);
 }
 
-// TODO check if it actually works...
+// FFCODE MUST IMPLEMENT PROPER OPTIMIZATION WHEN
+// PRODUCING FF CODE -> two-tier by augmenting pardegree
 void ffmapper::visit(map_node& n) {
-    // scatter/emitter
-    mw.push_back(startID++ % endID);
-
-    // recurse n.pardegree times for assign cpu ids to the workers
-    for (int i = 0; i < n.pardegree; i++)
-        n.get(0)->accept(*this);
-
-    // gather (?) <-- I don't think it's present for parallel_for/parallel_reduce...
-    mw.push_back(startID++ % endID);
+    // don't recurse here: two-tier model will
+    // be applied if stream parallelism inside
+    pardegree par(env);                      // setup pardegree visitor
+    size_t numworkers = par(n)+2;            // compute number of workers (considering scatter+gather)
+    for (size_t i = 0; i < numworkers; i++)  // cpu mapping for all workers
+        mw.push_back(startID++ % endID);
 }
 
-// TODO check if it actually works...
+// FFCODE MUST IMPLEMENT PROPER OPTIMIZATION WHEN
+// PRODUCING FF CODE -> two-tier by augmenting pardegree
 void ffmapper::visit(reduce_node& n) {
-    // scatter/emitter (?)
-    mw.push_back(startID++ % endID);
-
-    // recurse n.pardegree times for assign cpu ids to the workers
-    for (int i = 0; i < n.pardegree; i++)
-        n.get(0)->accept(*this);
-
+    // don't recurse here: two-tier model will
+    // be applied if stream parallelism inside
+    pardegree par(env);                      // setup pardegree visitor
+    size_t numworkers = par(n);              // compute number of workers
+    for (size_t i = 0; i < numworkers; i++)  // cpu mapping for all workers
+        mw.push_back(startID++ % endID);
 }
 
 void ffmapper::visit(id_node& n) {

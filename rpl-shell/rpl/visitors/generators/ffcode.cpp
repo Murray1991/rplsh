@@ -140,7 +140,7 @@ string map_declaration( map_node& n, rpl_environment& env ) {
     ss << "\t\t\t(*out)[i] = wrapper" << i << ".op(" << par << ");\n";
     ss << "\t\t}";
     // end lambda
-    ss << "," << to_string(n.pardegree) << ");\n";
+    ss << "," << to_string( nw(n) ) << ");\n";
     // end parallel for
 
     //TODO memory leak of previous node
@@ -204,7 +204,7 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
         ss << "\t\t\t(*mapout)[i] = wrapper" << i << ".op(" << par << ");\n";
         ss << "\t\t}\n";
         // end lambda
-        ss << "," << to_string(n.pardegree) << ");\n";
+        ss << "," << to_string( nw(n) ) << ");\n";
         // end parallel for
 
     }
@@ -213,7 +213,7 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
     ss << "\t\t" << typeout << "* out  = new " << typeout << "();\n";
     ss << "\t\tauto reduceF = [this]("<<typeout<<"& sum, "<<typeout<<" elem) {sum = wrapper"<<idx<<".op(sum, elem);};\n";
     ss << "\t\tauto bodyF = [this,&_task](const long i, "<<typeout<<"& sum) {sum = wrapper"<<idx<<".op(sum, _task[i]);};\n";
-    ss << "\t\t" << ffMap <<"::parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string(n.pardegree)<<");\n";
+    ss << "\t\t" << ffMap <<"::parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string( nw(n) )<<");\n";
 
     //TODO memory leak of previous node
     ss << "\t\t" << "return out;\n";
