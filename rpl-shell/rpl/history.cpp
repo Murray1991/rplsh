@@ -17,7 +17,8 @@ history::history( const std::string& id, const history& h ) {
             }
             commands.push_back(cmd);
             if (ids.size() == 0) break;
-        } else if (tok.kind == token::optimize || tok.kind == token::rewrite) {
+        } else if (tok.kind == token::optimize || tok.kind == token::rewrite ||
+             tok.kind == token::annotate ) {
             while (scanner.has_next() && tok.kind != token::word)
                 tok = scanner.next();
             if (tok.data == id)
