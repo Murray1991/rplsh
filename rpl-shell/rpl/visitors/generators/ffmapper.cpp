@@ -26,6 +26,17 @@ void ffmapper::visit(drain_node& n) {
 }
 
 void ffmapper::visit(comp_node& n) {
+    // if n.compseq is true its children are
+    // sequential nodes. We can use only one
+    // ff_node (a single thread) instead use
+    // multiple ff_node on the same pipe.
+    if (n.compseq) {
+        mw.push_back(startID++ % endID);
+        return;
+    }
+
+    // if n.compseq is false one of the children
+    // is parallel: so map ids to thread properly
     size_t _startID = startID;
     size_t _endID   = startID + res(n);
     for (size_t i = 0; i < n.size(); i++) {

@@ -87,6 +87,7 @@ struct comp_node : public concrete_skel_node<comp_node> {
     comp_node( std::initializer_list<skel_node*> init );
     comp_node( const comp_node& other );
     skel_node* clone();
+    bool compseq;
 };
 
 struct pipe_node : public concrete_skel_node<pipe_node> {

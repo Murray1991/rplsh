@@ -154,8 +154,8 @@ string map_declaration( map_node& n, rpl_environment& env ) {
 string red_declaration( reduce_node& n, rpl_environment& env ) {
     // two-tier model: inside reduce nodes only seq or compseq are allowed:
     // if stream/datap inside, ignore it when compile and show a warning
-    pardegree nw(env);         // setup the pardegree visitor
-    get_seq_wrappers gsw(env); // setup the get_seq_wrappers visitor
+    pardegree nw(env);           // setup the pardegree visitor
+    get_seq_wrappers gsw(env);   // setup the get_seq_wrappers visitor
 
     gsw(n); // find the sequential wrappers
     auto src_nodes = gsw.get_source_nodes();
@@ -259,7 +259,8 @@ string main_wrapper( const string& code ) {
 ffcode::ffcode( rpl_environment& env ) :
     env(env),
     gsw(env),
-    tds(env)
+    tds(env),
+    compseq(env)
 {}
 
 void ffcode::visit( seq_node& n ) {
@@ -275,7 +276,10 @@ void ffcode::visit( drain_node& n ) {
 }
 
 void ffcode::visit( comp_node& n ) {
-    comp_pipe("ff_comp", "comp", n);
+    if (n.compseq)
+        comp_pipe("ff_comp", "comp", n);
+    else
+        comp_pipe("ff_pipeline", "pipe", n);
 }
 
 void ffcode::visit( pipe_node& n ) {
@@ -342,7 +346,8 @@ string ffcode::operator()(skel_node& n) {
     queue<pair<string,string>> empty;
     swap( code_lines, empty );
 
-    gsw(n);     // start visit for getting seq wrappers
+    gsw(n);       // start visit for getting seq wrappers
+    compseq(n);   // start visit for setting compseq nodes
     auto src_nodes = gsw.get_source_nodes();
     auto drn_nodes = gsw.get_drain_nodes();
     auto seq_nodes = gsw.get_seq_nodes();
