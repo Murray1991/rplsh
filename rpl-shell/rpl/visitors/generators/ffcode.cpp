@@ -1,4 +1,5 @@
 #include "ffcode.hpp"
+#include "ffmapper.hpp"
 #include <iostream>
 #include <string>
 #include <map>
@@ -383,9 +384,23 @@ string ffcode::operator()(skel_node& n) {
 
     n.accept(*this);
     stringstream ss;
+
+    /* mapping */
+    ffmapper ffmap(env);
+    auto ids = ffmap(n).get_worker_mapping();
+    ss << "// worker mapping \n";
+    ss << "const char worker_mapping[] = \"";
+    for (size_t i = 0; i < ids.size(); i++)
+        ss << ids[i] << ( i+1 < ids.size() ? "," : "\";\n");
+    ss << "threadMapper::instance()->setMappingList(worker_mapping);\n";
+    /* code lines */
     auto p = code_lines.front();
     ss << p.second << "\n";
+
+    /* run the program */
     ss << p.first << ".run_and_wait_end();\n";
+
+    /* time and stats*/
     ss << "std::cout << \"Spent:\" << ";
     ss <<  p.first << ".ffTime() << \"msecs\" << std::endl;\n\n";
     ss << "#ifdef TRACE_FASTFLOW\n";
