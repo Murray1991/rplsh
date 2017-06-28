@@ -123,22 +123,40 @@ string map_declaration( map_node& n, rpl_environment& env ) {
     ss << "public:\n";
     ss << "\t" << typeout << "* svc("<< typein << " *t) {\n";
     ss << "\t\t" << typein << "& _task = *t;\n";
-    ss << "\t\t" << typeout << "* out = new " << typeout << "();\n";
-    ss << "\t\tout->resize(_task.size());\n"; //TODO really necessary?
+    if (typein != typeout) {
+        // if two different "container" types, we need this
+        ss << "\t\t" << typeout << "* out = new " << typeout << "();\n";
+        ss << "\t\tout->resize(_task.size());\n"; //TODO really necessary?
+    } else {
+        ss << "\t\t" << typeout << "* out = &_task;\n";
+    }
 
     // start parallel for
     size_t i;
     string par;
     ss << "\t\t" << ffMap << "::parallel_for(0, _task.size(),";
     // begin lambda
-    ss << "[this, &_task, &out](const long i) {\n";
-    for (i = 0; i < seq_nodes.size()-1; i++) {
+    // TODO: lazy -> do better
+    if (typein != typeout) {
+        ss << "[this, &_task, &out](const long i) {\n";
+        for (i = 0; i < seq_nodes.size()-1; i++) {
+            par = !i ? "_task[i]" : ("res" + to_string(i-1));
+            ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
+        }
         par = !i ? "_task[i]" : ("res" + to_string(i-1));
-        ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
+        ss << "\t\t\t(*out)[i] = wrapper" << i << ".op(" << par << ");\n";
+        ss << "\t\t}";
+    } else {
+        ss << "[this, &_task](const long i) {\n";
+        for (i = 0; i < seq_nodes.size()-1; i++) {
+            // TODO questo potrebbe essere un problema...
+            par = !i ? "_task[i]" : ("res" + to_string(i-1));
+            ss << "\t\t\tauto res" << i << " = wrapper" << i << ".op(" << par << ");\n";
+        }
+        par = !i ? "_task[i]" : ("res" + to_string(i-1));
+        ss << "\t\t\twrapper" << i << ".op(" << par << ");\n";
+        ss << "\t\t}";
     }
-    par = !i ? "_task[i]" : ("res" + to_string(i-1));
-    ss << "\t\t\t(*out)[i] = wrapper" << i << ".op(" << par << ");\n";
-    ss << "\t\t}";
     // end lambda
     ss << "," << to_string( nw(n) ) << ");\n";
     // end parallel for
