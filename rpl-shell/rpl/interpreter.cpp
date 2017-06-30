@@ -246,6 +246,62 @@ void interpreter::visit(source_node& n) {
 void interpreter::visit(drain_node& n) {
 }
 
+///////////////////// BEGIN EXPANSION
+#ifdef EXPANSION
+
+bool toclone;
+
+void recurse(skel_node& n, interpreter& interpr, rpl_environment& env) {
+    for (size_t i = 0;  i < n.size(); i++) {
+        toclone = false;
+        n.get(i)->accept(interpr);
+        if (toclone) {
+            id_node* k = static_cast<id_node*>(n.get(i));
+            auto ptr = env.get(k->id, k->index);
+            n.set(ptr->clone(), i);
+            toclone = false;
+            //TODO delete the id_node
+            //delete k;
+        }
+    }
+}
+
+void interpreter::visit(comp_node& n) {
+    recurse(n, *this, env);
+}
+
+void interpreter::visit(pipe_node& n) {
+    recurse(n, *this, env);
+}
+
+void interpreter::visit(farm_node& n) {
+    recurse(n, *this, env);
+}
+
+void interpreter::visit(map_node& n) {
+    recurse(n, *this, env);
+}
+
+void interpreter::visit(reduce_node& n) {
+    recurse(n, *this, env);
+}
+
+void interpreter::visit(id_node& n) {
+    auto ptr = env.get(n.id, n.index);                 // check if it exists
+    toclone  = ptr != nullptr && !dynamic_cast<seq_node*>(ptr.get()) &&
+        !dynamic_cast<source_node*>(ptr.get()) && !dynamic_cast<drain_node*>(ptr.get());
+
+    if (ptr == nullptr) {
+        success  = false;
+        err_repo.add( make_shared<error_not_exist>(n.id) );
+    }
+}
+
+////////////////////////// END EXPANSION
+
+///////////////////////// BEGIN OLD-STYLE
+#else
+
 void interpreter::visit(comp_node& n) {
     for (size_t i = 0;  i < n.size(); i++)
         n.get(i)->accept(*this);
@@ -275,6 +331,9 @@ void interpreter::visit(id_node& n) {
         err_repo.add( make_shared<error_not_exist>(n.id) );
     }
 }
+
+#endif
+//////////////////// END OLD STYLE
 
 history& interpreter::get_history() {
     return phistory;

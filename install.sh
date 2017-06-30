@@ -11,5 +11,10 @@ then
     build_type="Debug"
 fi
 
-cd build && cmake ../rpl-shell -DCMAKE_CXX_COMPILER=$cxx -DCMAKE_BUILD_TYPE=$build_type
+if [ "$1" == "exp" ]  || [ "$2" == "exp" ]
+then
+   EXP="-DEXPANSION=ON"
+fi
+
+cd build && cmake ../rpl-shell -DCMAKE_CXX_COMPILER=$cxx -DCMAKE_BUILD_TYPE=$build_type $EXP
 make
