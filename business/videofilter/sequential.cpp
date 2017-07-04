@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
 
-    vsource vsrc(argv[1]);
+    vsource vsrc("prova.mp4");
     vdrain vdrn;
     gblur gb;
     sobel s;
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
         tmp = s.compute(tmp);       // compute sobel
         auto t4 = aux::now();
 
-        // compute times
+        // compute total times
         vsrctime += aux::time_elapsed<aux::milliseconds>(t2, t1);
         gbtime   += aux::time_elapsed<aux::milliseconds>(t3, t2);
         stime    += aux::time_elapsed<aux::milliseconds>(t4, t3);
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) {
     auto tot2 = aux::now();
     std::cout << "total time :" << aux::time_elapsed<aux::milliseconds>(tot2, tot1) << std::endl;
     std::cout << "vsource time :" << vsrctime << " (total), " << (vsrctime/size) << " (per item)" << std::endl;
-    std::cout << "gbtime time :" << gbtime << " (total), " << (gbtime/size) << " (per item)" << std::endl;
-    std::cout << "stime time :" << stime << " (total), " << (stime/size) << " (per item)" << std::endl;
-
+    std::cout << "gblur time :" << gbtime << " (total), " << (gbtime/size) << " (per item)" << std::endl;
+    std::cout << "sobel time :" << stime << " (total), " << (stime/size) << " (per item)" << std::endl;
+    std::cout << "size: " << size << std::endl;
     return 0;
 }

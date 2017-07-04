@@ -3,12 +3,6 @@
  * example you can find in fastflow project, under
  * "examples/OpenCVVideo/" directory
  *
- * With respect to the original version here we gives more
- * choices for the filter, other than GaussianBlur and Sobel
- * we have also
- * - blur               // TODO
- * - medianBlur         // TODO
- * . bilateralFilter    // TODO
  */
 
 #ifndef videofilter_business_hpp
