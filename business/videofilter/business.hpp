@@ -17,8 +17,7 @@ using namespace cv;
 
 // file name of video source
 const std::string filename = "prova.mp4";
-// boolean for the consumer, if set
-// shows the video output, otherwise no
+// shows the video output, or not
 const bool showvideo  = false;
 
 // generate a stream of frames
