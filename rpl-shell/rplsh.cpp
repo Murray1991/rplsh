@@ -17,10 +17,6 @@
 
 using namespace std;
 
-typedef interpreter interpr_t;
-typedef lexer scanner_t;
-typedef parser parser_t;
-
 rpl_environment env;                    // environment: <name, skel_tree> bindings
 error_container err_repo;               // filled with errors
 
@@ -42,10 +38,10 @@ bool is_quit_input(string& line) {
     return line.length() == 1 && ( line[0] == 'q' || line[0] == 'Q' );
 }
 
-void process(interpr_t& _interpr, string& line) {
+void process(interpreter& _interpr, string& line) {
     err_repo.reset();
-    scanner_t _scanner(line, err_repo);
-    parser_t _parser(_scanner, err_repo);
+    lexer _scanner(line, err_repo);
+    parser _parser(_scanner, err_repo);
 
     unique_ptr<rpl_node> t = _parser.parse();
     if (err_repo.size() == 0)
@@ -59,7 +55,7 @@ void process(interpr_t& _interpr, string& line) {
 int main(int argc, char * argv[])
 {
     string line;                                // input line
-    interpr_t _interpr( env, err_repo );        // interpreter
+    interpreter _interpr( env, err_repo );        // interpreter
 
     if (argc > 1) {
         // import environment with script
