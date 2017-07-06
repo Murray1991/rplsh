@@ -107,8 +107,10 @@ void interpreter::visit(set_node& n) {
 void interpreter::visit(ann_node& n) {
     std::size_t i = n.index < 0 ? 0 : n.index;
     auto ptr = env.get(n.id, i);
-    if (ptr != nullptr)
-        (*adispatch[ n.prop ])( *ptr, n.value );
+    if (ptr != nullptr) {
+        bool b = (*adispatch[ n.prop ])( *ptr, n.value );
+        cout << "response: " << (b? "annotated!" : "not annotated!") << endl;
+    }
 }
 
 void interpreter::visit(rwr_node& n) {

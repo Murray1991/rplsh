@@ -8,6 +8,8 @@ struct ann_visitor : public skel_visitor
 {
     ann_visitor( rpl_environment& env );
     virtual void visit(seq_node& n);
+    virtual void visit(source_node& n);
+    virtual void visit(drain_node& n);
     virtual void visit(comp_node& n);
     virtual void visit(pipe_node& n);
     virtual void visit(farm_node& n);

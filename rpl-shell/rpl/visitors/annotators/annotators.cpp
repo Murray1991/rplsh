@@ -12,6 +12,14 @@ void ann_visitor::visit( seq_node& n ) {
     result = false;
 }
 
+void ann_visitor::visit( source_node& n ) {
+    result = false;
+}
+
+void ann_visitor::visit( drain_node& n ) {
+    result = false;
+}
+
 void ann_visitor::visit( comp_node& n ) {
     result = false;
 }
