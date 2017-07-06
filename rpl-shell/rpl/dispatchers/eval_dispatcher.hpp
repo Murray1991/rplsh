@@ -10,7 +10,6 @@
 struct eval_dispatcher : public dispatcher<std::string, std::unique_ptr<eval_visitor>>
 {
     eval_dispatcher(rpl_environment& env) {
-        //add(par::show_default   ,  std::unique_ptr<printer>(new printer()));
         add(par::servicetime    ,  std::unique_ptr<eval_visitor>(new servicetime(env)));
         add(par::latency        ,  std::unique_ptr<eval_visitor>(new latencytime(env)));
         add(par::compltime      ,  std::unique_ptr<eval_visitor>(new completiontime(env)));

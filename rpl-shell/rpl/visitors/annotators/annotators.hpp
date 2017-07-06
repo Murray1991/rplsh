@@ -17,7 +17,9 @@ struct ann_visitor : public skel_visitor
     virtual void visit(reduce_node& n);
     virtual void visit(id_node& n);
 
-    /* Return true if the value is correctly annotated, false otherwise. */
+    // implementations of this operator should return 'result';
+    // result should be set to true or false in overriden
+    // visit methods according to the logic of the annotator
     virtual bool operator()( skel_node& n, double value ) = 0;
 
 protected:
