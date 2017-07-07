@@ -20,7 +20,7 @@ struct ann_visitor : public skel_visitor
     // implementations of this operator should return 'result';
     // result should be set to true or false in overriden
     // visit methods according to the logic of the annotator
-    virtual bool operator()( skel_node& n, double value ) = 0;
+    virtual bool operator()( skel_node& n, ann_node& a ) = 0;
 
 protected:
     rpl_environment& env;
@@ -34,8 +34,7 @@ struct ann_servicetime : public ann_visitor
     void visit(source_node& n);
     void visit(drain_node& n);
 
-    /* Return true if the value is correctly annotated, false otherwise. */
-    bool operator()( skel_node& n, double value );
+    bool operator()( skel_node& n, ann_node& a );
 
 private:
     double servicetime;
@@ -47,8 +46,7 @@ struct ann_pardegree : public ann_visitor
     void visit(farm_node& n);
     void visit(map_node& n);
 
-    /* Return true if the value is correctly annotated, false otherwise. */
-    bool operator()( skel_node& n, double value );
+    bool operator()( skel_node& n, ann_node& a );
 
 private:
     std::size_t nw;
@@ -59,8 +57,7 @@ struct ann_datap : public ann_visitor
     ann_datap( rpl_environment& env );
     void visit(seq_node& n);
 
-    /* Return true if the value is correctly annotated, false otherwise. */
-    bool operator()( skel_node& n, double value );
+    bool operator()( skel_node& n, ann_node& a );
 
 private:
     bool datap;

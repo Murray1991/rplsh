@@ -1,4 +1,5 @@
 #include "annotators.hpp"
+#include "nodes/verbs.hpp"
 #include <iostream>
 
 using namespace std;
@@ -66,12 +67,12 @@ void ann_servicetime::visit( drain_node& n ) {
     result        = true;
 }
 
-bool ann_servicetime::operator()( skel_node& n, double value ) {
-    if (value < 0) {
+bool ann_servicetime::operator()( skel_node& n, ann_node& a ) {
+    if (a.value < 0) {
         cout << "warning: bad annotation value" << endl;
         return false;
     }
-    servicetime = value;
+    servicetime = a.value;
     n.accept( *this );
     return result;
 }
@@ -92,12 +93,12 @@ void ann_pardegree::visit( map_node& n ) {
     result      = true;
 }
 
-bool ann_pardegree::operator()( skel_node& n, double value ) {
-    if (value < 0) {
+bool ann_pardegree::operator()( skel_node& n, ann_node& a ) {
+    if (a.value < 0) {
         cout << "warning: bad annotation value" << endl;
         return false;
     }
-    this->nw = value;
+    this->nw = a.value;
     n.accept( *this );
     return result;
 }
@@ -113,8 +114,8 @@ void ann_datap::visit( seq_node& n ) {
     result       = true;
 }
 
-bool ann_datap::operator()( skel_node& n, double value ) {
-    this->datap = value == 0 ? false : true;
+bool ann_datap::operator()( skel_node& n, ann_node& a ) {
+    this->datap = a.value == 0 ? false : true;
     n.accept( *this );
     return result;
 }
