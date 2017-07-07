@@ -100,6 +100,22 @@ void interpreter::visit(show_node& n) {
     }
 }
 
+void interpreter::visit(ushow_node& n) {
+    auto range = env.range( n.id );
+    int index = 0;
+    for (auto it = range.first; it != range.second; it++) {
+        printer p;
+        ranker rnk(env);
+        unranker urnk(env);
+
+        auto& skptr = *it;
+        urnk(*skptr);               // unrank/unfold
+        cout << "[" << index << "]: " << p.print(*skptr) << endl;
+        rnk(*skptr);                // rerank
+        index++;
+    }
+}
+
 void interpreter::visit(set_node& n) {
     sdispatch[ n.prop ]( n.value );
 }

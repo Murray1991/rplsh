@@ -8,6 +8,7 @@ struct visitor
 {
     virtual void visit(assign_node& n) = 0;
     virtual void visit(show_node& n)   = 0;
+    virtual void visit(ushow_node& n)  = 0;
     virtual void visit(set_node& n)    = 0;
     virtual void visit(ann_node& n)    = 0;
     virtual void visit(rwr_node& n)    = 0;
@@ -40,6 +41,7 @@ struct skel_visitor : public visitor
 
     void visit(assign_node& n) {};
     void visit(show_node& n)   {};
+    void visit(ushow_node& n)  {};
     void visit(set_node& n)    {};
     void visit(ann_node& n)    {};
     void visit(rwr_node& n)    {};

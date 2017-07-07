@@ -87,6 +87,8 @@ rpl_node* parser::start_rule(token& tok)
             return assign_rule(tok);
         case token::show:
             return show_rule(tok);
+        case token::ushow:
+            return ushow_rule(tok);
         case token::set:
             return set_rule(tok);
         case token::annotate:
@@ -169,6 +171,16 @@ rpl_node* parser::show_rule(token& tok)
 
     expect(tok, token::eol);
     return new show_node(ident, num, parameters);
+}
+
+
+rpl_node* parser::ushow_rule(token& tok)
+{
+    string ident;
+    expect(tok, token::ushow);
+    expect(tok, token::word, ident);
+    expect(tok, token::eol);
+    return new ushow_node(ident);
 }
 
 //  <set> ::= set <word> with <pattern> <integer>

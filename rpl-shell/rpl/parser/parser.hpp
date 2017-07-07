@@ -30,6 +30,7 @@ private:
     rpl_node* start_rule(token& tok);
     rpl_node* assign_rule(token& tok);
     rpl_node* show_rule(token& tok);
+    rpl_node* ushow_rule(token& tok);
     rpl_node* set_rule(token& tok);
     rpl_node* ann_rule(token& tok);
     rpl_node* opt_rule(token& tok);

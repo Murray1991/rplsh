@@ -20,6 +20,7 @@ struct token
         comma,
         equals,
         show,
+        ushow,
         set,
         annotate,
         rewrite,

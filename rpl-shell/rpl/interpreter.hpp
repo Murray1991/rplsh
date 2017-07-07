@@ -37,6 +37,7 @@ struct interpreter : public visitor
     interpreter(rpl_environment& env, error_container& err_repo);
     void visit(assign_node& n);
     void visit(show_node& n);
+    void visit(ushow_node& n);
     void visit(set_node& n);
     void visit(ann_node& n);
     void visit(rwr_node& n);

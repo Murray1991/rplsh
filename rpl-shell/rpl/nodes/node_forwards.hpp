@@ -14,6 +14,7 @@
 struct skel_node;
 struct assign_node;
 struct show_node;
+struct ushow_node;
 struct set_node;
 struct ann_node;
 struct rwr_node;

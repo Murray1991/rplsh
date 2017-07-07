@@ -83,3 +83,8 @@ import_node::import_node(const string& id)
 
 gencode_node::gencode_node(const string& id)
     : verb_node(*this, id, id) {}
+
+///////////////////////////////////////////////////////////////////////////////
+
+ushow_node::ushow_node(const string& id)
+    : verb_node(*this, id, id) {}

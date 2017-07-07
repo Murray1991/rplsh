@@ -86,4 +86,9 @@ struct gencode_node : public verb_node<gencode_node> {
     gencode_node(const std::string& id);
 };
 
+// Node representing the "show" verb
+struct ushow_node : public verb_node<ushow_node> {
+    ushow_node(const std::string& id);
+};
+
 #endif
