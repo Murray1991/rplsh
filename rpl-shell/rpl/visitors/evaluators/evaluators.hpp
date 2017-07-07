@@ -109,4 +109,23 @@ protected:
     std::size_t res;
 };
 
+struct comm: public eval_visitor
+{
+    comm(rpl_environment& env);
+    void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
+    void visit(comp_node& n);
+    void visit(pipe_node& n);
+    void visit(farm_node& n);
+    void visit(map_node& n);
+    void visit(reduce_node& n);
+    void visit(id_node& n);
+
+    std::string print(skel_node& n);
+    std::size_t operator()(skel_node& n);
+protected:
+    std::size_t res;
+};
+
 #endif

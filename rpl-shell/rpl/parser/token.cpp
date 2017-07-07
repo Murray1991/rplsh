@@ -14,6 +14,7 @@ map<string, token::type> token::st_map =
    /* expansion */
    {par::typein,  token::parameter},
    {par::typeout, token::parameter},
+   {par::comm,    token::parameter},
 
    /* symbols */
    {"(",        token::open},

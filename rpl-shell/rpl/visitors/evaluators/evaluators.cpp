@@ -352,3 +352,85 @@ size_t resources::operator()(skel_node& n){
     n.accept(*this);
     return res;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+comm::comm( rpl_environment& env ) :
+    eval_visitor( env )
+{}
+
+void comm::visit( seq_node& n ) {
+    res = 0;
+}
+
+void comm::visit( source_node& n ) {
+    res = 0;
+}
+
+void comm::visit( drain_node& n ) {
+    res = 0;
+}
+
+void comm::visit( comp_node& n ) {
+    // let assume it's the max like in resources
+    // because we are interested in the number of
+    // communication channels in a given time
+    res = compute(*this, n, [](size_t a, size_t b){
+        return std::max(a, b);}
+    );
+}
+
+size_t num_channels( pipe_node& n, comm& c ) {
+    size_t num = 0;
+    for (size_t i = 0; i < n.size(); i++) {
+        skel_node* s = n.get(i);
+        pipe_node* p = dynamic_cast<pipe_node*>(s);
+        if ( !p )
+            num += (1 + c(*s));
+        else
+            num += num_channels(*p, c);
+    }
+    return num;
+}
+
+void comm::visit( pipe_node& n ) {
+    res = num_channels(n, *this) - 1;
+}
+
+void comm::visit( farm_node& n ) {
+    res = n.pardegree * (*this)(*n.get(0))  // comm channels in worker
+        + 2 * n.pardegree;                  // comm channels E->W->C
+}
+
+void comm::visit( map_node& n ) {
+    res = n.pardegree * (*this)(*n.get(0))  // comm channels in worker
+        + 2 * n.pardegree;                  // comm channels S->W->G
+}
+
+void comm::visit( reduce_node& n ) {
+    // comm channels in worker (typically zero)
+    res = n.pardegree * (*this)(*n.get(0));
+    // comm channels of the tree structure mapped in a vector
+    // (more or less) <- TODO
+    for (int i = 0; i <= ((int) log2(n.pardegree)-1); i++)
+        res += pow(2, i);
+}
+
+void comm::visit( id_node& n ) {
+    try {
+        auto ptr = env.get(n.id, n.index);
+        res = (*this)(*ptr);
+    } catch (out_of_range& e) {
+        //TODO handle in a better way
+        cout << "error, not found: " << n.id << endl;
+    }
+}
+
+string comm::print( skel_node& n ){
+    return std::to_string( (*this)( n ) );;
+}
+
+size_t comm::operator()(skel_node& n){
+    n.accept(*this);
+    return res;
+}

@@ -15,6 +15,7 @@ struct eval_dispatcher : public dispatcher<std::string, std::unique_ptr<eval_vis
         add(par::compltime      ,  std::unique_ptr<eval_visitor>(new completiontime(env)));
         add(par::pardegree      ,  std::unique_ptr<eval_visitor>(new pardegree(env)));
         add(par::resources      ,  std::unique_ptr<eval_visitor>(new resources(env)));
+        add(par::comm           ,  std::unique_ptr<eval_visitor>(new comm(env)));
     }
 };
 
