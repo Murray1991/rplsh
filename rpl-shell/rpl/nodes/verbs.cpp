@@ -49,11 +49,9 @@ set_node::set_node(const string& id, const string& prop, double value)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-ann_node::ann_node(const string& id, const string& prop, double value, bool bvalue)
-    : verb_node(*this, id, prop), value(value), bvalue(bvalue) {}
-
-ann_node::ann_node(const pair<string,int>& id, const string& prop, double value, bool bvalue)
-    : verb_node(*this, id, prop), value(value), bvalue(bvalue) {}
+ann_node::ann_node(const pair<string,int>& id, const string& prop,
+     double value, const string& word)
+    : verb_node(*this, id, prop), value(value), word(word) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 

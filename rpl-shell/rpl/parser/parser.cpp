@@ -190,23 +190,24 @@ rpl_node* parser::set_rule(token& tok)
 rpl_node* parser::ann_rule(token& tok)
 {
     string par;
-    double value = 0;
-    bool bvalue = false;
+    double value  = -1;
+    string word   = "";
     pair<string,int> id;
     expect(tok, token::annotate);
     expect(tok, token::word, id);
     expect(tok, token::with);
     expect(tok, token::parameter, par);
-    if ( tok.kind == token::integer )
+    if ( tok.kind == token::word )
+        expect(tok, token::word, word);
+    else if ( tok.kind == token::integer )
         expect(tok, token::integer, value);
     else if (tok.kind == token::number)
         expect(tok, token::number, value);
     else {
-        bvalue = tok.kind == token::bool_true;
-        value = bvalue? 1 : 0;
+        value = tok.kind == token::bool_true;              // false of default
         expect(tok, token::bool_true, token::bool_false);
     }
-    return new ann_node(id, par, value, bvalue);
+    return new ann_node(id, par, value, word);
 }
 
 // <rwr> ::= rewrite <word> with <rwr-rule-list>...

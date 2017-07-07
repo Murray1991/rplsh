@@ -1,4 +1,5 @@
 #include "annotators.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -66,6 +67,10 @@ void ann_servicetime::visit( drain_node& n ) {
 }
 
 bool ann_servicetime::operator()( skel_node& n, double value ) {
+    if (value < 0) {
+        cout << "warning: bad annotation value" << endl;
+        return false;
+    }
     servicetime = value;
     n.accept( *this );
     return result;
@@ -88,6 +93,10 @@ void ann_pardegree::visit( map_node& n ) {
 }
 
 bool ann_pardegree::operator()( skel_node& n, double value ) {
+    if (value < 0) {
+        cout << "warning: bad annotation value" << endl;
+        return false;
+    }
     this->nw = value;
     n.accept( *this );
     return result;

@@ -53,10 +53,10 @@ struct set_node : public verb_node<set_node> {
 
 // Node representing the "annotate" verb
 struct ann_node : public verb_node<ann_node> {
-    ann_node(const std::string& id, const std::string& prop, double value, bool bvalue = false);
-    ann_node(const std::pair<std::string,int>& id, const std::string& prop, double value, bool bvalue = false);
+    ann_node(const std::pair<std::string,int>& id, const std::string& prop,
+        double value, const std::string& word);
     double value;
-    bool bvalue;
+    std::string word;
 };
 
 // Node representing the "rewrite" verb
