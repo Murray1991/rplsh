@@ -13,9 +13,10 @@
 namespace par
 {
     /* expansion */
-    const std::string typein = "typein";
+    const std::string typein  = "typein";
     const std::string typeout = "typeout";
-    const std::string comm = "comm";
+    const std::string comm    = "comm";
+    const std::string twotier = "twotier";
 
     /* rewriting rules parameter names */
     const std::string farmintro = "farmintro";

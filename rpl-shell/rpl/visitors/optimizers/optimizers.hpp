@@ -106,4 +106,12 @@ private:
     size_t maxres;
 };
 
+struct twotier : public optrule
+{
+    twotier( rpl_environment& env );
+    void visit( map_node& n );
+    void visit( reduce_node& n);
+    void operator()( skel_node& n );
+};
+
 #endif

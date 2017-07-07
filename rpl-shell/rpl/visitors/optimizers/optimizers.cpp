@@ -302,3 +302,37 @@ void pipe_merge( pipe_node&n, size_t left, size_t right ) {
         n.add( *rit );
 
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+twotier::twotier( rpl_environment& env ) :
+    optrule(env)
+{}
+
+void twotier::visit( map_node& n ) {
+    get_seq_wrappers gsw(env);
+    gsw(*n.get(0));
+
+    comp_node* comp = new comp_node{};
+    auto seqwrappers = gsw.get_seq_nodes();
+    for (auto ptr : seqwrappers)
+        comp->add(ptr->clone());
+        
+    n.set(comp, 0);
+}
+
+void twotier::visit( reduce_node& n ) {
+    get_seq_wrappers gsw(env);
+    gsw(*n.get(0));
+
+    comp_node* comp = new comp_node{};
+    auto seqwrappers = gsw.get_seq_nodes();
+    for (auto ptr : seqwrappers)
+        comp->add(ptr->clone());
+
+    n.set(comp, 0);
+}
+
+void twotier::operator()( skel_node& sk ) {
+    sk.accept( *this );
+}
