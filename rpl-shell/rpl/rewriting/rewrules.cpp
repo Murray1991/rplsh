@@ -174,3 +174,15 @@ skel_node* mapelim::rewrite( skel_node& tree ) {
         POS(0) :
         nullptr;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+farmofmap::farmofmap() : rewrule (
+    Map(Farm(__))  // left part of the rewrule
+){}
+
+skel_node* farmofmap::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        Farm(Map(POS(0))) :
+        nullptr;
+}

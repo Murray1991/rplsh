@@ -22,6 +22,7 @@ struct rr_dispatcher : public dispatcher<std::string, std::unique_ptr<rewrule>>
         add(par::mapelim   , std::unique_ptr<rewrule> (new mapelim()));
         add(par::farmelim  , std::unique_ptr<rewrule> (new farmelim()));
         add(par::farmintro , std::unique_ptr<rewrule> (new farmintro()));
+        add(par::farmofmap , std::unique_ptr<rewrule> (new farmofmap()));
     }
 
     std::vector<std::string> get_allrules() {

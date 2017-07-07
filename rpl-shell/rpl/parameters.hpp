@@ -17,6 +17,7 @@ namespace par
     const std::string typeout = "typeout";
     const std::string comm    = "comm";
     const std::string twotier = "twotier";
+    const std::string farmofmap = "farmofmap";
 
     /* rewriting rules parameter names */
     const std::string farmintro = "farmintro";

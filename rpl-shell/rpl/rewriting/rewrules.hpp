@@ -72,4 +72,9 @@ struct mapelim : rewrule {
     skel_node* rewrite( skel_node& tree );
 };
 
+struct farmofmap : rewrule {
+    farmofmap();
+    skel_node* rewrite( skel_node& tree );
+};
+
 #endif
