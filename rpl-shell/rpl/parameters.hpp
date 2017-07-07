@@ -12,6 +12,10 @@
 
 namespace par
 {
+    /* expansion */
+    const std::string typein = "typein";
+    const std::string typeout = "typeout";
+    
     /* rewriting rules parameter names */
     const std::string farmintro = "farmintro";
     const std::string farmelim  = "farmelim";

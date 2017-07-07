@@ -11,6 +11,10 @@ token::token(type kind, string data, int pos) :
 
 map<string, token::type> token::st_map =
 {
+   /* expansion */
+   {par::typein,  token::parameter},
+   {par::typeout, token::parameter},
+
    /* symbols */
    {"(",        token::open},
    {")",        token::close},
