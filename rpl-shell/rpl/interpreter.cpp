@@ -28,8 +28,9 @@ interpreter::interpreter(rpl_environment& env, error_container& err_repo) :
 {}
 
 void interpreter::visit(assign_node& n) {
-    // recurse for semantic check in skel tree
+
     id_node* idnode = dynamic_cast<id_node*>(n.rvalue);
+    success = true;
     n.rvalue->accept(*this);
 
     if ( success && !idnode) {
@@ -41,7 +42,6 @@ void interpreter::visit(assign_node& n) {
         delete n.rvalue;
     } else
         delete n.rvalue;
-
 }
 
 void interpreter::visit(show_node& n) {
