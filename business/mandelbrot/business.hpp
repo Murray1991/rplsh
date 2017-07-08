@@ -8,8 +8,12 @@
 #include <complex>
 #include <thread>
 
+#define STRINGIFY2(X) #X
+#define STRINGIFY(X) STRINGIFY2(X)
+
 const int N = 2400;     // matrix dimension NxN
-const int K = 2000;     // number of iterations
+const int K = 200;     // number of iterations
+const int streamsize = 5;
 
 // mandelbrot escape time algorithm: from opencv-docs
 int mandelbrotAlgorithm(const std::complex<float> &z0, const int max) {
@@ -22,12 +26,12 @@ int mandelbrotAlgorithm(const std::complex<float> &z0, const int max) {
 }
 
 //! mandelbrot: modified from opencv-docs
-cv::Vec3b mandelbrotFormula(const std::complex<float> &z0, const int maxIter=500) {
+cv::Vec3f mandelbrotFormula(const std::complex<float> &z0, const int maxIter=500) {
     int value = mandelbrotAlgorithm(z0, maxIter);
     if(maxIter - value == 0)
         return 0;
-    cv::Vec3b color;
-    color[1] = std::round(sqrt(value / (float) maxIter) * 255);
+    cv::Vec3f color;
+    color[1] = (sqrt(value / (float) maxIter) * 255);
     return color;
 }
 
@@ -35,11 +39,11 @@ cv::Vec3b mandelbrotFormula(const std::complex<float> &z0, const int maxIter=500
 // the parameter for "op" function
 struct Point {
 
-    Point(const float x0, const float y0, cv::Vec3b& ch) :
+    Point(const float x0, const float y0, cv::Vec3f& ch) :
         z(x0,y0), ch(ch) {}
 
     const std::complex<float> z;
-    cv::Vec3b& ch;
+    cv::Vec3f& ch;
 
 };
 
@@ -51,7 +55,7 @@ public:
     MMatrix() : mat() {}
 
     MMatrix(int rows, int cols) :
-        mat(rows, cols, CV_8UC3) {
+        mat(rows, cols, CV_32FC3) {
 
         // mandelbrot transformation
         x1 = -2.1f; x2 = 0.6f;
@@ -66,7 +70,7 @@ public:
         int j = idx % mat.cols;
         float x0 = j / scaleX + x1;
         float y0 = i / scaleY + y1;
-        return Point(x0, y0, mat.at<cv::Vec3b>(i,j));
+        return Point(x0, y0, mat.at<cv::Vec3f>(i,j));
     }
 
     int size() {
@@ -78,6 +82,7 @@ public:
     float scaleY;
     float x1, x2;
     float y1, y2;
+    int index;
 };
 
 // generates a stream of matrices having same size but that may need
@@ -92,13 +97,13 @@ public:
 
     MMatrix<Point>* next() {
         auto m = new MMatrix<Point>(N, N);
-        start++;
+        m->index = ++start;
         return m;
     }
 
 private:
     int start{0};
-    int end{5};
+    int end{streamsize};
 };
 
 class mandelbrot : public seq_wrapper<MMatrix<Point>, MMatrix<Point>> {
@@ -115,12 +120,26 @@ public:
 
 };
 
+class colorize : public seq_wrapper<MMatrix<Point>, MMatrix<Point>> {
+public:
+    MMatrix<Point> compute( MMatrix<Point>& mmat ) {
+        std::hash<std::string> hash_fn;
+        for ( int i = 0; i < mmat.size(); i++ ) {
+            Point p = mmat[i];
+            float ratio = p.ch[1]/255;
+            p.ch[0] = ratio*(hash_fn(std::to_string(mmat.index+1))%255);
+            p.ch[1] = ratio*(hash_fn(std::to_string(mmat.index+2))%255);
+            p.ch[2] = ratio*(hash_fn(std::to_string(mmat.index+3))%255);
+        }
+    return mmat;
+    }
+};
+
 // drain wrapper
 class matrix_drain : public drain<MMatrix<Point>> {
 public:
-    int count{0};
     void process(MMatrix<Point>* res) {
-        const std::string filename = "mandelbrot_" + std::to_string(count++) + ".png";
+        const std::string filename = STRINGIFY(PRE) "_mandelbrot_" + std::to_string(res->index) + ".png";
         std::cout << "saving " << filename << std::endl;
         cv::imwrite(filename, res->mat);
     }

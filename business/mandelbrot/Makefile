@@ -1,5 +1,5 @@
 
-CXX	= g++ -std=c++11 
+CXX	= g++ -std=c++11
 CFLAGS 	= -Wall `pkg-config --cflags opencv` #-pg
 RPL	= ../../
 FF	= ../../fastflow/
@@ -12,9 +12,7 @@ BIN=$(patsubst %.cpp,%,$(SRC))
 ff:	$(BIN)
 
 sequential: sequential.cpp
-	$(CXX) $(OPT) $(CFLAGS) -I$(RPL) -o $@ $< $(LIBS)
+	$(CXX) $(OPT) $(CFLAGS) -DPRE=seq -I$(RPL) -o $@ $< $(LIBS)
 
 $(BIN): %: %.cpp
-	$(CXX) $(OPT) $(CFLAGS) -I$(FF) -I$(RPL) -o $@ $< $(LIBS) -pthread
-
-
+	$(CXX) $(OPT) $(CFLAGS) -DPRE=$(BIN) -I$(FF) -I$(RPL) -o $@ $< $(LIBS) -pthread
