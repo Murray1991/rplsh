@@ -357,6 +357,9 @@ void ffcode::visit( id_node& n ) {
 
 string ffcode::operator()(skel_node& n) {
 
+    ann_printer pr;
+    string repr = "// " + pr.print(n) + "\n\n";
+
     // clear global environment:
     // names, business_headers, queue
     names.clear();
@@ -436,7 +439,7 @@ string ffcode::operator()(skel_node& n) {
     assert(code_lines.empty());
 
     // main code
-    code = includes() + decls + main_wrapper( ss.str() );
+    code = repr + includes() + decls + main_wrapper( ss.str() );
 
     return code;
 }
