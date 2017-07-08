@@ -12,7 +12,7 @@
 #define STRINGIFY(X) STRINGIFY2(X)
 
 const int N = 2400;     // matrix dimension NxN
-const int K = 200;     // number of iterations
+const int K = 2000;     // number of iterations
 const int streamsize = 5;
 
 // mandelbrot escape time algorithm: from opencv-docs
