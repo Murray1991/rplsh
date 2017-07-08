@@ -54,6 +54,7 @@ class vdrain : public drain<Mat> {
 public:
     void process(Mat* frame) {
         if (showvideo) {
+            namedWindow("Filtered video", WINDOW_NORMAL);
             imshow("Filtered video", *frame);
             waitKey(30);    // accomodate visualization
         }
@@ -67,6 +68,17 @@ public:
         Mat out_frame;
         GaussianBlur(in_frame, out_frame, Size(0, 0), 3);
         addWeighted(in_frame, 1.5, out_frame, -0.5, 0, in_frame);
+        return out_frame;
+    }
+};
+
+// manual grayscale
+class togray : public seq_wrapper<Mat, Mat> {
+public:
+    Mat compute(Mat& in_frame) {
+        Mat out_frame;
+        cvtColor(in_frame, out_frame, CV_RGB2GRAY);  //scale in gray scale
+        cvtColor(out_frame, out_frame, CV_GRAY2RGB);    //ensure conversion in CV_8UC3
         return out_frame;
     }
 };
