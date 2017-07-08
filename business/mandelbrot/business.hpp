@@ -1,4 +1,5 @@
 #include "aux/wrappers.hpp"
+#include "aux/aux.hpp"
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -6,6 +7,9 @@
 #include <string>
 #include <complex>
 #include <thread>
+
+const int N = 2400;     // matrix dimension NxN
+const int K = 2000;     // number of iterations
 
 // mandelbrot escape time algorithm: from opencv-docs
 int mandelbrotAlgorithm(const std::complex<float> &z0, const int max) {
@@ -17,38 +21,37 @@ int mandelbrotAlgorithm(const std::complex<float> &z0, const int max) {
     return max;
 }
 
-//! mandelbrot grayscale-value: from opencv-docs
-int mandelbrotFormula(const std::complex<float> &z0, const int maxIter=500) {
+//! mandelbrot: modified from opencv-docs
+cv::Vec3b mandelbrotFormula(const std::complex<float> &z0, const int maxIter=500) {
     int value = mandelbrotAlgorithm(z0, maxIter);
     if(maxIter - value == 0)
         return 0;
-    return std::round(sqrt(value / (float) maxIter) * 255);
+    cv::Vec3b color;
+    color[1] = std::round(sqrt(value / (float) maxIter) * 255);
+    return color;
 }
 
-// it represents a subtask element
-// for map computation: it will be
+// it represents a subtask element for map computation: it will be
 // the parameter for "op" function
 struct Point {
 
-    Point(const float x0, const float y0, const int iters, uchar& ch) :
-        z(x0,y0), iters(iters), ch(ch) {}
+    Point(const float x0, const float y0, cv::Vec3b& ch) :
+        z(x0,y0), ch(ch) {}
 
     const std::complex<float> z;
-    const int iters;
-    uchar& ch;
+    cv::Vec3b& ch;
 
 };
 
-// Mandelbrot Matrix, it embeds
-// cv::Mat, transformation values
+// Mandelbrot Matrix, it embeds cv::Mat, transformation values
 // and max iterations needed
 template <typename T>
 class MMatrix {
 public:
     MMatrix() : mat() {}
 
-    MMatrix(int rows, int cols, int iters) :
-        mat(rows, cols, CV_8U), iters(iters) {
+    MMatrix(int rows, int cols) :
+        mat(rows, cols, CV_8UC3) {
 
         // mandelbrot transformation
         x1 = -2.1f; x2 = 0.6f;
@@ -63,7 +66,7 @@ public:
         int j = idx % mat.cols;
         float x0 = j / scaleX + x1;
         float y0 = i / scaleY + y1;
-        return Point(x0, y0, iters, mat.at<uchar>(i,j));
+        return Point(x0, y0, mat.at<cv::Vec3b>(i,j));
     }
 
     int size() {
@@ -75,34 +78,27 @@ public:
     float scaleY;
     float x1, x2;
     float y1, y2;
-    int iters;
-    int index;
 };
 
-// generates a stream of matrices
-// having same size but that need
-// to be computed with different
-// number of iterations
+// generates a stream of matrices having same size but that may need
+// to be computed with different number of iterations
 class matrixsource : public source<MMatrix<Point>> {
 
 public:
+
     bool has_next() {
         return start < end;
     }
 
     MMatrix<Point>* next() {
-        auto m = new MMatrix<Point>(N, M, iters);
-        m->index = start++;
-        iters += 50;
+        auto m = new MMatrix<Point>(N, N);
+        start++;
         return m;
     }
 
 private:
     int start{0};
-    int end{1};
-    int N{4500};
-    int M{5000};
-    int iters{200};
+    int end{5};
 };
 
 class mandelbrot : public seq_wrapper<MMatrix<Point>, MMatrix<Point>> {
@@ -114,18 +110,18 @@ public:
     }
 
     void op( Point&& p ) {
-        p.ch = (uchar) mandelbrotFormula(p.z, p.iters);
+        p.ch = mandelbrotFormula(p.z, K);
     }
 
 };
 
-///////////////////// drain wrapper /////////////////////
+// drain wrapper
 class matrix_drain : public drain<MMatrix<Point>> {
 public:
     int count{0};
     void process(MMatrix<Point>* res) {
-        const std::string filename = "mandelbrot_" + std::to_string(res->index) + ".png";
-        std::cout << "arrived: " << count++ << std::endl;
+        const std::string filename = "mandelbrot_" + std::to_string(count++) + ".png";
+        std::cout << "saving " << filename << std::endl;
         cv::imwrite(filename, res->mat);
     }
 };
