@@ -26,6 +26,7 @@ struct rr_dispatcher : public dispatcher<std::string, std::unique_ptr<rewrule>>
 
     std::vector<std::string> get_allrules() {
         return {
+            par::mapelim,
             par::pipeintro,
             par::pipeelim,
             par::compassoc,
@@ -34,7 +35,6 @@ struct rr_dispatcher : public dispatcher<std::string, std::unique_ptr<rewrule>>
             par::compofmap,
             par::mapofpipe,
             par::pipeofmap,
-            par::mapelim,
             par::farmelim,
             par::farmintro
         };
