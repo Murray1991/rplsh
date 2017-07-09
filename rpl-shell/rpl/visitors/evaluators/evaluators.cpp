@@ -200,7 +200,7 @@ void completiontime::visit( comp_node& n ) {
 
 void completiontime::visit( pipe_node& n ) {
     /* latency of the first stage + ts*dimension */
-    res = lat(*n) + env.get_dim() * ts(n);
+    res = lat(n) + env.get_dim() * ts(n);
 }
 
 void completiontime::visit( farm_node& n ) {
