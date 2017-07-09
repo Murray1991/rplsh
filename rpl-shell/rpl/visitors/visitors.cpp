@@ -221,7 +221,7 @@ skel_node* single_node_cloner::operator()( skel_node& sk ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 reduce_resources::reduce_resources( rpl_environment& env ) :
-    ts(env), getres(env)
+    ts(env), getres(env), env(env)
 {}
 
 void reduce_resources::visit( seq_node& n ) {
@@ -280,11 +280,11 @@ void reduce_resources::visit( pipe_node& n ) {
 }
 
 void reduce_resources::visit( farm_node& n ) {
-    size_t dim = env.get_dim();
+    int dim = env.get_dim();
     res = n.pardegree > 1;
     if ( n.pardegree > dim )
         n.pardegree = dim;
-    if ( res )
+    else if ( res )
         n.pardegree--;
     else
         (*this)( *n.get(0) );

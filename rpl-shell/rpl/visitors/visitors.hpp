@@ -97,6 +97,7 @@ private:
     bool res;
     servicetime ts;
     resources getres;
+    rpl_environment& env;
 };
 
 struct assign_resources : public skel_visitor {
