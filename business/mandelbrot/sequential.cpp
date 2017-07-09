@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
     matrixsource msrc;
     mandelbrot benoit;
     colorize applycol;
-    matrix_drain mdrn;
+    matrixdrain mdrn;
 
     // some "time" variables
     double tot21  = 0;

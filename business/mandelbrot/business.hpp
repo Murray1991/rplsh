@@ -13,7 +13,7 @@
 
 const int N = 2400;     // matrix dimension NxN
 const int K = 2000;     // number of iterations
-const int streamsize = 5;
+const int streamsize = 16;
 
 // mandelbrot escape time algorithm: from opencv-docs
 int mandelbrotAlgorithm(const std::complex<float> &z0, const int max) {
@@ -136,7 +136,7 @@ public:
 };
 
 // drain wrapper
-class matrix_drain : public drain<MMatrix<Point>> {
+class matrixdrain : public drain<MMatrix<Point>> {
 public:
     void process(MMatrix<Point>* res) {
         const std::string filename = STRINGIFY(PRE) "_mandelbrot_" + std::to_string(res->index) + ".png";
