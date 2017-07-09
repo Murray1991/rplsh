@@ -280,7 +280,10 @@ void reduce_resources::visit( pipe_node& n ) {
 }
 
 void reduce_resources::visit( farm_node& n ) {
+    size_t dim = env.get_dim();
     res = n.pardegree > 1;
+    if ( n.pardegree > dim )
+        n.pardegree = dim;
     if ( res )
         n.pardegree--;
     else
