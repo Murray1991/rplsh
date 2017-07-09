@@ -26,10 +26,10 @@ int main(int argc, char *argv[]) {
 
         if (!loop) break;
 
-        tmp = gb.compute(tmp);      // compute gaussian blur
+        tmp = tg.compute(tmp);      // compute togray
 
         auto t3a = aux::now();
-        tmp = tg.compute(tmp);      // compute togray
+        tmp = gb.compute(tmp);      // compute gblur
 
         auto t3 = aux::now();
         tmp = s.compute(tmp);       // compute sobel
@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
 
         // compute total times
         vsrctime += aux::time_elapsed<aux::milliseconds>(t2, t1);
-        gbtime   += aux::time_elapsed<aux::milliseconds>(t3a, t2);
-        tgtime   += aux::time_elapsed<aux::milliseconds>(t3, t3a);
+        tgtime   += aux::time_elapsed<aux::milliseconds>(t3a, t2);
+        gbtime   += aux::time_elapsed<aux::milliseconds>(t3, t3a);
         stime    += aux::time_elapsed<aux::milliseconds>(t4, t3);
 
         // not interesting measuring "drain time" (negligible)
