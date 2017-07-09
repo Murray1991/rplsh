@@ -10,7 +10,7 @@ using namespace std;
 /* implementation of these functions is at the end */
 tuple<int, int, int> longestrun( const pipe_node& n, servicetime& ts );
 void pipe_merge( pipe_node&n, size_t left, size_t right );
-pair<size_t, size_t> findmax( const skel_node& n, servicetime& ts );
+pair<size_t, double> findmax( const skel_node& n, servicetime& ts );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -155,7 +155,7 @@ pipebalance::pipebalance( rpl_environment& env ) :
 void pipebalance::visit( pipe_node& n ) {
     auto p = findmax( n, ts );
     size_t idx = p.first;
-    size_t max = p.second;
+    double max = p.second;
     for (size_t i = 0; i < n.size(); i++)
         if (i != idx)
             (*this)(*n.get(i), max);
@@ -239,11 +239,11 @@ void maxresources::operator()( skel_node& n ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 // find the index of the heaviest stage of the pipeline/sequence
-pair<size_t, size_t> findmax( const skel_node& n, servicetime& ts ) {
+pair<size_t, double> findmax( const skel_node& n, servicetime& ts ) {
     size_t idx = 0;
-    size_t max = 0;
+    double max = 0;
     for ( size_t i = 0; i < n.size(); i++ ) {
-        size_t tmp = ts( *n.get(i) );
+        double tmp = ts( *n.get(i) );
         if ( max <= tmp ) {
             idx = i;
             max = tmp;
