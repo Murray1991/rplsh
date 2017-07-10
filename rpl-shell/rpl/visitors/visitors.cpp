@@ -614,6 +614,5 @@ void count_stages::visit( id_node& n ) {
 size_t count_stages::operator()( skel_node& n ) {
     res = 0;
     n.accept(*this);
-    cout << "size: " << res << endl;
     return res;
 }
