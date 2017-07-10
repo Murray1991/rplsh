@@ -189,6 +189,8 @@ private:
 struct count_stages : public skel_visitor {
     count_stages(rpl_environment& env);
     void visit(seq_node& n);
+    void visit(source_node& n);
+    void visit(drain_node& n);
     void visit(comp_node& n);
     void visit(pipe_node& n);
     void visit(farm_node& n);

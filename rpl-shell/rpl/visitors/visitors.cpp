@@ -576,6 +576,14 @@ void count_stages::visit( seq_node& n ) {
     res += 1;
 }
 
+void count_stages::visit( source_node& n ) {
+    res += 1;
+}
+
+void count_stages::visit( drain_node& n ) {
+    res += 1;
+}
+
 void count_stages::visit( comp_node& n ) {
     res += 1;
 }
