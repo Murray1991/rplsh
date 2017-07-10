@@ -564,3 +564,48 @@ void unranker::visit( id_node& n ) {
 void unranker::operator()( skel_node& n ) {
     n.accept(*this);
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+count_stages::count_stages( rpl_environment& env ) :
+    env(env), res(0)
+{}
+
+void count_stages::visit( seq_node& n ) {
+    res += 1;
+}
+
+void count_stages::visit( comp_node& n ) {
+    res += 1;
+}
+
+void count_stages::visit( pipe_node& n ) {
+    for (size_t i = 0; i < n.size(); i++)
+        n.get(i)->accept(*this);
+}
+
+void count_stages::visit( farm_node& n ) {
+    res += 1;
+}
+
+void count_stages::visit( map_node& n ) {
+    res += 1;
+}
+
+void count_stages::visit( reduce_node& n ) {
+    res += 1;
+}
+
+void count_stages::visit( id_node& n ) {
+    auto ptr = env.get(n.id, n.index);
+    if (ptr != nullptr)
+        ptr->accept(*this);
+}
+
+size_t count_stages::operator()( skel_node& n ) {
+    res = 0;
+    n.accept(*this);
+    cout << "size: " << res << endl;
+    return res;
+}
