@@ -207,7 +207,7 @@ void completiontime::visit( pipe_node& n ) {
 
 void completiontime::visit( farm_node& n ) {
     // latency + ts
-    res = (env.get_dim()-1) * ts(n) + lat(n);
+    res = env.get_dim()/n.pardegree*lat(n);
 }
 
 void completiontime::visit( map_node& n ) {
