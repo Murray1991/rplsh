@@ -163,7 +163,7 @@ void pipebalance::visit( pipe_node& n ) {
 
 void pipebalance::visit( farm_node& n ) {
     double tw  = ts( *n.get(0) );
-    n.pardegree = floor( tw / ts_max );
+    n.pardegree = ceil( tw / ts_max );
     if (!n.pardegree)
         n.pardegree = 1;
 }
@@ -175,7 +175,7 @@ void pipebalance::visit( map_node& n ) {
     assignres(n, n.inputsize);
 
     double tw  = ts( *n.get(0) );
-    n.pardegree = floor( tw / ts_max );
+    n.pardegree = ceil( tw / ts_max );
     if (!n.pardegree)
         n.pardegree = 1;
     assignres(n, n.inputsize);
