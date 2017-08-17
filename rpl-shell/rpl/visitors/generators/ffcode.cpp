@@ -59,7 +59,7 @@ string stage_declaration( const seq_node& n ) {
     ss << "\t\t" << n.typein << " _in  = *((" << n.typein << "*) t);\n";
     ss << "\t\t" << n.typeout << "* _out  = new " << n.typeout << "();\n";
     ss << "\t\t" << "*_out = wrapper.compute(_in);\n";
-    //TODO memory leak of previous node
+    ss << "\t\t" << "delete ((" << n.typein << "*) t);\n";
     ss << "\t\t" << "return (void*) _out;\n";
     ss << "\t}\n";
     ss << "};\n\n";
