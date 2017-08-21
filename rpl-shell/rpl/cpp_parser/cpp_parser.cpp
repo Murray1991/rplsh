@@ -32,7 +32,7 @@ pair<cpp_parser::iterator, cpp_parser::iterator> cpp_parser::parse() {
     while (std::getline(file, line)) {
         if( std::regex_search(line, match, seq_regex) ) {
             vec.push_back( wrapper_info( trim(match[3]), wrapper_info::seq,
-                match[9], match[12]));
+                match[12], match[9]));
         } else if( std::regex_search(line, match, src_regex) ) {
             vec.push_back( wrapper_info( trim(match[3]), wrapper_info::source,
                 "", match[9]));
