@@ -228,7 +228,7 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
     }
 
     size_t idx = seq_nodes.size()-1;
-    ss << "\t\t" << typeout << "* out  = new " << typeout << "();\n";
+    ss << "\t\t" << typeout << "* out  = new " << typeout << "(wrapper" << idx <<".identity);\n";
     ss << "\t\tauto reduceF = [this]("<<typeout<<"& sum, "<<typeout<<" elem) {sum = wrapper"<<idx<<".op(sum, elem);};\n";
     ss << "\t\tauto bodyF = [this,&_task](const long i, "<<typeout<<"& sum) {sum = wrapper"<<idx<<".op(sum, _task[i]);};\n";
     ss << "\t\t" << ffMap <<"::parallel_reduce(*out, wrapper"<<idx<<".identity,0,"<<task<<".size(),bodyF,reduceF,"<<to_string( nw(n) )<<");\n";
