@@ -21,18 +21,18 @@ int main(int argc, char *argv[]) {
         // get next frame
         auto t1 = aux::now();
         bool loop = vsrc.has_next();
-        Mat tmp = *vsrc.next();
+        Mat* tmp = vsrc.next();
         auto t2 = aux::now();
 
         if (!loop) break;
 
-        tmp = tg.compute(tmp);      // compute togray
+        *tmp = tg.compute(*tmp);      // compute togray
 
         auto t3a = aux::now();
-        tmp = gb.compute(tmp);      // compute gblur
+        *tmp = gb.compute(*tmp);      // compute gblur
 
         auto t3 = aux::now();
-        tmp = s.compute(tmp);       // compute sobel
+        *tmp = s.compute(*tmp);       // compute sobel
         auto t4 = aux::now();
 
         // compute total times
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         stime    += aux::time_elapsed<aux::milliseconds>(t4, t3);
 
         // not interesting measuring "drain time" (negligible)
-        vdrn.process(&tmp);
+        vdrn.process(tmp);
         size++;
 
     }

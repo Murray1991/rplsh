@@ -48,8 +48,6 @@ protected:
 };
 
 // consume the stream of frames
-// what about out of order frames?
-// TODO numbering of frames?
 class vdrain : public drain<Mat> {
 public:
     void process(Mat* frame) {
@@ -58,6 +56,7 @@ public:
             imshow("Filtered video", *frame);
             waitKey(30);    // accomodate visualization
         }
+         delete frame;
     }
 };
 
