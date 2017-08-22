@@ -97,6 +97,14 @@ string drain_declaration( const drain_node& n ) {
     return ss.str();
 }
 
+string mapred_constructor( string name, int nw, bool value ) {
+    stringstream ss;
+    ss << "\t" << name << "() : ff_Map(" << nw << ") {\n";
+    ss << "\t\tpfr.disableScheduler(" << value << ");\n";
+    ss << "\t}\n";
+    return ss.str();
+}
+
 string map_declaration( map_node& n, rpl_environment& env ) {
     // two-tier model: inside map nodes only seq or compseq are allowed:
     // if stream/datap inside, ignore it when compile and show a warning
@@ -121,6 +129,7 @@ string map_declaration( map_node& n, rpl_environment& env ) {
         ss << "\t" << seq_nodes[i]->name << " wrapper" << i << ";\n";
 
     ss << "public:\n";
+    ss << mapred_constructor("map" + to_string(n.getid()) + "_stage", n.pardegree, false) << "\n";
     ss << "\t" << typeout << "* svc("<< typein << " *t) {\n";
     ss << "\t\t" << typein << "& _task = *t;\n";
     if (typein != typeout) {
@@ -197,6 +206,7 @@ string red_declaration( reduce_node& n, rpl_environment& env ) {
     for (size_t i = 0; i < seq_nodes.size(); i++)
         ss << "\t" << seq_nodes[i]->name << " wrapper" << i << ";\n";
     ss << "public:\n";
+    ss << mapred_constructor("reduce" + to_string(n.getid()) + "_stage", n.pardegree, true) << "\n";
     ss << "\t" << typeout << "* svc("<< typein <<"* t) {\n";
     string task = "_task";
     ss << "\t\t" << typein << "& _task = *t;\n";
