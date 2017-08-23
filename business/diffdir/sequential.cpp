@@ -7,8 +7,8 @@ int main() {
 
     dsrc src;
     ddrn drn;
-    dirdiffA ddmap;
-    dirdiffB ddred;
+    diffdirA ddmap;
+    diffdirB ddred;
     size_t size;
 
     auto t1 = aux::now();
