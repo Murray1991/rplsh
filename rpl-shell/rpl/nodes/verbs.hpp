@@ -91,4 +91,9 @@ struct expand_node : public verb_node<expand_node> {
     expand_node(const std::string& idA, const std::string& idB);
 };
 
+// Node representing the "add" verb
+struct add_node : public verb_node<add_node> {
+    add_node(const std::string& idA, const std::string& idB);
+};
+
 #endif

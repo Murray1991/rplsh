@@ -22,6 +22,7 @@ struct history_node;
 struct import_node;
 struct gencode_node;
 struct expand_node;
+struct add_node;
 struct seq_node;
 struct source_node;
 struct drain_node;

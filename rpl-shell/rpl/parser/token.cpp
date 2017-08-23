@@ -38,6 +38,7 @@ map<string, token::type> token::st_map =
    {"import",   token::import},
    {"gencode",  token::gencode},
    {"expand",   token::expand},
+   {"add",      token::add},
 
    /* skeleton patterns */
    {"seq",      token::seq},

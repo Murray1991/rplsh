@@ -28,6 +28,7 @@ struct token
         import,
         gencode,
         expand,
+        add,
         seq,
         source,
         drain,

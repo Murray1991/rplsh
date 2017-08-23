@@ -103,6 +103,8 @@ rpl_node* parser::start_rule(token& tok)
             return gencode_rule(tok);
         case token::expand:
             return expand_rule(tok);
+        case token::add:
+            return add_rule(tok);
         default:
             err_repo.add( make_shared<error_unexp>(tok.data, tok.pos) );
             return nullptr;
@@ -298,6 +300,17 @@ rpl_node* parser::expand_rule(token& tok)
 
     expect(tok, token::eol);
     return new expand_node(varfrom, varto);
+}
+
+rpl_node* parser::add_rule(token& tok)
+{
+    string varfrom, varto;
+    expect(tok, token::add);
+    expect(tok, token::word, varfrom);
+    expect(tok, token::in);
+    expect(tok, token::word, varto);
+    expect(tok, token::eol);
+    return new add_node(varfrom, varto);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

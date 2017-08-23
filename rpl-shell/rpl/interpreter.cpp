@@ -274,6 +274,29 @@ void interpreter::visit(expand_node& n) {
         env.add(n.prop, ptr);
 }
 
+void interpreter::visit(add_node& n) {
+    auto skptr = env.get(n.id, 0);
+    auto range = env.range(n.prop);
+    std::vector<skel_node*> vec;
+    if (!skptr) //TODO better error handling
+        std::cout << "error: " << n.id << " does not exist" << std::endl;
+    else if ( dynamic_cast<source_node*>(skptr.get()) ) {
+        for (auto it = range.first; it != range.second; it++)
+            vec.push_back( new pipe_node( { new id_node{n.id}, (*it)->clone() } ) );
+        env.clear(n.prop);
+        for (auto ptr : vec)
+            env.add(n.prop, ptr);
+    } else if ( dynamic_cast<drain_node*>(skptr.get()) ) {
+        for (auto it = range.first; it != range.second; it++)
+            vec.push_back( new pipe_node( { (*it)->clone(), new id_node{n.id} } ) );
+        env.clear(n.prop);
+        for (auto ptr : vec)
+            env.add(n.prop, ptr);
+    } else {
+        std::cout << "error: at the moment add is implemented only for adding source and drain to nodes" << std::endl;
+    }
+}
+
 void interpreter::visit(seq_node& n) {
     if (n.get(0) != nullptr)
         n.get(0)->accept(*this);

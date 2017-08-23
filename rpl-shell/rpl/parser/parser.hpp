@@ -38,6 +38,7 @@ private:
     rpl_node* import_rule(token& tok);
     rpl_node* gencode_rule(token& tok);
     rpl_node* expand_rule(token& tok);
+    rpl_node* add_rule(token& tok);
 
     skel_node* pattexp_rule(token& tok);
     skel_node* id_rule(token& tok);

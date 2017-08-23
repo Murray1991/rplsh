@@ -88,3 +88,8 @@ gencode_node::gencode_node(const string& id)
 
 expand_node::expand_node(const string& idA, const string& idB)
     : verb_node(*this, idA, idB) {}
+
+///////////////////////////////////////////////////////////////////////////////
+
+add_node::add_node(const string& idA, const string& idB)
+    : verb_node(*this, idA, idB) {}
