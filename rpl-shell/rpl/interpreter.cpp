@@ -37,8 +37,10 @@ void interpreter::visit(assign_node& n) {
         unranktorank2(*n.rvalue, snc);
         env.put(n.id, n.rvalue);
     } else if ( success ) {
-        skel_node& skel = *env.get(idnode->id, idnode->index);
-        env.put(n.id, skel.clone());
+        env.clear(n.id);
+        auto range = env.range(idnode->id);
+        for (auto it = range.first; it != range.second; it++)
+            env.add(n.id, (*it)->clone());
         delete n.rvalue;
     } else
         delete n.rvalue;
@@ -237,6 +239,41 @@ void interpreter::visit(gencode_node& n) {
     }
 }
 
+bool toclone(skel_node* ptr) {
+    return ptr != nullptr && !dynamic_cast<seq_node*>(ptr) &&
+        !dynamic_cast<source_node*>(ptr) && !dynamic_cast<drain_node*>(ptr);
+}
+
+void exprecurse(skel_node* n, rpl_environment& env) {
+    for (size_t i = 0; i < n->size(); i++) {
+        id_node* k = dynamic_cast<id_node*>(n->get(i));
+        if ( k ) {
+            auto ptr = env.get(k->id, k->index);    // shared pointer
+            if ( toclone( ptr.get() ) ) {
+                n->set( ptr->clone(), i );
+                exprecurse( n->get(i), env );
+            }
+        } else
+            exprecurse( n->get(i), env );
+    }
+}
+
+void interpreter::visit(expand_node& n) {
+
+    auto range = env.range( n.id );
+    std::vector<skel_node*> vec;
+    for (auto it = range.first; it != range.second; it++) {
+        auto& skptr = *it;
+        skel_node* tmp = skptr->clone();
+        exprecurse(tmp, env);
+        vec.push_back(tmp);
+    }
+
+    env.clear(n.prop);
+    for (auto ptr : vec)
+        env.add(n.prop, ptr);
+}
+
 void interpreter::visit(seq_node& n) {
     if (n.get(0) != nullptr)
         n.get(0)->accept(*this);
@@ -249,7 +286,7 @@ void interpreter::visit(drain_node& n) {
 }
 
 ///////////////////// BEGIN EXPANSION
-#ifdef EXPANSION
+/*#ifdef EXPANSION
 
 bool toclone;
 
@@ -298,11 +335,11 @@ void interpreter::visit(id_node& n) {
         err_repo.add( make_shared<error_not_exist>(n.id) );
     }
 }
-
+*/
 ////////////////////////// END EXPANSION
 
 ///////////////////////// BEGIN OLD-STYLE
-#else
+//#else
 
 void interpreter::visit(comp_node& n) {
     for (size_t i = 0;  i < n.size(); i++)
@@ -334,7 +371,7 @@ void interpreter::visit(id_node& n) {
     }
 }
 
-#endif
+//#endif
 //////////////////// END OLD STYLE
 
 history& interpreter::get_history() {

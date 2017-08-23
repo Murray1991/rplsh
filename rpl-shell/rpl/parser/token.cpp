@@ -26,6 +26,7 @@ map<string, token::type> token::st_map =
    /* verb's keywords */
    {"with",     token::with},
    {"by",       token::by},
+   {"in",       token::in},
 
    /* verbs */
    {"show",     token::show},
@@ -36,6 +37,7 @@ map<string, token::type> token::st_map =
    {"history",  token::history},
    {"import",   token::import},
    {"gencode",  token::gencode},
+   {"expand",   token::expand},
 
    /* skeleton patterns */
    {"seq",      token::seq},

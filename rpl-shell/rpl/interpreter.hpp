@@ -44,6 +44,7 @@ struct interpreter : public visitor
     void visit(history_node& n);
     void visit(import_node& n);
     void visit(gencode_node& n);
+    void visit(expand_node& n);
 
     void visit(seq_node& n);
     void visit(source_node& n);

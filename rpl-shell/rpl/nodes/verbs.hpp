@@ -86,4 +86,9 @@ struct gencode_node : public verb_node<gencode_node> {
     gencode_node(const std::string& id);
 };
 
+// Node representing the "expand" verb
+struct expand_node : public verb_node<expand_node> {
+    expand_node(const std::string& idA, const std::string& idB);
+};
+
 #endif
