@@ -23,6 +23,8 @@ struct optrule : public skel_visitor
     virtual void visit(id_node& n);
     virtual void operator() ( skel_node& n ) = 0;
 
+    bool subexp;
+
 protected:
     optrule(rpl_environment& env);
     rpl_environment& env;

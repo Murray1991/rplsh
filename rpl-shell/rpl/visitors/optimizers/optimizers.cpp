@@ -40,10 +40,15 @@ void optrule::visit( reduce_node& n ) {
 }
 
 void optrule::visit( id_node& n ) {
-    // TODO apply optrule recursively or not?
+    if (!subexp)
+        return;
+
+    auto ptr = env.get(n.id, n.index);
+    (*this)( *ptr );
 }
 
 optrule::optrule( rpl_environment& env ) :
+    subexp( false ),
     env( env ),
     ts( env )
 {}

@@ -147,6 +147,10 @@ void interpreter::visit(opt_node& n) {
         auto begin = range.first + ( n.index < 0 ? 0 : n.index );
         auto end   = n.index < 0 ? range.second : range.first + n.index + 1;
 
+        auto it = std::find(n.parameters.begin(), n.parameters.end(), "subexp");
+        bool subexp = it != n.parameters.end();
+        if (subexp) n.parameters.erase(it);
+
         for (const string& opt : n.parameters ) {
             if (opt == "normalform") {
                 skel_node* newsk = normform( **begin );
@@ -155,6 +159,8 @@ void interpreter::visit(opt_node& n) {
                 env.add( n.id, newsk );
             } else {
                 optrule& optrule = *odispatch[ opt ];
+                optrule.subexp = subexp;                    // if true, the optrule will be
+                                                            // applied recursively in the subexpr
                 for (auto it = begin; it != end; it++) {
                     auto& skptr = *it;
                     assignres( *skptr, env.get_inputsize() );

@@ -35,7 +35,7 @@ public:
     std::string id;
     int index;
     std::string prop;
-    const std::vector<std::string> parameters;
+    std::vector<std::string> parameters;
 };
 
 // Node representing the "show" verb
