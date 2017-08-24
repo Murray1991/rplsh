@@ -53,6 +53,10 @@ namespace par
     /* other std::string constants */
     const std::string show_default   = "show_default";
 
+    /* some other flags for show */
+    const std::string unranked       = "unrank";
+    const std::string noann          = "noann";
+
 }
 
 #endif

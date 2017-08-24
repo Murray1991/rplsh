@@ -73,7 +73,13 @@ map<string, token::type> token::st_map =
    {par::gather_time,   token::parameter},
    {par::dimension,     token::parameter},
    {par::inputsize,     token::parameter},
-   {par::arch,          token::parameter},
+
+   /* parameter flags */
+   {par::unranked,      token::parameter},
+   {par::noann,         token::parameter},
+
+   /* future stuff? */
+   {par::arch,          token::parameter}
 };
 
 map<token::type, string> token::ts_map =

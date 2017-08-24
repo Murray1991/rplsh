@@ -54,19 +54,40 @@ void interpreter::visit(show_node& n) {
             return;
         }
 
-        ann_printer p;
+        printer np;
+        ann_printer ap;
+        printable* p = &ap;
+        unranker unrank(env);
+
         vector<mytuple> tuples;
         auto range = env.range( n.id );
         auto index = n.index < 0 ? 0 : n.index;
         auto begin = range.first + ( n.index < 0 ? 0 : n.index );
         auto end   = n.index < 0 ? range.second : range.first + n.index + 1;
 
+        // check unranked flag
+        auto it = std::find(n.parameters.begin(), n.parameters.end(), par::unranked);
+        bool unrnk = it != n.parameters.end();
+        if (unrnk) n.parameters.erase(it);
+
+        // check noann flag
+        it = std::find(n.parameters.begin(), n.parameters.end(), par::noann);
+        bool noann = it != n.parameters.end();
+        if (noann) {
+            n.parameters.erase(it);
+            p = &np;
+        }
+
         for ( auto it = begin; it != end; it++ ) {
 
             tuples.push_back(mytuple());
             auto& last  = tuples.back();
-            auto& skptr = *it;
+            auto skptr = (*it)->clone();
             assignres(*skptr, env.get_inputsize());
+
+            if (unrnk) {
+                unrank(*skptr);
+            }
 
             for (const string& par : n.parameters)
                 if ( par != "show_default" ) {
@@ -74,8 +95,11 @@ void interpreter::visit(show_node& n) {
                     last.add( unique_ptr<wrapper>(new double_wrapper( shower.print(*skptr))) );
                 } else {
                     string idx  = utils::get_idx(it - begin + index, end - begin + index);
-                    last.add( unique_ptr<wrapper>(new string_wrapper( idx + " : " + p.print(*skptr))) );
+                    last.add( unique_ptr<wrapper>(new string_wrapper( idx + " : " + p->print(*skptr))) );
                 }
+
+            delete skptr;
+
         }
 
         // sort the tuples by calling stable_sort multiple times
