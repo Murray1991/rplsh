@@ -15,6 +15,11 @@
 #include <locale>
 #include <regex>
 
+// for readline library
+#include <cstdlib>
+#include <readline/readline.h>
+#include <readline/history.h>
+
 using namespace std;
 
 rpl_environment env;                    // environment: <name, skel_tree> bindings
@@ -68,6 +73,24 @@ int main(int argc, char * argv[])
         }
     }
 
+    char *buffer;
+    while ( (buffer = readline(rplsh::name.c_str())) ) {
+        if ( !buffer ) {
+            std::cout << rplsh::name << " exit..." << std::endl;
+        }
+
+        std::string line(buffer);
+        add_history(line.c_str());
+        if (is_empty_input(line) || is_comment(line))
+            continue;
+        if (is_quit_input(line))
+            break;
+        process(_interpr, line);
+        free(buffer);
+
+    }
+
+    /*
     while ( print_rpl() && getline(cin, line) ) {
         // interactive mode
         if (is_empty_input(line) || is_comment(line))
@@ -75,7 +98,7 @@ int main(int argc, char * argv[])
         if (is_quit_input(line))
             break;
         process(_interpr, line);
-    }
+    }*/
 
     return 0;
 }
