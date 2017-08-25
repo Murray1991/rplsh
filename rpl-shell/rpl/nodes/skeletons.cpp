@@ -79,6 +79,7 @@ template <typename skeleton>
 concrete_skel_node<skeleton>::concrete_skel_node( skeleton& sk, const skeleton& toclone )
     : skel_node({}), _sk(sk) {
 
+    inputsize = toclone.inputsize;
     for (size_t i = 0; i < toclone.size(); i++)
         add( toclone.get(i)->clone() );
 
@@ -258,7 +259,7 @@ id_node::id_node( const string& id )
     : concrete_skel_node( *this ), id( id ), index(0) {}
 
 id_node::id_node( const id_node& other )
-    : concrete_skel_node( *this ), id( other.id ), index(other.index) {}
+    : concrete_skel_node( *this, other ), id( other.id ), index(other.index) {}
 
 skel_node* id_node::clone() {
     return new id_node(*this);
