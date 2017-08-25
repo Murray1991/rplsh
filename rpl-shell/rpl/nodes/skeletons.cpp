@@ -235,7 +235,7 @@ skel_node * map_node::clone() {
 ///////////////////////////////////////////////////////////////////////////////
 
 reduce_node::reduce_node(initializer_list<skel_node*> init)
-    : concrete_skel_node( *this, init ) {}
+    : concrete_skel_node( *this, init ), pardegree(1) {}
 
 reduce_node::reduce_node( skel_node* pattexp, int pardegree )
         : concrete_skel_node( *this ), pardegree(pardegree) {
@@ -243,7 +243,7 @@ reduce_node::reduce_node( skel_node* pattexp, int pardegree )
 }
 
 reduce_node::reduce_node( const reduce_node& other )
-    : concrete_skel_node( *this, other ) {}
+    : concrete_skel_node( *this, other ), pardegree(other.pardegree) {}
 
 skel_node* reduce_node::clone() {
     return new reduce_node(*this);
