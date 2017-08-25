@@ -29,6 +29,10 @@ inline skelptr Map(skelptr s) {
     return new map_node(s);
 }
 
+inline skelptr Reduce(skelptr s) {
+    return new reduce_node(s);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 rewrule::rewrule( skel_node*&& left0, skel_node*&& left1 ) :
@@ -170,6 +174,18 @@ mapelim::mapelim() : rewrule (
 ){}
 
 skel_node* mapelim::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        POS(0) :
+        nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+reduceelim::reduceelim() : rewrule (
+    Reduce(__)
+){}
+
+skel_node* reduceelim::rewrite( skel_node& tree ) {
     return match(&tree, left0.get()) ?
         POS(0) :
         nullptr;
