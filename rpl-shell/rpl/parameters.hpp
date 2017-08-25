@@ -57,7 +57,7 @@ namespace par
     /* some other flags for show */
     const std::string unranked       = "unrank";
     const std::string noann          = "noann";
-
+    const std::string full           = "full";
 }
 
 #endif

@@ -77,6 +77,7 @@ map<string, token::type> token::st_map =
    /* parameter flags */
    {par::unranked,      token::parameter},
    {par::noann,         token::parameter},
+   {par::full,          token::parameter},
 
    /* future stuff? */
    {par::arch,          token::parameter}

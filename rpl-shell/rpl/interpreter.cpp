@@ -11,6 +11,7 @@
 using namespace std;
 
 single_node_cloner snc;
+void exprecurse(skel_node* n, rpl_environment& env);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -78,15 +79,24 @@ void interpreter::visit(show_node& n) {
             p = &np;
         }
 
+        // check full flag
+        it = std::find(n.parameters.begin(), n.parameters.end(), par::full);
+        bool full = it != n.parameters.end();
+        if (full) n.parameters.erase(it);
+
         for ( auto it = begin; it != end; it++ ) {
 
             tuples.push_back(mytuple());
             auto& last  = tuples.back();
             auto skptr = (*it)->clone();
             assignres(*skptr, env.get_inputsize());
-
+            
             if (unrnk) {
                 unrank(*skptr);
+            }
+
+            if (full) {
+                exprecurse(skptr, env);
             }
 
             for (const string& par : n.parameters)
