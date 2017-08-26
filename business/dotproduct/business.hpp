@@ -46,10 +46,10 @@ void init(Iterator begin, Iterator end) {
   }
 }
 
-class src : public source<vec_pair> {
+class dsrc : public source<vec_pair> {
 public:
 
-    src() : i(0) {
+    dsrc() : i(0) {
         srand(0);
     }
 
@@ -69,7 +69,7 @@ private:
     int i;
 };
 
-class drn : public drain<size_type> {
+class ddrn : public drain<size_type> {
 public:
     void process(size_type* value) {
         std::cout << "result is: " << *value << std::endl;

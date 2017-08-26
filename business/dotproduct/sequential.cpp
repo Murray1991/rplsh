@@ -5,8 +5,8 @@ using namespace std;
 
 int main() {
 
-    src _src;
-    drn _drn;
+    dsrc _src;
+    ddrn _drn;
     mul _mul;
     inc _inc;
     size_t size;
@@ -36,8 +36,8 @@ int main() {
 
     std::cout << "total time :" << ttot << std::endl;
     std::cout << "source time :" << tsrc << std::endl;
-    std::cout << "map time :" << tmul << " (total), " << (tmul/size) << " (per item)" << std::endl;
-    std::cout << "red time :" << tinc << " (total), " << (tinc/size) << " (per item)" << std::endl;
+    std::cout << "mul time :" << tmul << " (total), " << (tmul/size) << " (per item)" << std::endl;
+    std::cout << "inc time :" << tinc << " (total), " << (tinc/size) << " (per item)" << std::endl;
     std::cout << "size: " << size << std::endl;
 
     return 0;
