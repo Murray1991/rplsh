@@ -279,11 +279,11 @@ rpl_node* parser::import_rule(token& tok)
 
 rpl_node* parser::gencode_rule(token& tok)
 {
-    string word;
+    pair<string,int> ident;
     expect(tok, token::gencode);
-    expect(tok, token::word, word);
+    expect(tok, token::word, ident);
     expect(tok, token::eol);
-    return new gencode_node(word);
+    return new gencode_node(ident.first, ident.second);
 }
 
 rpl_node* parser::expand_rule(token& tok)
@@ -465,6 +465,7 @@ skel_node* parser::id_rule(token& tok)
 {
     pair<string, int> id;
     expect(tok, token::word, id);
+    bool all = id.second < 0;
     id.second = id.second < 0 ? 0 : id.second;
-    return new id_node(id.first, id.second);
+    return new id_node(id.first, id.second, all);
 }

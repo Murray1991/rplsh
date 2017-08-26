@@ -39,9 +39,15 @@ void interpreter::visit(assign_node& n) {
         env.put(n.id, n.rvalue);
     } else if ( success ) {
         env.clear(n.id);
-        auto range = env.range(idnode->id);
-        for (auto it = range.first; it != range.second; it++)
-            env.add(n.id, (*it)->clone());
+        if (idnode->all) {
+            auto range = env.range(idnode->id);
+            for (auto it = range.first; it != range.second; it++)
+                env.add(n.id, (*it)->clone());
+        } else {
+            auto skel = env.get(idnode->id, idnode->index);
+            if (skel)
+                env.add(n.id, skel->clone());
+        }
         delete n.rvalue;
     } else
         delete n.rvalue;
@@ -90,7 +96,7 @@ void interpreter::visit(show_node& n) {
             auto& last  = tuples.back();
             auto skptr = (*it)->clone();
             assignres(*skptr, env.get_inputsize());
-            
+
             if (unrnk) {
                 unrank(*skptr);
             }

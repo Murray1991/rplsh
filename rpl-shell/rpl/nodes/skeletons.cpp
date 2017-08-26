@@ -252,14 +252,14 @@ skel_node* reduce_node::clone() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-id_node::id_node( const string& id, const int& index )
-    : concrete_skel_node( *this ), id( id ), index(index) {}
+id_node::id_node( const string& id, const int& index, bool all )
+    : concrete_skel_node( *this ), id( id ), index(index), all(all) {}
 
 id_node::id_node( const string& id )
-    : concrete_skel_node( *this ), id( id ), index(0) {}
+    : concrete_skel_node( *this ), id( id ), index(0), all(false) {}
 
 id_node::id_node( const id_node& other )
-    : concrete_skel_node( *this, other ), id( other.id ), index(other.index) {}
+    : concrete_skel_node( *this, other ), id( other.id ), index(other.index), all(other.all) {}
 
 skel_node* id_node::clone() {
     return new id_node(*this);

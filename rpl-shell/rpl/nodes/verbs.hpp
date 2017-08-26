@@ -83,7 +83,7 @@ struct import_node : public verb_node<import_node> {
 
 // Node representing the "gencode" verb
 struct gencode_node : public verb_node<gencode_node> {
-    gencode_node(const std::string& id);
+    gencode_node(const std::string& id, int index = 0);
 };
 
 // Node representing the "expand" verb

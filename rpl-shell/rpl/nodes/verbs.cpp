@@ -81,8 +81,10 @@ import_node::import_node(const string& id)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-gencode_node::gencode_node(const string& id)
-    : verb_node(*this, id, id) {}
+gencode_node::gencode_node(const string& id, int index)
+    : verb_node(*this, id, id) {
+        this->index = index;
+    }
 
 ///////////////////////////////////////////////////////////////////////////////
 

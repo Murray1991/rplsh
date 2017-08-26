@@ -121,12 +121,13 @@ struct reduce_node : public concrete_skel_node<reduce_node> {
 };
 
 struct id_node : public concrete_skel_node<id_node> {
-    id_node( const std::string& id, const int& index );
+    id_node( const std::string& id, const int& index, bool all );
     id_node( const std::string& id );
     id_node( const id_node& other );
     skel_node* clone();
     std::string id;
     int index;
+    bool all;
 };
 
 // special node, it matches with every other node
