@@ -85,7 +85,7 @@ void mapopt::visit( map_node& n ) {
 
     /* compute the "optimal" pardegree */
     double tsc = env.get_scatter_time();
-    double tsg = env.get_emitter_time();
+    double tsg = env.get_gather_time();
     double tw  = ts( *n.get(0) );
     size_t nw  = ceil( sqrt( tw / max(tsc,tsg) ) );
     n.pardegree = nw;
