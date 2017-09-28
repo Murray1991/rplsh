@@ -540,11 +540,15 @@ void unranker::visit( seq_node& n ) {
 void unranker::visit( comp_node& n ) {
     skel_node* ptr = &n;
     ranktounrank(ptr,ptr);
+    for (size_t i=0; i < n.size(); i++)
+        n.get(i)->accept(*this);
 }
 
 void unranker::visit( pipe_node& n ) {
     skel_node* ptr = &n;
     ranktounrank(ptr,ptr);
+    for (size_t i=0; i < n.size(); i++)
+        n.get(i)->accept(*this);
 }
 
 void unranker::visit( farm_node& n ) {
