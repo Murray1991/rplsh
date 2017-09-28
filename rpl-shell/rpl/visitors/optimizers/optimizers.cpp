@@ -108,11 +108,18 @@ reduceopt::reduceopt( rpl_environment& env ) :
 {}
 
 void reduceopt::visit( reduce_node& n ) {
-    /* compute the optimal number of workers */
+    //std::cout << "reduceopt first: " << n.pardegree << " - " << n.inputsize << std::endl;
+    /* reassign resources assuming only one worker */
     assign_resources assignres;
-    n.pardegree = ( ((double) n.inputsize) * log(2) );
+    n.pardegree = 1;
     assignres(n, n.inputsize);
 
+    //std::cout << "reduceopt second: " << n.pardegree << " - " << n.inputsize << std::endl;
+    /* compute the optimal number of workers */
+    n.pardegree = ( ((double) n.inputsize) * log(2) );
+    assignres(n, n.inputsize);
+    //std::cout << "npardegree : " << n.pardegree << std::endl;
+    //std::cout << "reduceopt third: " << n.pardegree << " - " << n.inputsize << std::endl;
     /* recurse; TODO Or not?*/
     (*this)( *n.get(0) );
 }
@@ -238,6 +245,7 @@ void maxresources::visit( reduce_node& n ) {
 
 void maxresources::operator()( skel_node& n ) {
     maxres = env.get_res();
+    reduce_res.subexp = subexp;
     n.accept(*this);
 }
 

@@ -93,6 +93,7 @@ struct reduce_resources : public skel_visitor {
     void visit(reduce_node& n);
     void visit(id_node& n);
     bool operator()(skel_node& n);
+    bool subexp;
 private:
     bool res;
     servicetime ts;

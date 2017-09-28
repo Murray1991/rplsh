@@ -221,7 +221,7 @@ skel_node* single_node_cloner::operator()( skel_node& sk ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 reduce_resources::reduce_resources( rpl_environment& env ) :
-    ts(env), getres(env), env(env)
+    subexp(false), ts(env), getres(env), env(env)
 {}
 
 void reduce_resources::visit( seq_node& n ) {
@@ -311,7 +311,11 @@ void reduce_resources::visit( reduce_node& n ) {
 }
 
 void reduce_resources::visit( id_node& n ) {
-    res = false;
+    if (subexp) {
+        auto skptr = env.get(n.id, n.index);
+        (*this)( *skptr );
+    } else
+        res = false;
 }
 
 bool reduce_resources::operator()(skel_node& n) {

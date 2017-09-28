@@ -266,7 +266,8 @@ void interpreter::visit(gencode_node& n) {
     ranker rank(env);
     unranker unrank(env);
 
-    auto ptr = env.get(n.id, n.index);
+    size_t pos = n.index < 0 ? 0 : n.index;
+    auto ptr = env.get(n.id, pos);
 
     if (ptr != nullptr) {
         // unrank and generate code
