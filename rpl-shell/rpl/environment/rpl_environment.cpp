@@ -7,7 +7,7 @@ rpl_environment::rpl_environment() {
     set_collector_time(1);
     set_scatter_time(1);
     set_gather_time(1);
-    set_dim(1);
+    set_dim(1000);
     set_inputsize(1);
     set_res(16);
 }
