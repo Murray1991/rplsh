@@ -1,0 +1,8 @@
+stage1 = seq(10)
+stage2 = seq(20)
+main = pipe(stage1, stage2)
+rewrite main with allrules
+show main by noann
+optimize main[5] with farmopt, pipeopt
+show main[5] by servicetime
+gencode main[5]

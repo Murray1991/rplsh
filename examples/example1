@@ -1,0 +1,22 @@
+stage1 = seq(10,true)
+stage2 = seq(20,true)
+maps1 = map(stage1,16)
+show maps1
+maps2 = map(stage2,16)
+main = pipe(maps1, maps2)
+show main by servicetime
+fatw = comp(stage1,stage2)
+main2 = map(fatw, 32)
+show main2 by servicetime
+
+history main2
+gencode main2
+
+# example for balancing stages in "main" solution
+# we set "resources" to 36 because scatterers and
+# gatherers are considered as resources
+set resources with 36
+annotate maps1 with pardegree 32
+annotate maps2 with pardegree 32
+optimize main with maxresources, subexp
+show main by servicetime, full

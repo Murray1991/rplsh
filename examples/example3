@@ -1,0 +1,13 @@
+a = seq(10)
+b = seq(2)
+c = seq(3)
+d = seq(2)
+main = pipe(a,b,c,d)
+rewrite main with allrules
+optimize main with farmopt
+show main by servicetime, unrank, noann
+
+show resources
+show main[8] by servicetime, resources, unrank
+optimize main[8] with maxresources
+show main[8] by servicetime, resources, unrank

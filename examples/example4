@@ -1,0 +1,19 @@
+import "examples/business.hpp"
+annotate stage1 with latency 5
+annotate stage2 with latency 8
+body = pipe(stage1, stage2)
+main = pipe(gen, body, stop)
+show main by servicetime
+rewrite stage2 with farmintro
+annotate stage2 with pardegree 2
+show main by servicetime, full, unrank
+optimize main with farmopt, subexp
+show main by servicetime, full, unrank
+rewrite stage2 with farmelim
+rewrite body with farmintro
+optimize main with farmopt, subexp
+show main by servicetime, resources, full, unrank
+rewrite body with farmelim, pipeelim, farmintro
+optimize main with farmopt, subexp
+show main by servicetime, resources, full, unrank
+history main
