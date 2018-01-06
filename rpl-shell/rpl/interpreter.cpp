@@ -159,10 +159,14 @@ void interpreter::visit(rwr_node& n) {
     try {
         string id = n.id;
 
+        /* rec support */
+        auto it = std::find(n.parameters.begin(), n.parameters.end(), "rec");
+        bool rec = it != n.parameters.end();
+        if (rec) n.parameters.erase(it);
 
         for (const string& rule : n.parameters ) {
             node_set _set;
-            rewriter _rewriter;
+            rewriter _rewriter(rec);
             auto range = env.range( n.id );
             auto begin = range.first + ( n.index < 0 ? 0 : n.index );
             auto end   = n.index < 0 ? range.second : range.first + n.index + 1;

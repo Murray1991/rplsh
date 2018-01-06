@@ -19,6 +19,7 @@ node_set merge(node_set& s1, node_set& s2);
 void delset( node_set& s );
 
 struct rewriter {
+    rewriter(bool rec) : rec(rec) {}
     node_set apply_allrules ( skel_node& tree, rr_dispatcher& rr_disp);
     template <typename Iterator>
     node_set apply_allrules ( Iterator& it1, Iterator& it2, rr_dispatcher& rr_disp);
@@ -31,6 +32,11 @@ private:
     skel_node* rewrite( skel_node& n, rewrule& r );
     node_set fullrecrewrite( skel_node& n, rewrule& r );
     void insert_or_delete( node_set& set, skel_node* rn );
+
+    /* When it is set to true, the rewrules are considered as  recrewrules:
+     * the rewriter will apply the rule recursively modifying the same
+     * skel tree */
+    bool rec;
 };
 
 template <typename Iterator>
@@ -68,6 +74,13 @@ node_set rewriter::apply_allrules ( Iterator& begin, Iterator& end, rr_dispatche
 
 skel_node* rewriter::rewrite( skel_node& n, rewrule& r ) {
     skel_node* newptr = r.rewrite(n);
+    /* for rec support */
+    if ( rec && newptr && newptr->size() == 1)
+        newptr->set( rewrite(*newptr->get(0), r), 0 );
+    else if ( rec && newptr && newptr->size() == 2) {
+        newptr->set( rewrite(*newptr->get(0), r), 0 );
+        newptr->set( rewrite(*newptr->get(1), r), 1 );
+    }
     return newptr == nullptr ? n.clone() : newptr;
 }
 
