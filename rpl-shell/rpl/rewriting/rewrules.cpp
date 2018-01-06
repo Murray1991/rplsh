@@ -190,3 +190,27 @@ skel_node* reduceelim::rewrite( skel_node& tree ) {
         POS(0) :
         nullptr;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+mapmapelim::mapmapelim() : rewrule (
+    Map(Map(__))
+){}
+
+skel_node* mapmapelim::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        Map(POS(0)) :
+        nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+farmfarmelim::farmfarmelim() : rewrule (
+    Farm(Farm(__))
+){}
+
+skel_node* farmfarmelim::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        Farm(POS(0)) :
+        nullptr;
+}

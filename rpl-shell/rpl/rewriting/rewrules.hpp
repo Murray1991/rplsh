@@ -77,4 +77,14 @@ struct reduceelim : rewrule {
     skel_node* rewrite( skel_node& tree );
 };
 
+struct mapmapelim: rewrule {
+    mapmapelim();
+    skel_node* rewrite( skel_node& tree );
+};
+
+struct farmfarmelim: rewrule {
+    farmfarmelim();
+    skel_node* rewrite( skel_node& tree );
+};
+
 #endif

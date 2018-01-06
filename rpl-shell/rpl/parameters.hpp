@@ -25,6 +25,8 @@ namespace par
     const std::string pipeofmap = "pipeofmap";
     const std::string mapelim   = "mapelim";
     const std::string reduceelim = "reduceelim";
+    const std::string mapmapelim = "mapmapelim";
+    const std::string farmfarmelim = "farmfarmelim";
 
     /* optimization parameter names */
     const std::string farmopt      = "farmopt";
