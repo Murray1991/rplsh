@@ -74,13 +74,19 @@ node_set rewriter::apply_allrules ( Iterator& begin, Iterator& end, rr_dispatche
 
 skel_node* rewriter::rewrite( skel_node& n, rewrule& r ) {
     skel_node* newptr = r.rewrite(n);
+    skel_node* tmp;
+
     /* for rec support */
-    if ( rec && newptr && newptr->size() == 1)
+    while ( rec && newptr && (tmp = r.rewrite(*newptr)) )
+        newptr = tmp;
+
+    if ( rec && newptr && newptr->size() == 1) {
         newptr->set( rewrite(*newptr->get(0), r), 0 );
-    else if ( rec && newptr && newptr->size() == 2) {
+    } else if ( rec && newptr && newptr->size() == 2) {
         newptr->set( rewrite(*newptr->get(0), r), 0 );
         newptr->set( rewrite(*newptr->get(1), r), 1 );
     }
+
     return newptr == nullptr ? n.clone() : newptr;
 }
 
