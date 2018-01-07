@@ -17,8 +17,16 @@ inline skelptr Pipe(skelptr s1, skelptr s2) {
     return new pipe_node{s1, s2};
 }
 
+inline skelptr Pipe(skelptr s) {
+    return new pipe_node{s};
+}
+
 inline skelptr Comp(skelptr s1, skelptr s2) {
     return new comp_node{s1, s2};
+}
+
+inline skelptr Comp(skelptr s) {
+    return new comp_node{s};
 }
 
 inline skelptr Farm(skelptr s) {
@@ -212,5 +220,29 @@ farmfarmelim::farmfarmelim() : rewrule (
 skel_node* farmfarmelim::rewrite( skel_node& tree ) {
     return match(&tree, left0.get()) ?
         Farm(POS(0)) :
+        nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+compdel::compdel() : rewrule (
+    Comp(__)
+){}
+
+skel_node* compdel::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        POS(0) :
+        nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+pipedel::pipedel() : rewrule (
+    Pipe(__)
+){}
+
+skel_node* pipedel::rewrite( skel_node& tree ) {
+    return match(&tree, left0.get()) ?
+        POS(0) :
         nullptr;
 }

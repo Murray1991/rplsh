@@ -87,4 +87,14 @@ struct farmfarmelim: rewrule {
     skel_node* rewrite( skel_node& tree );
 };
 
+struct compdel: rewrule {
+    compdel();
+    skel_node* rewrite( skel_node& tree );
+};
+
+struct pipedel: rewrule {
+    pipedel();
+    skel_node* rewrite( skel_node& tree );
+};
+
 #endif
