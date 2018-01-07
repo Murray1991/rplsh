@@ -202,6 +202,10 @@ void interpreter::visit(opt_node& n) {
                 env.clear( n.id );
                 env.add( n.id, newsk );
             } else {
+
+                node_set _set;
+                printer print;
+
                 optrule& optrule = *odispatch[ opt ];
                 optrule.subexp = subexp;                    // if true, the optrule will be
                                                             // applied recursively in the subexpr
@@ -209,7 +213,12 @@ void interpreter::visit(opt_node& n) {
                     auto& skptr = *it;
                     assignres( *skptr, env.get_inputsize() );
                     optrule( *skptr );
+                    _set.insert({print(*skptr), skptr->clone()});
                 }
+
+                env.clear( n.id );
+                for ( auto& p : _set )
+                    env.add( n.id, p.second );
             }
         }
     } catch (out_of_range& e) {
