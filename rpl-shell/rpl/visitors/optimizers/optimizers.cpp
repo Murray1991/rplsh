@@ -5,12 +5,16 @@
 #include <cmath>
 #include <iostream>
 
+// useful for farmfarmopt and mapmapopt
+#include "rewriting/rewrules.hpp"
+
 using namespace std;
 
 /* implementation of these functions is at the end */
 tuple<int, int, int> longestrun( const pipe_node& n, servicetime& ts );
 void pipe_merge( pipe_node&n, size_t left, size_t right );
 pair<size_t, double> findmax( const skel_node& n, servicetime& ts );
+skel_node* modifytree( skel_node& n, rewrule& r );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -251,6 +255,70 @@ void maxresources::operator()( skel_node& n ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+twotier::twotier( rpl_environment& env ) :
+    optrule(env)
+{}
+
+void twotier::visit( map_node& n ) {
+    get_seq_wrappers gsw(env);
+    gsw(*n.get(0));
+
+    comp_node* comp = new comp_node{};
+    auto seqwrappers = gsw.get_seq_nodes();
+    for (auto ptr : seqwrappers)
+        comp->add(ptr->clone());
+
+    n.set(comp, 0);
+}
+
+void twotier::visit( reduce_node& n ) {
+    get_seq_wrappers gsw(env);
+    gsw(*n.get(0));
+
+    comp_node* comp = new comp_node{};
+    auto seqwrappers = gsw.get_seq_nodes();
+    for (auto ptr : seqwrappers)
+        comp->add(ptr->clone());
+
+    n.set(comp, 0);
+}
+
+void twotier::operator()( skel_node& sk ) {
+    sk.accept( *this );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+farmfarmopt::farmfarmopt( rpl_environment& env ) :
+    optrule(env)
+{}
+
+void farmfarmopt::visit( farm_node& n ) {
+    farmelim rule;
+    n.set( modifytree(*n.get(0), rule), 0 );
+}
+
+void farmfarmopt::operator()( skel_node& sk ) {
+    sk.accept( *this );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+mapmapopt::mapmapopt( rpl_environment& env ) :
+    optrule(env)
+{}
+
+void mapmapopt::visit( map_node& n ) {
+    mapelim rule;
+    n.set( modifytree(*n.get(0), rule), 0 );
+}
+
+void mapmapopt::operator()( skel_node& sk ) {
+    sk.accept( *this );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 // find the index of the heaviest stage of the pipeline/sequence
 pair<size_t, double> findmax( const skel_node& n, servicetime& ts ) {
     size_t idx = 0;
@@ -316,36 +384,25 @@ void pipe_merge( pipe_node&n, size_t left, size_t right ) {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////
+skel_node* modifytree( skel_node& n, rewrule& r ) {
+    skel_node* newptr = r.rewrite(n);
+    skel_node* tmp;
 
-twotier::twotier( rpl_environment& env ) :
-    optrule(env)
-{}
+    while ( newptr && (tmp = r.rewrite(*newptr)) )
+        newptr = tmp;
 
-void twotier::visit( map_node& n ) {
-    get_seq_wrappers gsw(env);
-    gsw(*n.get(0));
+    /* TODO really lazy now, should be written in a more concise way */
+    if ( newptr && newptr->size() == 1) {
+        newptr->set( modifytree(*newptr->get(0), r), 0 );
+    } else if ( newptr && newptr->size() == 2) {
+        newptr->set( modifytree(*newptr->get(0), r), 0 );
+        newptr->set( modifytree(*newptr->get(1), r), 1 );
+    } else if ( n.size() == 1 ) {
+        n.set( modifytree(*n.get(0), r), 0 );
+    } else if ( n.size() == 2) {
+        n.set( modifytree(*n.get(0), r), 0 );
+        n.set( modifytree(*n.get(1), r), 1 );
+    }
 
-    comp_node* comp = new comp_node{};
-    auto seqwrappers = gsw.get_seq_nodes();
-    for (auto ptr : seqwrappers)
-        comp->add(ptr->clone());
-
-    n.set(comp, 0);
-}
-
-void twotier::visit( reduce_node& n ) {
-    get_seq_wrappers gsw(env);
-    gsw(*n.get(0));
-
-    comp_node* comp = new comp_node{};
-    auto seqwrappers = gsw.get_seq_nodes();
-    for (auto ptr : seqwrappers)
-        comp->add(ptr->clone());
-
-    n.set(comp, 0);
-}
-
-void twotier::operator()( skel_node& sk ) {
-    sk.accept( *this );
+    return newptr == nullptr ? n.clone() : newptr;
 }

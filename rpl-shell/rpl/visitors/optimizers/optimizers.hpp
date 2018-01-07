@@ -116,4 +116,18 @@ struct twotier : public optrule
     void operator()( skel_node& n );
 };
 
+struct farmfarmopt : public optrule
+{
+    farmfarmopt( rpl_environment& env );
+    virtual void visit(farm_node& n);
+    void operator()( skel_node& n );
+};
+
+struct mapmapopt : public optrule
+{
+    mapmapopt( rpl_environment& env );
+    virtual void visit(map_node& n);
+    void operator()( skel_node& n );
+};
+
 #endif

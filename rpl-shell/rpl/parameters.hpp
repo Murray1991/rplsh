@@ -37,6 +37,8 @@ namespace par
     const std::string reduceopt    = "reduceopt";
     const std::string maxresources = "maxresources";
     const std::string twotier = "twotier";
+    const std::string farmfarmopt = "farmfarmopt";
+    const std::string mapmapopt = "mapmapopt";
 
     /* non functional name parameters used for performance evaluation */
     const std::string servicetime    = "servicetime";
