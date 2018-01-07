@@ -13,6 +13,8 @@ struct ann_dispatcher : public dispatcher<std::string, std::unique_ptr<ann_visit
         add(par::latency        ,  std::unique_ptr<ann_visitor>(new ann_servicetime(env)));
         add(par::pardegree      ,  std::unique_ptr<ann_visitor>(new ann_pardegree(env)));
         add(par::datap          ,  std::unique_ptr<ann_visitor>(new ann_datap(env)));
+        add(par::typein         ,  std::unique_ptr<ann_visitor>(new ann_typein(env)));
+        add(par::typeout        , std::unique_ptr<ann_visitor>(new ann_typeout(env)));
     }
 };
 

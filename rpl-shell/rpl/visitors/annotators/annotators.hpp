@@ -63,4 +63,26 @@ private:
     bool datap;
 };
 
+struct ann_typein : public ann_visitor
+{
+    ann_typein( rpl_environment& env );
+    void visit( seq_node& n );
+    void visit( drain_node& n );
+    bool operator()( skel_node& n, ann_node& a );
+
+private:
+    std::string type;
+};
+
+struct ann_typeout : public ann_visitor
+{
+    ann_typeout( rpl_environment& env );
+    void visit( seq_node& n );
+    void visit( source_node& n );
+    bool operator()( skel_node& n, ann_node& a );
+
+private:
+    std::string type;
+};
+
 #endif

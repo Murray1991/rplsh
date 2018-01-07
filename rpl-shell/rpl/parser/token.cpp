@@ -74,6 +74,9 @@ map<string, token::type> token::st_map =
    {par::dimension,     token::parameter},
    {par::inputsize,     token::parameter},
 
+   {par::typein,  token::parameter},
+   {par::typeout, token::parameter},
+
    /* parameter flags */
    {par::unranked,      token::parameter},
    {par::noann,         token::parameter},

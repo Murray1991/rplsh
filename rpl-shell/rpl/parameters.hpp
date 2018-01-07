@@ -49,6 +49,9 @@ namespace par
     const std::string resources      = "resources";
     const std::string datap          = "datap";
 
+    const std::string typein  = "typein";
+    const std::string typeout = "typeout";
+
     /* environment variables */
     const std::string emitter_time   = "emitter_time";
     const std::string collector_time = "collector_time";

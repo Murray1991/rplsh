@@ -119,3 +119,47 @@ bool ann_datap::operator()( skel_node& n, ann_node& a ) {
     n.accept( *this );
     return result;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+ann_typein::ann_typein( rpl_environment& env ) :
+    ann_visitor ( env )
+{}
+
+void ann_typein::visit( seq_node& n ) {
+    n.typein = type;
+    result   = true;
+}
+
+void ann_typein::visit( drain_node& n ) {
+    n.typein = type;
+    result   = true;
+}
+
+bool ann_typein::operator()( skel_node& n, ann_node& a ) {
+    type = a.word;
+    n.accept(*this);
+    return result;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+ann_typeout::ann_typeout( rpl_environment& env ) :
+    ann_visitor ( env )
+{}
+
+void ann_typeout::visit( seq_node& n ) {
+    n.typeout = type;
+    result    = true;
+}
+
+void ann_typeout::visit( source_node& n ) {
+    n.typeout = type;
+    result    = true;
+}
+
+bool ann_typeout::operator()( skel_node& n, ann_node& a ) {
+    type = a.word;
+    n.accept(*this);
+    return result;
+}
