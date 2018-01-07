@@ -34,6 +34,7 @@ namespace par
     const std::string mapopt       = "mapopt";
     const std::string reduceopt    = "reduceopt";
     const std::string maxresources = "maxresources";
+    const std::string twotier = "twotier";
 
     /* non functional name parameters used for performance evaluation */
     const std::string servicetime    = "servicetime";

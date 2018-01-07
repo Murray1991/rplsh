@@ -15,6 +15,7 @@ struct opt_dispatcher : public dispatcher<std::string, std::unique_ptr<optrule>>
         add(par::reduceopt,    std::unique_ptr<optrule>( new reduceopt(env)));
         add(par::pipeopt,      std::unique_ptr<optrule>( new pipeopt(env) ));
         add(par::maxresources, std::unique_ptr<optrule>( new maxresources(env)));
+        add(par::twotier, std::unique_ptr<optrule>( new twotier(env)));
     }
 };
 
