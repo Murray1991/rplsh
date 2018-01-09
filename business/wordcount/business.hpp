@@ -23,14 +23,23 @@
 #include <chrono>
 #include <thread>
 
+
+// For put delays in map and reduce op
+// Comment to disable, decomment to enable
+#define sleep_for(n) ;
+//std::this_thread::sleep_for(std::chrono::microseconds(n))
+
+// To print the output of wordcount in drn
+#define print_wc_out 1
+
 typedef std::vector<std::string> vecWords;
-typedef std::map<std::string,int> mapWI;
+typedef std::map<const std::string,int> mapWI;
 typedef std::vector<mapWI> vecMapWIs;
 
 class wc_src : public source<vecWords> {
 public:
 
-    wc_src() : filename("business.hpp") {}
+    wc_src() : filename("macbeth.txt") {}
 
     bool has_next() {
         return i++ == 0; // just once = one file
@@ -42,6 +51,7 @@ public:
         std::copy(std::istream_iterator<std::string>(file),
             std::istream_iterator<std::string>(),
             std::back_inserter(*words));
+        std::cout << "file of " << words->size() << " words" << std::endl;
         return words;
     }
 
@@ -64,9 +74,9 @@ public:
         return maps;
     }
 
-    mapWI op(std::string& w) {
-        mapWI mymap = {{w,1}};
-        return mymap;
+    mapWI op(const std::string& w) {
+        //sleep_for(20);
+        return {{w,1}};
     }
 };
 
@@ -79,11 +89,11 @@ public:
         return sum;
     }
 
-    mapWI op(const mapWI& a, const mapWI& b) {
-        mapWI res = a;
-        for (auto& w : b)
-            res[w.first] += w.second;
-        return res;
+    const mapWI& op(mapWI& a, mapWI& b) {
+        //sleep_for(80);
+        for (const auto& w : b)
+            a[w.first] += w.second;
+        return a;
     }
 
     const mapWI identity{};
@@ -92,8 +102,9 @@ public:
 class wc_drn : public drain<mapWI> {
 public:
     void process(mapWI* res) {
-        for (auto& w : *res)
-            std::cout << w.first << ": " << w.second << std::endl;
+        if (print_wc_out)
+            for (auto& w : *res)
+                std::cout << w.first << ": " << w.second << std::endl;
     }
 };
 
