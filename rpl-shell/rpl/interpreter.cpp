@@ -193,9 +193,6 @@ void interpreter::visit(rwr_node& n) {
 
 void interpreter::visit(opt_node& n) {
     try {
-        auto range = env.range( n.id );
-        auto begin = range.first + ( n.index < 0 ? 0 : n.index );
-        auto end   = n.index < 0 ? range.second : range.first + n.index + 1;
 
         auto it = std::find(n.parameters.begin(), n.parameters.end(), "subexp");
         bool subexp = it != n.parameters.end();
@@ -203,11 +200,15 @@ void interpreter::visit(opt_node& n) {
 
         for (const string& opt : n.parameters ) {
             if (opt == "normalform") {
-                skel_node* newsk = normform( **begin );
-                unranktorank2(*newsk, snc);
-                env.clear( n.id );
-                env.add( n.id, newsk );
+                //skel_node* newsk = normform( **begin );
+                //unranktorank2(*newsk, snc);
+                //env.clear( n.id );
+                //env.add( n.id, newsk );
             } else {
+
+                auto range = env.range( n.id );
+                auto begin = range.first + ( n.index < 0 ? 0 : n.index );
+                auto end   = n.index < 0 ? range.second : range.first + n.index + 1;
 
                 node_set _set;
                 printer print;
@@ -217,6 +218,7 @@ void interpreter::visit(opt_node& n) {
                                                             // applied recursively in the subexpr
                 for (auto it = begin; it != end; it++) {
                     auto& skptr = *it;
+                    //cout << (it-begin) << ": " << print(*skptr) << endl;
                     assignres( *skptr, env.get_inputsize() );
                     optrule( *skptr );
                     _set.insert({print(*skptr), skptr->clone()});
@@ -302,16 +304,18 @@ void interpreter::visit(load_node& n) {
         parser _parser(_scanner, err_repo);
 
         unique_ptr<rpl_node> t = _parser.parse();
-        streambuf* orig_buf = cout.rdbuf();
+
         // set null
         if (!n.show)
-            cout.rdbuf(NULL);
+            cout.setstate(std::ios_base::failbit);
+
         cout << "rplsh> " << line << endl;
         if (err_repo.size() == 0)
             t->accept(*this);
+
         // restore buffer
         if (!n.show)
-            cout.rdbuf(orig_buf);
+            cout.clear();
 
         if (err_repo.size() == 0)
             get_history().add(line);
