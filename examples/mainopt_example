@@ -1,0 +1,8 @@
+# Generate a big list of equivalent rules, then clean it 
+# with rec application of farmfarmelim and mapmapelim
+# Then apply farmopt and maxresources optimizations
+
+rewrite main with allrules, allrules
+rewrite main with farmfarmelim, mapmapelim, rec
+optimize main with farmopt, maxresources
+
