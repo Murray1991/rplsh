@@ -95,3 +95,8 @@ expand_node::expand_node(const string& idA, const string& idB)
 
 add_node::add_node(const string& idA, const string& idB)
     : verb_node(*this, idA, idB) {}
+
+///////////////////////////////////////////////////////////////////////////////
+
+load_node::load_node(const string& id, bool showoutput)
+    : verb_node(*this, id, id), show(showoutput) {}

@@ -17,6 +17,7 @@ struct visitor
     virtual void visit(gencode_node& n) = 0;
     virtual void visit(expand_node& n)  = 0;
     virtual void visit(add_node& n)     = 0;
+    virtual void visit(load_node& n)  = 0;
 
     virtual void visit(seq_node& n)     = 0;
     virtual void visit(source_node& n)  = 0;
@@ -51,6 +52,7 @@ struct skel_visitor : public visitor
     void visit(gencode_node& n) {};
     void visit(expand_node& n)  {};
     void visit(add_node& n)  {};
+    void visit(load_node& n) {};
 };
 
 #endif

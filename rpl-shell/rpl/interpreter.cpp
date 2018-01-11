@@ -8,6 +8,12 @@
 #include <iostream>
 #include <fstream>
 
+// only for load verb...
+#include <regex>
+#include "parser/lexer.hpp"
+#include "parser/parser.hpp"
+
+
 using namespace std;
 
 single_node_cloner snc;
@@ -271,6 +277,49 @@ void interpreter::visit(import_node& n) {
     }
 }
 
+/* TODO it's not very good, rewrite all */
+bool lis_empty_input(string& line) {
+    return line.empty() || line == string(line.length(), ' ');
+}
+
+bool lis_comment(string& line) {
+    regex comment("^([ ]*)#(.*)");
+    return regex_match(line, comment);
+}
+
+void interpreter::visit(load_node& n) {
+    // TODO fast implementation of load verb, better rewrite please
+    string path = utils::get_real_path(n.id);
+    string line;
+    ifstream infile(path);
+    while ( getline(infile, line) ) {
+        //print_rpl(); cout << line << endl;
+        if (lis_empty_input(line) || lis_comment(line))
+            continue;
+
+        err_repo.reset();
+        lexer _scanner(line, err_repo);
+        parser _parser(_scanner, err_repo);
+
+        unique_ptr<rpl_node> t = _parser.parse();
+        streambuf* orig_buf = cout.rdbuf();
+        // set null
+        if (!n.show)
+            cout.rdbuf(NULL);
+        cout << "rplsh> " << line << endl;
+        if (err_repo.size() == 0)
+            t->accept(*this);
+        // restore buffer
+        if (!n.show)
+            cout.rdbuf(orig_buf);
+
+        if (err_repo.size() == 0)
+            get_history().add(line);
+        if (err_repo.size() > 0)
+            cout << err_repo.get(0);
+    }
+}
+
 void interpreter::visit(gencode_node& n) {
     int i = 0;
     string code;
@@ -356,6 +405,8 @@ void interpreter::visit(add_node& n) {
         std::cout << "error: at the moment add is implemented only for adding source and drain to nodes" << std::endl;
     }
 }
+
+
 
 void interpreter::visit(seq_node& n) {
     if (n.get(0) != nullptr)

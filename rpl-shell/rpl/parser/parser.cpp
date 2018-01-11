@@ -105,6 +105,8 @@ rpl_node* parser::start_rule(token& tok)
             return expand_rule(tok);
         case token::add:
             return add_rule(tok);
+        case token::load:
+            return load_rule(tok);
         default:
             err_repo.add( make_shared<error_unexp>(tok.data, tok.pos) );
             return nullptr;
@@ -311,6 +313,19 @@ rpl_node* parser::add_rule(token& tok)
     expect(tok, token::word, varto);
     expect(tok, token::eol);
     return new add_node(varfrom, varto);
+}
+
+rpl_node* parser::load_rule(token& tok)
+{
+    string word; bool showoutput = false;
+    expect(tok, token::load);
+    expect(tok, token::file, word);
+    if (tok.kind == token::bool_true) {
+        expect(tok, token::bool_true);
+        showoutput = true;
+    }
+    expect(tok, token::eol);
+    return new load_node(word, showoutput);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -21,6 +21,7 @@ struct token
         equals,
         show,
         set,
+
         annotate,
         rewrite,
         optimize,
@@ -28,6 +29,7 @@ struct token
         import,
         gencode,
         expand,
+        load,
         add,
         seq,
         source,

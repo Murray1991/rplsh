@@ -46,6 +46,7 @@ struct interpreter : public visitor
     void visit(gencode_node& n);
     void visit(expand_node& n);
     void visit(add_node& n);
+    void visit(load_node& n);
 
     void visit(seq_node& n);
     void visit(source_node& n);

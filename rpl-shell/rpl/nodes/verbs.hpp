@@ -96,4 +96,10 @@ struct add_node : public verb_node<add_node> {
     add_node(const std::string& idA, const std::string& idB);
 };
 
+// Node representing the "load" verb
+struct load_node : public verb_node<load_node> {
+    load_node(const std::string& id, bool showoutput);
+    bool show;
+};
+
 #endif
